@@ -25,12 +25,16 @@ jobs:
         uses: xu-cheng/latex-action@v3
         with:
           root_file: main.tex
+          latexmk_shell_escape: true
 
-      - name: Automatic Release
-        uses: marvinpinto/action-automatic-releases@latest
+      - name: Rename PDF
+        run: mv main.pdf DawidKarpinski-mgr.pdf
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest"
-          title: "Latest PDF"
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          name: "Latest PDF"
+          tag_name: "latest"
           files: |
             DawidKarpinski-mgr.pdf
