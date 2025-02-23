@@ -1,0 +1,242 @@
+\documentclass[11pt,a4paper,twoside]{book}
+\linespread{1.3}
+
+\usepackage[english]{babel}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+% \usepackage[sfdefault,scaled=.95]{FiraSans}
+
+\usepackage[lf]{Baskervaldx} % lining figures
+\usepackage[bigdelims,vvarbb]{newtxmath} % math italic letters from nimbus Roman
+\usepackage[cal=boondoxo]{mathalfa} % mathcal from STIX, unslanted a bit
+\renewcommand*\oldstylenums[1]{\textosf{#1}}
+
+\usepackage[table]{xcolor}
+\definecolor{sliwka}{RGB}{150,95,119}
+\definecolor{grafit}{RGB}{60,60,60}
+
+\usepackage{amsmath,amsfonts}
+% \usepackage{icomma}
+\usepackage{textcomp}
+\usepackage{gensymb}
+
+\usepackage{graphicx}
+
+\usepackage[left=3cm,right=2cm,top=2.5cm,bottom=2.5cm]{geometry}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{1.5pt}
+\renewcommand{\footrule}{{\color{sliwka}%
+			\vskip-\footruleskip\vskip-\footrulewidth
+			\hrule width\headwidth height\footrulewidth\vskip\footruleskip}}
+
+\fancyhead{}
+\cfoot{}
+\fancyfoot[LE,RO]{\thepage}
+
+\renewcommand\labelitemi{\color{sliwka}{\tiny$\blacksquare$}}
+\renewcommand\labelitemii{\color{sliwka}{\tiny$\square$}}
+\renewcommand\labelitemiii{\color{sliwka}{\tiny$\bullet$}}
+
+\usepackage{enumitem}
+\setlist[itemize]{noitemsep, topsep=0pt, leftmargin=1cm, itemindent=0cm}
+
+\usepackage{nowidow}
+\widowpenalty=10000
+\clubpenalty=10000
+\brokenpenalty 10000
+\sloppy
+
+\usepackage[skip=4pt,indent=0cm,parfill=0pt]{parskip}
+
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{multirow}
+\renewcommand*{\figurename}{Fig.}
+\renewcommand*{\tablename}{Tab.}
+\setlength{\arrayrulewidth}{1pt}
+\arrayrulecolor{sliwka}
+\renewcommand\thefootnote{\textcolor{sliwka}{\arabic{footnote}}}
+\usepackage[font={footnotesize},justification=centerlast]{caption}
+\numberwithin{equation}{chapter}
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+\usepackage{subfig}
+
+\usepackage{lipsum}
+
+\let\lll=\relax
+
+\usepackage[inkscapelatex=false]{svg}
+\usepackage[version=4]{mhchem}
+\usepackage{braket}
+\usepackage{listings}
+
+\setlength{\jot}{20pt}
+\setlength{\parskip}{1em}
+
+\raggedbottom
+\renewcommand{\arraystretch}{1.4}
+
+\usepackage{catchfile}
+\newcommand{\getenv}[2][]{%
+  \CatchFileEdef{\temp}{"|kpsewhich --var-value #2"}{\endlinechar=-1}%
+  \if\relax\detokenize{#1}\relax\temp\else\let#1\temp\fi}
+
+\getenv[\INDEX]{INDEX}
+
+\newcommand{\probP}{\text{I\kern-0.15em P}}
+\newcommand{\todo}[1]{\textcolor{red}{TODO: #1}}
+\newcommand{\thesistitle}{Influence of the reconstruction efficiency on the angular correlation functions in Run 3 software in ALICE.}
+\newcommand{\thesistitlepl}{Wpływ wydajności rekonstrukcji śladów cząstek na kątowe funkcje korelacyjne w oprogramowaniu Run 3 w eksperymencie ALICE.}
+
+\usepackage{hyperref}
+\hypersetup{
+	pdftitle = {\thesistitle},
+	pdfauthor = {Dawid Karpiński},
+	colorlinks,
+	linktoc=page,
+	linkcolor=sliwka,
+	citecolor=sliwka,
+	filecolor=sliwka,
+	urlcolor=sliwka
+}
+
+
+\begin{document}
+\pagestyle{empty}
+
+\begin{titlepage}
+	\begin{minipage}{\textwidth}
+		\begin{center}
+			\includegraphics[scale=0.2]{img/WF_ENG} \\
+			\vspace{1.5cm}
+			\includegraphics[width=0.7\textwidth]{img/mgr_en}
+		\end{center}
+	\end{minipage}
+	
+	\vspace{1.5cm}
+	
+	\begin{minipage}{\textwidth}
+		\begin{center}
+			{\large in the field of study Fizyka Techniczna \\
+				and specialisation EDMI}
+		\end{center}
+	\end{minipage}
+	
+	\vspace{1.5cm}
+	
+	\begin{minipage}{\textwidth}
+		\begin{center}
+			{\LARGE \thesistitle}
+			\vspace{0.5cm}\\
+			{\large thesis number according to Faculty's thesis evidence: \{\todo{number}\}}
+		\end{center}
+	\end{minipage}
+	
+	\vspace{1.5cm}
+	
+	\begin{minipage}{\textwidth}
+		\begin{center}
+			{\LARGE Dawid Karpiński}
+			\vspace{0.5cm}\\
+			{\large student record book number: \INDEX}
+		\end{center}
+	\end{minipage}
+	
+	\vspace{1.5cm}
+	
+	\begin{minipage}{\textwidth}
+		\begin{center}
+			{\large supervisor: \\
+				dr hab. inż. Małgorzata Janik}\\
+			\vspace{0.5cm}
+			{\large second supervisor: \\
+				dr hab. inż. Łukasz Graczyk}
+		\end{center}
+	\end{minipage}%
+	
+	\vfill
+	
+	\begin{minipage}[b]{\textwidth}
+		\begin{center}
+			{\large WARSAW \the\year{}}
+		\end{center}
+	\end{minipage}
+\end{titlepage}
+
+\newpage
+\mbox{ }
+
+\newpage
+{\Large Abstract}\\
+{\color{sliwka}\rule[1pt]{\textwidth}{2pt}}
+
+\textbf{Thesis title:} \thesistitle
+
+\todo{abstract}
+
+\vspace{0.025\textheight}
+\textit{Keywords}\\
+\textit{\todo{keywords}}
+
+\vfill
+
+\begin{multicols}{2}
+	\begin{flushleft}
+		supervisor's signature
+	\end{flushleft}
+	\begin{flushright}
+		student's signature
+	\end{flushright}
+\end{multicols}
+
+\newpage
+\mbox{ }
+
+\newpage
+{\Large Streszczenie}\\
+{\color{sliwka}\rule[1pt]{\textwidth}{2pt}}
+
+\textbf{Tytuł pracy:} \thesistitlepl
+
+\todo{abstract pl}
+
+\vspace{0.025\textheight}
+\textit{Słowa kluczowe:}\\
+\textit{\todo{klucz}}
+
+\vfill
+
+\begin{multicols}{2}
+	\begin{flushleft}
+		podpis opiekuna naukowego
+	\end{flushleft}
+	\begin{flushright}
+		podpis studenta
+	\end{flushright}
+\end{multicols}
+
+\newpage
+\mbox{ }
+
+\tableofcontents
+\addtocontents{toc}{\protect\thispagestyle{empty}}
+\pagestyle{empty}
+
+\chapter{Introduction}
+\pagestyle{fancy}
+
+\todo{intro}
+
+\bibliography{bib}
+\bibliographystyle{unsrt}
+
+\listoffigures
+\listoftables
+
+\appendix
+
+\end{document}
