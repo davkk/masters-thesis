@@ -1,9 +1,13 @@
-name: Compile LaTeX and Update Release
+name: Compile LaTeX and update release
 
 on:
   push:
     branches:
       - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 permissions:
   contents: write
