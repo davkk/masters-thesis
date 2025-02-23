@@ -1,0 +1,32 @@
+name: Compile LaTeX and Update Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  compile-and-release:
+    runs-on: Ubuntu-22.04
+    env:
+      INDEX: ${{ secrets.INDEX }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compile LaTeX
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
+
+      - name: Automatic Release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          title: "Latest PDF"
+          files: |
+            DawidKarpinski-mgr.pdf
