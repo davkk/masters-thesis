@@ -5,8 +5,8 @@ from pathlib import Path
 import scienceplots
 from matplotlib import pyplot as plt
 
-DATA_DIR = Path(__file__).parent / "data"
-FIG_DIR = Path(__file__).parent / "figures"
+DATA_DIR = Path(__file__).parent.parent / "data"
+FIG_DIR = Path(__file__).parent.parent / "figures"
 
 to_latex = {
     "p+p+": r"$pp$",
