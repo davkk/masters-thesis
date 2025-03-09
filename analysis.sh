@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 args=`cat datafiles.csv | fzf --layout=reverse | tr "," " "`
 if [[ -z $args ]]; then
