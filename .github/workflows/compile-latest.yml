@@ -26,7 +26,7 @@ jobs:
       #     latexmk_shell_escape: true
 
       - name: Compile
-        run: make
+        run: make install && make build
 
       - name: Rename PDF
         run: mv main.pdf DawidKarpinski-mgr.pdf

@@ -1,6 +1,12 @@
-.PHONY: report dev hist hist-all clean
+.PHONY: install report dev hist hist-all clean
 
-all: hist-all report clean
+install: pyproject.toml
+	uv sync
+	uv pip install -e .
+
+build: uv.lock
+	make hist-all
+	make report
 
 report: main.tex
 	latexmk -bibtex -pdf --silent --shell-escape main.tex
