@@ -19,13 +19,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # - name: Compile LaTeX
-      #   uses: xu-cheng/latex-action@v3
-      #   with:
-      #     root_file: main.tex
-      #     latexmk_shell_escape: true
-      #
-
       - name: Install uv
         uses: astral-sh/setup-uv@v5
 
@@ -34,8 +27,19 @@ jobs:
         with:
           python-version-file: ".python-version"
 
-      - name: Compile
-        run: make install && make build
+      - name: Install analysis
+        run: make install
+
+      - name: Setup TeX Live
+        uses: teatimeguest/setup-texlive-action@v3
+        with:
+          packages: scheme-full
+
+      - name: Run analysis
+        run: make hist-all
+
+      - name: Compile report
+        run: make report
 
       - name: Rename PDF
         run: mv main.pdf DawidKarpinski-mgr.pdf

@@ -4,10 +4,6 @@ install: pyproject.toml
 	uv pip install pyproject.toml --system
 	uv pip install -e . --system
 
-build: uv.lock
-	make hist-all
-	make report
-
 report: main.tex
 	latexmk -bibtex -pdf --silent --shell-escape main.tex
 	make clean
