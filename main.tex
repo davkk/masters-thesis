@@ -1,7 +1,8 @@
+% LTeX: enabled=false
 \documentclass[11pt,a4paper,twoside]{book}
 \linespread{1.3}
 
-\usepackage[english]{babel}
+\usepackage[main=english,polish]{babel}
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -13,7 +14,7 @@
 \renewcommand*\oldstylenums[1]{\textosf{#1}}
 
 \usepackage[table]{xcolor}
-\definecolor{sliwka}{RGB}{150,95,119}
+\definecolor{plum}{RGB}{150,95,119}
 \definecolor{grafit}{RGB}{60,60,60}
 
 \usepackage{amsmath,amsfonts}
@@ -29,17 +30,17 @@
 \pagestyle{fancy}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{1.5pt}
-\renewcommand{\footrule}{{\color{sliwka}%
+\renewcommand{\footrule}{{\color{plum}%
 			\vskip-\footruleskip\vskip-\footrulewidth
 			\hrule width\headwidth height\footrulewidth\vskip\footruleskip}}
 
 \fancyhead{}
 \cfoot{}
-\fancyfoot[LE,RO]{\thepage}
+\fancyfoot[LE, RO]{\thepage}
 
-\renewcommand\labelitemi{\color{sliwka}{\tiny$\blacksquare$}}
-\renewcommand\labelitemii{\color{sliwka}{\tiny$\square$}}
-\renewcommand\labelitemiii{\color{sliwka}{\tiny$\bullet$}}
+\renewcommand\labelitemi{\color{plum}{\tiny$\blacksquare$}}
+\renewcommand\labelitemii{\color{plum}{\tiny$\square$}}
+\renewcommand\labelitemiii{\color{plum}{\tiny$\bullet$}}
 
 \usepackage{enumitem}
 \setlist[itemize]{noitemsep, topsep=0pt, leftmargin=1cm, itemindent=0cm}
@@ -58,8 +59,8 @@
 \renewcommand*{\figurename}{Fig.}
 \renewcommand*{\tablename}{Tab.}
 \setlength{\arrayrulewidth}{1pt}
-\arrayrulecolor{sliwka}
-\renewcommand\thefootnote{\textcolor{sliwka}{\arabic{footnote}}}
+\arrayrulecolor{plum}
+\renewcommand\thefootnote{\textcolor{plum}{\arabic{footnote}}}
 \usepackage[font={footnotesize},justification=centerlast]{caption}
 \numberwithin{equation}{chapter}
 \newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
@@ -90,7 +91,9 @@
 \newcommand{\probP}{\text{I\kern-0.15em P}}
 \newcommand{\todo}[1]{\textcolor{red}{TODO: #1}}
 \newcommand{\thesistitle}{Influence of the reconstruction efficiency on the angular correlation functions in Run 3 software in ALICE.}
-\newcommand{\thesistitlepl}{Wpływ wydajności rekonstrukcji śladów cząstek na kątowe funkcje korelacyjne w oprogramowaniu Run 3 w eksperymencie ALICE.}
+\newcommand{\thesistitlepl}{\begin{otherlanguage}{polish}
+    Wpływ wydajności rekonstrukcji śladów cząstek na kątowe funkcje korelacyjne w oprogramowaniu Run 3 w eksperymencie ALICE.
+\end{otherlanguage}}
 
 \usepackage{hyperref}
 \hypersetup{
@@ -98,10 +101,10 @@
 	pdfauthor = {Dawid Karpiński},
 	colorlinks,
 	linktoc=page,
-	linkcolor=sliwka,
-	citecolor=sliwka,
-	filecolor=sliwka,
-	urlcolor=sliwka
+	linkcolor=plum,
+	citecolor=plum,
+	filecolor=plum,
+	urlcolor=plum
 }
 
 
@@ -109,70 +112,73 @@
 \pagestyle{empty}
 
 \begin{titlepage}
-	\begin{minipage}{\textwidth}
-		\begin{center}
-			\includegraphics[scale=0.2]{img/WF_ENG} \\
-			\vspace{1.5cm}
-			\includegraphics[width=0.7\textwidth]{img/mgr_en}
-		\end{center}
-	\end{minipage}
-	
-	\vspace{1.5cm}
-	
-	\begin{minipage}{\textwidth}
-		\begin{center}
-			{\large in the field of study Fizyka Techniczna \\
-				and specialisation EDMI}
-		\end{center}
-	\end{minipage}
-	
-	\vspace{1.5cm}
-	
-	\begin{minipage}{\textwidth}
-		\begin{center}
-			{\LARGE \thesistitle}
-			\vspace{0.5cm}\\
-			{\large thesis number according to Faculty's thesis evidence: \{\todo{number}\}}
-		\end{center}
-	\end{minipage}
-	
-	\vspace{1.5cm}
-	
-	\begin{minipage}{\textwidth}
-		\begin{center}
-			{\LARGE Dawid Karpiński}
-			\vspace{0.5cm}\\
-			{\large student record book number: \INDEX}
-		\end{center}
-	\end{minipage}
-	
-	\vspace{1.5cm}
-	
-	\begin{minipage}{\textwidth}
-		\begin{center}
-			{\large supervisor: \\
-				dr hab. inż. Małgorzata Janik}\\
-			\vspace{0.5cm}
-			{\large second supervisor: \\
-				dr hab. inż. Łukasz Graczyk}
-		\end{center}
-	\end{minipage}%
-	
-	\vfill
-	
-	\begin{minipage}[b]{\textwidth}
-		\begin{center}
-			{\large WARSAW \the\year{}}
-		\end{center}
-	\end{minipage}
+    \begin{minipage}{\textwidth}
+        \begin{center}
+            \includegraphics[scale=0.2]{img/WF_ENG} \\
+            \vspace{1.5cm}
+            \includegraphics[width=0.7\textwidth]{img/mgr_en}
+        \end{center}
+    \end{minipage}
+
+    \vspace{1.5cm}
+
+    \begin{minipage}{\textwidth}
+        \begin{center}
+            {\large in the field of study Fizyka Techniczna \\
+                and specialization EDMI}
+        \end{center}
+    \end{minipage}
+
+    \vspace{1.5cm}
+
+    \begin{minipage}{\textwidth}
+        \begin{center}
+            {\LARGE \thesistitle}
+            \vspace{0.5cm}\\
+            {\large thesis number according to Faculty's thesis evidence: \{\todo{number}\}}
+        \end{center}
+    \end{minipage}
+
+    \vspace{1.5cm}
+
+    \begin{minipage}{\textwidth}
+        \begin{center}
+            {\LARGE Dawid Karpiński}
+            \vspace{0.5cm}\\
+            {\large student record book number: \INDEX}
+        \end{center}
+    \end{minipage}
+
+    \vspace{1.5cm}
+
+    \begin{minipage}{\textwidth}
+        \begin{center}
+            {\large supervisor: \\
+                dr hab. inż. Małgorzata Janik}\\
+            \vspace{0.5cm}
+            {\large second supervisor: \\
+                dr hab. inż. Łukasz Graczyk}
+        \end{center}
+    \end{minipage}%
+
+    \vfill
+
+    \begin{minipage}[b]{\textwidth}
+        \begin{center}
+            {\large WARSAW \the\year{}}
+        \end{center}
+    \end{minipage}
 \end{titlepage}
+
+% LTeX: enabled=true
 
 \newpage
 \mbox{ }
 
 \newpage
-{\Large Abstract}\\
-{\color{sliwka}\rule[1pt]{\textwidth}{2pt}}
+{\Large Abstract}
+
+{\color{plum}\rule[1pt]{\textwidth}{2pt}}
 
 \textbf{Thesis title:} \thesistitle
 
@@ -185,39 +191,42 @@
 \vfill
 
 \begin{multicols}{2}
-	\begin{flushleft}
-		supervisor's signature
-	\end{flushleft}
-	\begin{flushright}
-		student's signature
-	\end{flushright}
+    \begin{flushleft}
+        supervisor's signature
+    \end{flushleft}
+    \begin{flushright}
+        student's signature
+    \end{flushright}
 \end{multicols}
 
 \newpage
 \mbox{ }
 
 \newpage
-{\Large Streszczenie}\\
-{\color{sliwka}\rule[1pt]{\textwidth}{2pt}}
+\begin{otherlanguage}{polish}
+    {\Large Streszczenie}
 
-\textbf{Tytuł pracy:} \thesistitlepl
+    {\color{plum}\rule[1pt]{\textwidth}{2pt}}
 
-\todo{abstract pl}
+    \textbf{Tytuł pracy:} \thesistitlepl
 
-\vspace{0.025\textheight}
-\textit{Słowa kluczowe:}\\
-\textit{\todo{klucz}}
+    \todo{abstract pl}
 
-\vfill
+    \vspace{0.025\textheight}
+    \textit{Słowa kluczowe:}\\
+    \textit{\todo{klucz}}
 
-\begin{multicols}{2}
-	\begin{flushleft}
-		podpis opiekuna naukowego
-	\end{flushleft}
-	\begin{flushright}
-		podpis studenta
-	\end{flushright}
-\end{multicols}
+    \vfill
+
+    \begin{multicols}{2}
+        \begin{flushleft}
+            podpis opiekuna naukowego
+        \end{flushleft}
+        \begin{flushright}
+            podpis studenta
+        \end{flushright}
+    \end{multicols}
+\end{otherlanguage}
 
 \newpage
 \mbox{ }
@@ -229,7 +238,29 @@
 \chapter{Introduction}
 \pagestyle{fancy}
 
-\todo{intro}
+\section{LHC and Run 3}
+
+The \textbf{Large Hadron Collider} (LHC), located at the European Organization for Nuclear Research (CERN) near Geneva, Switzerland, is the world's largest particle accelerator. Created in 2008, its main purpose is to accelerate and collide particles, primarily protons and heavy ions (e.g., lead). These collisions produce a variety of subatomic particles, allowing us to test our predictions of the Standard Model and search for new phenomena beyond it.
+
+The collider has completed two successful periods of data collection, the first being Run 1 (2010-2013), and the other Run 2 (2015-2018). \textbf{Run 3} is the current operational phase, which began in 2022 following the second, long shutdown (LS2) \cite{lhc-upgrade}. After numerous upgrades, the LHC now features proton-proton collisions at a center-of-mass energy of 13.6 [TeV], an increase from the 13 [TeV] utilized in Run 2. This higher energy helps in further studies and improves measurement precision and analysis statistics.
+
+\section{The ALICE experiment}
+
+The acronym ALICE stands for \textbf{A Large Ion Collider Experiment}, which is a name of one of four major experiments at the LHC. The detector was designed to allow studying the quark-gluon plasma (QGP), a state of similar conditions as those a few millionths of a second after the Big Bang, before quarks and gluons combined to form protons and neutrons. Such state can be achieved by nucleus-nucleus collisions of heavy ions. In the case of ALICE, it was namely optimized for lead-lead (Pb-Pb) collisions \cite{alice-cern}. The experiment also includes proton-nucleus collisions, as well as analysis of proton-proton collisions as a reference data.
+
+\section{Efficiency}
+
+\todo{transverse momentum, mc reco, mc truth, detection}
+
+\section{Angular correlation function}
+
+\todo{angles, coordinate system}
+
+\section{Framework — O2 and O2Physics}
+
+\cite{alice-o2}
+
+\section{CCDB}
 
 \bibliography{bib}
 \bibliographystyle{unsrt}
