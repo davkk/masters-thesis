@@ -19,11 +19,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Compile LaTeX
-        uses: xu-cheng/latex-action@v3
-        with:
-          root_file: main.tex
-          latexmk_shell_escape: true
+      # - name: Compile LaTeX
+      #   uses: xu-cheng/latex-action@v3
+      #   with:
+      #     root_file: main.tex
+      #     latexmk_shell_escape: true
+
+      - name: Compile
+        run: make
 
       - name: Rename PDF
         run: mv main.pdf DawidKarpinski-mgr.pdf
@@ -32,7 +35,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
-          name: "Latest PDF"
+          name: "Master's Thesis"
           tag_name: "latest"
           files: |
             DawidKarpinski-mgr.pdf
