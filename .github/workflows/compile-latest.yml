@@ -24,6 +24,15 @@ jobs:
       #   with:
       #     root_file: main.tex
       #     latexmk_shell_escape: true
+      #
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: ".python-version"
 
       - name: Compile
         run: make install && make build

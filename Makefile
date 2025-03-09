@@ -1,8 +1,8 @@
 .PHONY: install report dev hist hist-all clean
 
 install: pyproject.toml
-	uv sync
-	uv pip install -e .
+	uv pip install pyproject.toml --system
+	uv pip install -e . --system
 
 build: uv.lock
 	make hist-all
