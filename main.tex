@@ -240,19 +240,34 @@
 
 \section{LHC and Run 3}
 
-The \textbf{Large Hadron Collider} (LHC), located at the European Organization for Nuclear Research (CERN) near Geneva, Switzerland, is the world's largest particle accelerator. Created in 2008, its main purpose is to accelerate and collide particles, primarily protons and heavy ions (e.g., lead). These collisions produce a variety of subatomic particles, allowing us to test our predictions of the Standard Model and search for new phenomena beyond it.
+The \textbf{Large Hadron Collider} (LHC), located at the European Organization for Nuclear Research (CERN) near Geneva, Switzerland, stands as the world's largest particle accelerator. Created in 2008, it accelerates and collides particles, primarily protons and heavy ions (e.g., lead). These collisions produce a variety of subatomic particles, allowing us to test our predictions of the Standard Model and search for new phenomena beyond it.
 
-The collider has completed two successful periods of data collection, the first being Run 1 (2010--2013), and the other Run 2 (2015--2018). \textbf{Run 3} is the current operational phase, which began in 2022 following the second, long shutdown (LS2) \cite{lhc-upgrade}. After numerous upgrades, the LHC now features proton-proton collisions at a center-of-mass energy of 13.6 [TeV], an increase from the 13 [TeV] utilized in Run 2. This higher energy helps in further studies and improves measurement precision and analysis statistics.
+The collider has completed two successful periods of data collection, the first Run 1 (2010--2013), and the other Run 2 (2015--2018). The current operational phase, \textbf{Run 3}, began in 2022 following the second, long shutdown (LS2) \cite{lhc-upgrade}. After the upgrades, the LHC now features proton-proton collisions at a center-of-mass energy of 13.6 [TeV], an increase from the 13 [TeV] utilized in Run 2. This higher energy helps in further studies and improves measurement precision and analysis statistics.
 
 \section{The ALICE experiment}
 
-The acronym ALICE stands for \textbf{A Large Ion Collider Experiment}, which is a name of one of four major experiments at the LHC. The detector was designed to allow studying the quark-gluon plasma (QGP), a state of similar conditions as those a few millionths of a second after the Big Bang, before quarks and gluons combined to form protons and neutrons. Such state can be achieved by nucleus-nucleus collisions of heavy ions. In the case of ALICE, it was namely optimized for lead-lead (Pb-Pb) collisions \cite{alice-cern}. The experiment also includes proton-nucleus collisions, as well as analysis of proton-proton collisions as a reference data.
+The acronym ALICE stands for \textbf{A Large Ion Collider Experiment}, one of four major experiments at the LHC. The detector enables to study the quark-gluon plasma (QGP), a state with conditions resembling those a few millionths of a second after the Big Bang, before quarks and gluons combined to form protons and neutrons. Heavy ion nucleus-nucleus collisions can produce such a state. In the case of ALICE, the main focus lies on lead-lead (Pb-Pb) collisions \cite{alice-cern}. The experiment also includes proton-nucleus collisions, as well as analysis of proton-proton collisions as a reference data.
 
-\section{Efficiency}
+
+\section{Two-particle angular correlation function}
+
+The main work in this thesis based on $\Delta\eta\Delta\varphi$ particle correlations, that come from proton-proton collision data collected from the ALICE experiment.
+
+\subsection{Pseudorapidity and azimuthal angle}
+
+Once constructs the correlation function using two quantities: pseudorapidity, $\eta$, and azimuthal angle, $\phi$. Both represent different angles in the detector space.
+
+First, the pseudorapidity, $\eta$, relates to the angle between the particle momentum $p$ and the beam axis as such:
+
+\begin{equation}
+    \eta = -\ln\left[\tan\left(\frac{\theta}{2}\right)\right]
+\end{equation}.
+
+\section{Correction procedure}
 
 \todo{transverse momentum, mc reco, mc truth, detection}
 
-\section{Angular correlation function}
+\section{Reconstruction efficiency}
 
 \todo{angles, coordinate system}
 
