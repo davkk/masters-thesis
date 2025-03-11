@@ -28,7 +28,7 @@ hist-all: datafiles.csv
 
 push: main.tex
 	git add .
-	git commit -m `date +%s`
+	git commit -m "update `date +%s`"
 	git push origin main
 
 clean:
