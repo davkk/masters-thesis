@@ -1,4 +1,3 @@
-% LTeX: enabled=false
 \documentclass[11pt,a4paper,twoside]{book}
 \linespread{1.3}
 
@@ -170,8 +169,6 @@
     \end{minipage}
 \end{titlepage}
 
-% LTeX: enabled=true
-
 \newpage
 \mbox{ }
 
@@ -240,28 +237,47 @@
 
 \section{LHC and Run 3}
 
-The \textbf{Large Hadron Collider} (LHC), located at the European Organization for Nuclear Research (CERN) near Geneva, Switzerland, stands as the world's largest particle accelerator. Created in 2008, it accelerates and collides particles, primarily protons and heavy ions (e.g., lead). These collisions produce a variety of subatomic particles, allowing us to test our predictions of the Standard Model and search for new phenomena beyond it.
+The \textbf{Large Hadron Collider} (LHC), located at the European Organization for Nuclear Research (CERN) near Geneva, Switzerland, stands as the world's largest particle accelerator. Created in 2008, it accelerates and collides particles, primarily protons and heavy ions (e.g., lead). These collisions produce a variety of subatomic particles, allowing us to test predictions of the Standard Model and search for new phenomena beyond it.
 
-The collider has completed two successful periods of data collection, the first Run 1 (2010--2013), and the other Run 2 (2015--2018). The current operational phase, \textbf{Run 3}, began in 2022 following the second, long shutdown (LS2) \cite{lhc-upgrade}. After the upgrades, the LHC now features proton-proton collisions at a center-of-mass energy of 13.6 [TeV], an increase from the 13 [TeV] utilized in Run 2. This higher energy helps in further studies and improves measurement precision and analysis statistics.
+The collider has completed two successful periods of data collection, the first Run 1 (2010--2013), and the other Run 2 (2015--2018). The current operational phase, \textbf{Run 3}, began in 2022 following the second, long shutdown (LS2) \cite{lhc-upgrade}. After numerous upgrades, the LHC now features proton-proton collisions at a center-of-mass energy of 13.6 [TeV], an increase from the 13 [TeV] utilized in Run 2. This higher energy helps in further studies and improves measurement precision and analysis statistics.
 
 \section{The ALICE experiment}
 
-The acronym ALICE stands for \textbf{A Large Ion Collider Experiment}, one of four major experiments at the LHC. The detector enables to study the quark-gluon plasma (QGP), a state with conditions resembling those a few millionths of a second after the Big Bang, before quarks and gluons combined to form protons and neutrons. Heavy ion nucleus-nucleus collisions can produce such a state. In the case of ALICE, the main focus lies on lead-lead (Pb-Pb) collisions \cite{alice-cern}. The experiment also includes proton-nucleus collisions, as well as analysis of proton-proton collisions as a reference data.
-
+The acronym ALICE stands for \textbf{A Large Ion Collider Experiment}, one of four major experiments at the LHC. The detector enables the study of the quark-gluon plasma (QGP), a state with conditions resembling those a few millionths of a second after the Big Bang, before quarks and gluons combined to form protons and neutrons. Heavy ion nucleus-nucleus collisions can produce such a state. In the case of ALICE, the focus lies on lead-lead (Pb-Pb) collisions \cite{alice-cern}. The experiment also includes proton-nucleus collisions, as well as analysis of proton-proton collisions as reference data.
 
 \section{Two-particle angular correlation function}
 
-The main work in this thesis based on $\Delta\eta\Delta\varphi$ particle correlations, that come from proton-proton collision data collected from the ALICE experiment.
+This thesis focuses on $\Delta\eta\Delta\varphi$ particle correlations derived from proton-proton collision data collected in the ALICE experiment. \todo{why these angles in particular?}
 
 \subsection{Pseudorapidity and azimuthal angle}
 
-Once constructs the correlation function using two quantities: pseudorapidity, $\eta$, and azimuthal angle, $\phi$. Both represent different angles in the detector space.
+One can construct the angular correlation function using two quantities: pseudorapidity, $\eta$, and azimuthal angle, $\phi$. Both represent different aspects of a particle's trajectory in the detector.
 
-First, the pseudorapidity, $\eta$, relates to the angle between the particle momentum $p$ and the beam axis as such:
+First, the pseudorapidity, $\eta$, relates to the angle between the particle momentum $p$ and the beam axis as:
 
 \begin{equation}
-    \eta = -\ln\left[\tan\left(\frac{\theta}{2}\right)\right]
-\end{equation}.
+    \eta = -\ln\left[\tan\left(\frac{\theta}{2}\right)\right].
+\end{equation}
+
+The azimuthal angle on the other hand represents the angle between the $x$-axis and the projection of the momentum vector onto the $xy$-plane.
+
+\todo{image showing both angles}
+
+However, the analysis of two-particle correlation accounts for the differences between both angles, expressed as $\Delta\eta = \eta_1 - \eta_2$ and $\Delta\varphi = \varphi_1 - \varphi_2$.
+
+\subsection{Angular correlation function calculation}
+
+To construct the $\Delta\eta\Delta\varphi$ correlation function, one first obtains the so-called \textbf{signal distribution}, $S(\Delta\eta, \Delta\varphi)$, by pairing every particle with every other particle, all within the same event.
+
+Next, through the event mixing, in which pairs consist of particles from different events, one calculates the \textbf{background distribution}, $B(\Delta\eta, \Delta\varphi)$. This aids in eliminating any single-particle effects. \todo{write more why?}
+
+For correct results, one should normalize both distributions normalized by the corresponding numbers of pairs in the same events, $N_{\text{same}}$, and mixed events, $N_{\text{mixed}}$, respectively.
+
+Finally, the formula for the angular correlation function takes the form:
+
+\begin{equation}
+    C(\Delta\eta, \Delta\varphi) = \frac{S(\Delta\eta, \Delta\varphi)}{N_{\text{same}}} \frac{N_{\text{mixed}}}{B(\Delta\eta, \Delta\varphi)}.
+\end{equation}
 
 \section{Correction procedure}
 
