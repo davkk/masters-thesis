@@ -9,15 +9,17 @@ DATA_DIR = Path(__file__).parent.parent / "data"
 FIG_DIR = Path(__file__).parent.parent / "figures"
 
 to_latex = {
-    "p+p+": r"$pp$",
-    "pi+pi-": r"$\pi\overline{\pi}$",
+    "p": r"p",
+    "pi": r"\pi",
+    "ap": r"\overline{p}",
+    "api": r"\overline{\pi}",
 }
 
 
 @dataclass
 class Args:
-    pair_tex: str
-    pair: str
+    pair: tuple[str, str]
+    pair_tex: tuple[str, str]
     dataset: str
     eff: str
     cor: str
@@ -28,8 +30,10 @@ class Args:
 # pair,dataset,eff,cor,nocor,truth
 def parse_args():
     assert len(sys.argv) > 1
-    pair_tex = to_latex[sys.argv[1]]
-    return Args(pair_tex, *sys.argv[1:])
+    pair = tuple(sys.argv[1].split("-"))
+    assert len(pair) == 2
+    pair_tex = (to_latex[pair[0]], to_latex[pair[1]])
+    return Args(pair, pair_tex, *sys.argv[2:])
 
 
 def setup_pyplot():
