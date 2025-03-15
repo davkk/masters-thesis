@@ -88,7 +88,6 @@
 \getenv[\INDEX]{INDEX}
 
 \newcommand{\probP}{\text{I\kern-0.15em P}}
-\newcommand{\todo}[1]{\textcolor{red}{TODO: #1}}
 \newcommand{\thesistitle}{Influence of the reconstruction efficiency on the angular correlation functions in Run 3 software in ALICE.}
 \newcommand{\thesistitlepl}{\begin{otherlanguage}{polish}
     Wpływ wydajności rekonstrukcji śladów cząstek na kątowe funkcje korelacyjne w oprogramowaniu Run 3 w eksperymencie ALICE.
@@ -134,7 +133,8 @@
         \begin{center}
             {\LARGE \thesistitle}
             \vspace{0.5cm}\\
-            {\large thesis number according to Faculty's thesis evidence: \{\todo{number}\}}
+            % TODO: thesis number
+            {\large thesis number according to Faculty's thesis evidence: \{\}}
         \end{center}
     \end{minipage}
 
@@ -179,11 +179,12 @@
 
 \textbf{Thesis title:} \thesistitle
 
-\todo{abstract}
+% TODO: abstract
 
 \vspace{0.025\textheight}
 \textit{Keywords}\\
-\textit{\todo{keywords}}
+% TODO: keywords
+\textit{}
 
 \vfill
 
@@ -200,30 +201,27 @@
 \mbox{ }
 
 \newpage
-\begin{otherlanguage}{polish}
-    {\Large Streszczenie}
+{\Large Streszczenie}
 
-    {\color{plum}\rule[1pt]{\textwidth}{2pt}}
+{\color{plum}\rule[1pt]{\textwidth}{2pt}}
 
-    \textbf{Tytuł pracy:} \thesistitlepl
+\textbf{Tytuł pracy:} \thesistitlepl
 
-    \todo{abstract pl}
+\vspace{0.025\textheight}
+\textit{Słowa kluczowe:}\\
+% TODO: slowa kluczowe
+\textit{}
 
-    \vspace{0.025\textheight}
-    \textit{Słowa kluczowe:}\\
-    \textit{\todo{klucz}}
+\vfill
 
-    \vfill
-
-    \begin{multicols}{2}
-        \begin{flushleft}
-            podpis opiekuna naukowego
-        \end{flushleft}
-        \begin{flushright}
-            podpis studenta
-        \end{flushright}
-    \end{multicols}
-\end{otherlanguage}
+\begin{multicols}{2}
+    \begin{flushleft}
+        podpis opiekuna naukowego
+    \end{flushleft}
+    \begin{flushright}
+        podpis studenta
+    \end{flushright}
+\end{multicols}
 
 \newpage
 \mbox{ }
@@ -231,6 +229,8 @@
 \tableofcontents
 \addtocontents{toc}{\protect\thispagestyle{empty}}
 \pagestyle{empty}
+
+% -------
 
 \chapter{Introduction}
 \pagestyle{fancy}
@@ -247,9 +247,13 @@ The acronym ALICE stands for \textbf{A Large Ion Collider Experiment}, one of�
 
 \section{Two-particle angular correlation function}
 
-This thesis focuses on $\Delta\eta\Delta\varphi$ particle correlations derived from proton-proton collision data collected in the ALICE experiment. \todo{why these angles in particular?}
+This thesis focuses on $\Delta\eta\Delta\varphi$ particle correlations derived from proton-proton collision data collected in the ALICE experiment.
+
+% TODO: why these angles in particular?
 
 \subsection{Pseudorapidity and azimuthal angle}
+
+% TODO: angles, coordinate system
 
 One can construct the angular correlation function using two quantities: pseudorapidity, $\eta$, and azimuthal angle, $\phi$. Both represent different aspects of a particle's trajectory in the detector.
 
@@ -260,36 +264,92 @@ First, the pseudorapidity, $\eta$, relates to the angle between the particle 
 
 The azimuthal angle on the other hand represents the angle between the $x$-axis and the projection of the momentum vector onto the $xy$-plane.
 
-\todo{image showing both angles}
+% TODO: image showing both angles
 
 However, the analysis of two-particle correlation accounts for the differences between both angles, expressed as $\Delta\eta = \eta_1 - \eta_2$ and $\Delta\varphi = \varphi_1 - \varphi_2$.
 
-\subsection{Angular correlation function calculation}
+\subsection{Angular correlation function}
 
 To construct the $\Delta\eta\Delta\varphi$ correlation function, one first obtains the so-called \textbf{signal distribution}, $S(\Delta\eta, \Delta\varphi)$, by pairing every particle with every other particle, all within the same event.
 
-Next, through the event mixing, in which pairs consist of particles from different events, one calculates the \textbf{background distribution}, $B(\Delta\eta, \Delta\varphi)$. This aids in eliminating any single-particle effects. \todo{write more why?}
+Next, through the event mixing, in which pairs consist of particles from different events, one calculates the \textbf{background distribution}, $B(\Delta\eta, \Delta\varphi)$. This aids in eliminating any single-particle effects.
 
-For correct results, one should normalize both distributions normalized by the corresponding numbers of pairs in the same events, $N_{\text{same}}$, and mixed events, $N_{\text{mixed}}$, respectively.
+% TODO: write more why?
+
+As the last step, one should normalize both distributions normalized by the corresponding numbers of pairs in the same events, $N_{\text{same}}$, and mixed events, $N_{\text{mixed}}$, respectively.
 
 Finally, the formula for the angular correlation function takes the form:
 \begin{equation}
     C(\Delta\eta, \Delta\varphi) = \frac{S(\Delta\eta, \Delta\varphi)}{N_{\text{same}}} \frac{N_{\text{mixed}}}{B(\Delta\eta, \Delta\varphi)}.
 \end{equation}
 
-\section{Correction procedure}
-
-\todo{transverse momentum, mc reco, mc truth, detection}
-
 \section{Reconstruction efficiency}
 
-\todo{angles, coordinate system}
+\section{Correction procedure}
+
+% TODO: transverse momentum, mc reco, mc truth, detection
+
+\subsection{Secondary contamination}
+
+\subsection{Correction factor}
+
+% correction factor added to correlation function
 
 \section{Framework — O2 and O2Physics}
+
 
 \cite{alice-o2}
 
 \section{CCDB}
+
+\section{GRID and HyperLoop}
+
+% TODO: Highlight how the O2 framework utilizes HPC techniques, connecting to your "Podstawy High Performance Computing" course.
+
+% -------
+
+\chapter{Extending FemtoUniverse in the O2Physics framework}
+\pagestyle{fancy}
+
+% TODO: Installing and learning the O2 framework, and modifying the FemtoUniverse package to incorporate reconstruction efficiency corrections.
+% TODO: Detail how you’ll use the O2 framework to handle big data challenges, such as efficiently processing Monte Carlo simulations and experimental data from LHC Run 3. Discuss data cleaning, transformation, and quality assurance (QA) steps.
+
+\section{The old approach}
+
+\section{The new additions}
+
+\section{The final workflow for data correction}
+
+% TODO: how does it help
+
+% -------
+
+\chapter{Data Analysis and Results}
+\pagestyle{fancy}
+
+\section{Reconstruction efficiency}
+
+% TODO: Calculating reconstruction efficiencies for pions, kaons, and protons using Monte Carlo data.
+
+\section{Comparison analysis}
+
+\subsection{Correction influence on correlation functions}
+
+% TODO: overall impact of corrections on the correlation functions
+
+\subsection{Contamination factor impact}
+
+\subsection{Efficiency influence in 1d vs. 2d}
+
+% TODO: Measuring angular correlation functions (in terms of relative pseudorapidity, Δη, and azimuthal angle, Δφ) with and without efficiency corrections.
+
+
+% -------
+
+\chapter{}
+\pagestyle{fancy}
+
+% -------
 
 \bibliography{bib}
 \bibliographystyle{unsrt}
