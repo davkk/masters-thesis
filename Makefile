@@ -4,6 +4,7 @@ SCRIPTS := analysis/mc-closure-ratio.py analysis/corr-func.py analysis/efficienc
 TEX_FLAGS := -bibtex -pdf --silent --shell-escape
 
 install: pyproject.toml
+	uv venv
 	uv pip install -r pyproject.toml
 	uv pip install -e .
 
