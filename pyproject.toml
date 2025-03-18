@@ -11,4 +11,4 @@ dependencies = [
 ]
 
 [tool.setuptools]
-packages = ["common", "analysis"]
+packages = ["analysis"]
