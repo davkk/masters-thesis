@@ -1,15 +1,13 @@
 from pathlib import Path
-from typing import cast
 
+import common
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
 import uproot
+from common import DATA_DIR
 from mpl_toolkits.mplot3d import Axes3D
 from uproot.models import TH
-
-import common
-from common import DATA_DIR
 
 args = common.parse_args()
 colors, markers = common.setup_pyplot()

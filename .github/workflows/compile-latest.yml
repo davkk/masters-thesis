@@ -42,7 +42,7 @@ jobs:
         run: make report
 
       - name: Rename PDF
-        run: mv main.pdf DawidKarpinski-mgr.pdf
+        run: mv tex/main.pdf tex/DawidKarpinski-mgr.pdf
 
       - name: Release
         uses: softprops/action-gh-release@v2
@@ -51,4 +51,4 @@ jobs:
           name: "Master's Thesis"
           tag_name: "latest"
           files: |
-            DawidKarpinski-mgr.pdf
+            tex/DawidKarpinski-mgr.pdf

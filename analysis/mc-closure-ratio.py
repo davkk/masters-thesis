@@ -1,14 +1,13 @@
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
+import common
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
 import uproot
-from uproot.models import TH
-
-import common
 from common import DATA_DIR
+from uproot.models import TH
 
 args = common.parse_args()
 colors, markers = common.setup_pyplot()

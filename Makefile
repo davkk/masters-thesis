@@ -4,16 +4,16 @@ SCRIPTS := analysis/mc-closure-ratio.py analysis/corr-func.py analysis/efficienc
 TEX_FLAGS := -bibtex -pdf --silent --shell-escape
 
 install: pyproject.toml
-	uv pip install pyproject.toml --system
+	uv pip install -r pyproject.toml --system
 	uv pip install -e . --system
 
-report: main.tex
-	latexmk ${TEX_FLAGS} main.tex
+report: tex/main.tex
+	cd tex && latexmk ${TEX_FLAGS} main.tex
 	make clean
 
-dev: main.tex
+dev: tex/main.tex
 	fd .py | entr make hist-all &
-	latexmk -pvc ${TEX_FLAGS} main.tex
+	cd tex && latexmk -pvc ${TEX_FLAGS} main.tex
 	make clean
 
 hist: datafiles.csv
@@ -26,10 +26,10 @@ hist-all: datafiles.csv
 		::: ${SCRIPTS} \
 		::: `tail -n +2 datafiles.csv`
 
-push: main.tex
+push:
 	git add .
 	git commit -m "update `date +%s`"
 	git push origin main
 
 clean:
-	latexmk -c main.tex
+	cd tex && latexmk -c main.tex
