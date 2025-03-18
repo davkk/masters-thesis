@@ -1,6 +1,8 @@
 *.pdf
 .styles/*
 .envrc
+AnalysisResults.root
+EfficiencyCorrection.root
 
 # Created by https://www.toptal.com/developers/gitignore/api/linux,latex,c++,python,data
 # Edit at https://www.toptal.com/developers/gitignore?templates=linux,latex,c++,python,data
