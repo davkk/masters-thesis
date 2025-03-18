@@ -4,8 +4,8 @@ SCRIPTS := analysis/mc-closure-ratio.py analysis/corr-func.py analysis/efficienc
 TEX_FLAGS := -bibtex -pdf --silent --shell-escape
 
 install: pyproject.toml
-	uv pip install -r pyproject.toml --system
-	uv pip install -e . --system
+	uv pip install -r pyproject.toml
+	uv pip install -e .
 
 report: tex/main.tex
 	cd tex && latexmk ${TEX_FLAGS} main.tex
