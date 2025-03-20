@@ -13,9 +13,11 @@ from uproot.models import TH
 args = common.parse_args()
 colors, markers = common.setup_pyplot()
 
-TASK_NAME = "femto-universe-pair-task-track-track-extended"
+pair = "-".join(args.pair)
+
+TASK_NAME = f"femto-universe-pair-task-track-track-extended_{pair}_nocor"
 DATA_DIR /= args.dataset
-DATA_DIR /= "-".join(args.pair)
+DATA_DIR /= pair
 
 particles = ["one", "two"]
 

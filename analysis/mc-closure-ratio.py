@@ -12,10 +12,12 @@ from uproot.models import TH
 args = common.parse_args()
 colors, markers = common.setup_pyplot()
 
+pair = "-".join(args.pair)
+
 TRUTH_TASK_NAME = "femto-universe-pair-task-track-track-mc-truth"
-TASK_NAME = "femto-universe-pair-task-track-track-extended"
+TASK_NAME = f"femto-universe-pair-task-track-track-extended_{pair}"
 DATA_DIR /= args.dataset
-DATA_DIR /= "-".join(args.pair)
+DATA_DIR /= pair
 
 
 def project(hist: TH.Model_TH2F_v4) -> tuple[npt.NDArray, Any, Any]:
@@ -72,20 +74,20 @@ assert isinstance(data_truth, uproot.ReadOnlyDirectory)
 
 cf_truth, phi, eta = corr_func(
     data_truth,
-    TRUTH_TASK_NAME + "/SameEvent/DeltaEtaDeltaPhi",
-    TRUTH_TASK_NAME + "/MixedEvent/DeltaEtaDeltaPhi",
+    f"{TRUTH_TASK_NAME}/SameEvent/DeltaEtaDeltaPhi",
+    f"{TRUTH_TASK_NAME}/MixedEvent/DeltaEtaDeltaPhi",
 )
 phi = phi[:-1]
 
 cf_nocor, *_ = corr_func(
     data_nocor,
-    TASK_NAME + "/SameEvent_MC/DeltaEtaDeltaPhi",
-    TASK_NAME + "/MixedEvent_MC/DeltaEtaDeltaPhi",
+    f"{TASK_NAME}_nocor/SameEvent_MC/DeltaEtaDeltaPhi",
+    f"{TASK_NAME}_nocor/MixedEvent_MC/DeltaEtaDeltaPhi",
 )
 cf_cor, *_ = corr_func(
     data_cor,
-    TASK_NAME + "/SameEvent_MC/DeltaEtaDeltaPhi",
-    TASK_NAME + "/MixedEvent_MC/DeltaEtaDeltaPhi",
+    f"{TASK_NAME}_cor/SameEvent_MC/DeltaEtaDeltaPhi",
+    f"{TASK_NAME}_cor/MixedEvent_MC/DeltaEtaDeltaPhi",
 )
 
 fig = plt.figure(figsize=(5, 5), tight_layout=True)
