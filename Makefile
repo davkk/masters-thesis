@@ -18,12 +18,12 @@ dev: tex/main.tex
 	make clean
 
 hist: datafiles.csv
-	parallel --progress ./run {1} {2} \
+	parallel --progress ./run.sh {1} {2} \
 		::: ${SCRIPTS} \
 		::: `cat datafiles.csv | fzf --layout=reverse -m`
 
 hist-all: datafiles.csv
-	parallel --progress ./run {1} {2} \
+	parallel --progress ./run.sh {1} {2} \
 		::: ${SCRIPTS} \
 		::: `tail -n +2 datafiles.csv`
 
