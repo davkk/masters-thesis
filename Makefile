@@ -32,8 +32,5 @@ push:
 	git commit -m "update `date +%s`"
 	git push origin main
 
-eff_calc: eff_calc.cxx
-	g++ `root-config --libs --glibs --cflags` --std=c++20 -O3 eff_calc.cxx -o eff_calc.out
-
 clean:
 	cd tex && latexmk -c main.tex

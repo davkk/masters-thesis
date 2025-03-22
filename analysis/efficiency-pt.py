@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import common
@@ -14,12 +15,18 @@ colors, markers = common.setup_pyplot()
 DATA_DIR /= args.dataset
 DATA_DIR /= "-".join(args.pair)
 
+files = [
+    file
+    for file in os.listdir(DATA_DIR)
+    if file.startswith("EfficiencyCorrection") and file.endswith(".root")
+]
+
 fig = plt.figure(figsize=(4, 3), tight_layout=True)
 # gs = fig.add_gridspec(1, 2)
 ax = fig.add_subplot()
 
-for idx in range(2):
-    data = uproot.open(DATA_DIR / f"EfficiencyCorrection{idx + 1}.root")
+for idx, file in enumerate(files):
+    data = uproot.open(DATA_DIR / file)
     assert isinstance(data, uproot.ReadOnlyDirectory)
 
     hist_eff = data["hEfficiency"]

@@ -62,41 +62,41 @@ void eff_calc(const fs::path& results_path, const fs::path& reco_path, const fs:
   output_file->WriteTObject(hist_eff);
 
   // Calculate Contamination
-  // daughters + material
   auto* hist_reco {get_histogram<TH1F>(result_file, reco_path / "hPt")};
-  auto* hist_secondary {get_histogram<TH2F>(result_file, reco_true_path / "hDCAxy_Daughter")};
-  auto* hist_material {get_histogram<TH2F>(result_file, reco_true_path / "hDCAxy_Material")};
 
-  assert(hist_reco);
-  assert(hist_secondary);
+  const auto to_project {std::vector<std::string> {
+      "hDCAxy_Primary",
+      "hDCAxy_Daughter",
+      "hDCAxy_Material",
+      "hDCAxy_Fake",
+  }};
 
-  assert(hist_secondary->GetXaxis()->GetBinWidth(1) == hist_reco->GetXaxis()->GetBinWidth(1));
-  assert(hist_secondary->GetXaxis()->GetBinLowEdge(1) == hist_reco->GetXaxis()->GetBinLowEdge(1));
+  for (const auto& hist_name : to_project) {
+    auto* hist {get_histogram<TH2F>(result_file, reco_true_path / hist_name)};
+    assert(hist);
+    assert(hist->GetXaxis()->GetBinWidth(1) == hist_reco->GetXaxis()->GetBinWidth(1));
+    assert(hist->GetXaxis()->GetBinLowEdge(1) == hist_reco->GetXaxis()->GetBinLowEdge(1));
 
-  auto* hist_secondary_x {hist_secondary->ProjectionX("hSecondary")};
-  hist_secondary_x->Add(hist_material->ProjectionX());
-  for (int bin_idx = 1; bin_idx <= hist_secondary_x->GetNbinsX(); ++bin_idx) {
-    auto cont_value {hist_secondary_x->GetBinContent(bin_idx)};
-    auto reco_value {hist_reco->GetBinContent(bin_idx)};
-    hist_secondary_x->SetBinContent(bin_idx, reco_value > 0 ? cont_value / reco_value : 0);
+    const auto split {hist_name.find_first_of('_')};
+    assert(split != std::string::npos);
+
+    const auto name {hist_name.substr(split + 1)};
+    auto* hist_x {hist->ProjectionX(("h" + name).c_str())};
+    for (int bin_idx = 1; bin_idx <= hist_x->GetNbinsX(); ++bin_idx) {
+      auto cont_value {hist_x->GetBinContent(bin_idx)};
+      auto reco_value {hist_reco->GetBinContent(bin_idx)};
+      hist_x->SetBinContent(bin_idx, reco_value > 0 ? cont_value / reco_value : 0);
+    }
+
+    output_file->WriteTObject(hist_x);
   }
-  output_file->WriteTObject(hist_secondary_x);
 
-  auto* hist_fake {get_histogram<TH2F>(result_file, reco_true_path / "hDCAxy_Fake")};
-  assert(hist_fake);
-  assert(hist_fake->GetXaxis()->GetBinWidth(1) == hist_reco->GetXaxis()->GetBinWidth(1));
-  assert(hist_fake->GetXaxis()->GetBinLowEdge(1) == hist_reco->GetXaxis()->GetBinLowEdge(1));
+  auto* hist_secondary_x {get_histogram<TH1D>(output_file, "hDaughter")};
+  auto* hist_material_x {get_histogram<TH1D>(output_file, "hMaterial")};
+  assert(hist_secondary_x);
+  assert(hist_material_x);
 
-  auto* hist_fake_x {hist_secondary->ProjectionX("hFake")};
-  for (int bin_idx = 1; bin_idx <= hist_fake_x->GetNbinsX(); ++bin_idx) {
-    auto cont_value {hist_secondary_x->GetBinContent(bin_idx)};
-    auto reco_value {hist_reco->GetBinContent(bin_idx)};
-    hist_fake_x->SetBinContent(bin_idx, reco_value > 0 ? cont_value / reco_value : 0);
-  }
-  output_file->WriteTObject(hist_fake_x);
-
-  assert(hist_secondary_x->GetXaxis()->GetBinWidth(1) == hist_eff->GetXaxis()->GetBinWidth(1));
-  assert(hist_secondary_x->GetXaxis()->GetBinLowEdge(1) == hist_eff->GetXaxis()->GetBinLowEdge(1));
+  hist_secondary_x->Add(hist_material_x);
 
   // Calculate Weights
   auto* weights {clone_histogram(hist_secondary_x, "hWeights")};

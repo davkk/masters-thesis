@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import common
@@ -15,11 +16,19 @@ colors, markers = common.setup_pyplot()
 DATA_DIR /= args.dataset
 DATA_DIR /= "-".join(args.pair)
 
-fig = plt.figure(figsize=(6, 3), tight_layout=True)
-gs = fig.add_gridspec(1, 2)
+files = [
+    file
+    for file in os.listdir(DATA_DIR)
+    if file.startswith("EfficiencyCorrection") and file.endswith(".root")
+]
+
+fig = plt.figure(figsize=(3 * len(files), 3), tight_layout=True)
+gs = fig.add_gridspec(1, len(files))
 
 
-def parse_hist(hist: TH.Model_TH1D_v3) -> tuple[npt.NDArray, npt.NDArray]:
+def parse_hist(
+    hist: TH.Model_TH1D_v3 | TH.Model_TH1F_v3,
+) -> tuple[npt.NDArray, npt.NDArray]:
     counts, pt = hist.to_numpy()
     assert isinstance(pt, np.ndarray)
 
@@ -32,38 +41,49 @@ def parse_hist(hist: TH.Model_TH1D_v3) -> tuple[npt.NDArray, npt.NDArray]:
     return counts, pt
 
 
-for idx in range(2):
-    data = uproot.open(DATA_DIR / f"EfficiencyCorrection{idx + 1}.root")
+hist_names = [
+    "hPrimary",
+    "hDaughter",
+    "hMaterial",
+    "hFake",
+]
+
+for idx, file in enumerate(files):
+    data = uproot.open(DATA_DIR / file)
     assert isinstance(data, uproot.ReadOnlyDirectory)
 
-    hist_sec = data["hSecondary"]
-    assert isinstance(hist_sec, TH.Model_TH1D_v3)
-
-    hist_fake = data["hFake"]
-    assert isinstance(hist_fake, TH.Model_TH1D_v3)
-
-    counts_sec, pt_sec = parse_hist(hist_sec)
-    counts_fake, pt_fake = parse_hist(hist_fake)
-
     ax = fig.add_subplot(gs[idx])
-    ax.plot(
-        pt_sec,
-        counts_sec * 100,
-        ".",
-        markersize=6,
-        label="Secondary contamination",
-    )
-    ax.plot(
-        pt_fake,
-        counts_fake * 100,
-        ".",
-        markersize=6,
-        markerfacecolor="none",
-        label="Fake contamination",
-    )
+    hists = []
+    bottom = None
 
+    for hist_name in hist_names:
+        hist = data[hist_name]
+        assert isinstance(hist, TH.Model_TH1D_v3)
+        counts, pt = parse_hist(hist)
+
+        if bottom is None:
+            bottom = np.zeros_like(counts, dtype=counts.dtype)
+
+        ax.bar(
+            pt,
+            counts * 100,
+            align="edge",
+            bottom=bottom * 100,
+            label=hist_name[1:].lower(),
+            alpha=0.6,
+            width=pt[1] - pt[0],
+        )
+
+        bottom += counts
+
+    ax.legend(
+        title=f"Contamination - ${args.pair_tex[idx]}$",
+        loc="lower center",
+        bbox_to_anchor=(0.5, 1.02),
+        ncol=len(hist_names),
+        fontsize=6,
+    )
     ax.set_xlabel(r"$p_T [\text{GeV/c}]$")
     ax.set_ylabel(r"[\%]")
-    ax.legend(title=f"Contamination - ${'-'.join(args.pair_tex)}$")
 
 fig.savefig(DATA_DIR / f"{Path(__file__).stem}.pdf")
