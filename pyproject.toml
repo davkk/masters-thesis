@@ -12,3 +12,5 @@ dependencies = [
 
 [tool.setuptools]
 packages = ["analysis"]
+
+tool.uv.package = true

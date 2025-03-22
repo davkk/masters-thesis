@@ -5,8 +5,7 @@ TEX_FLAGS := -bibtex -pdf --silent --shell-escape
 
 install: pyproject.toml
 	uv venv
-	uv pip install -r pyproject.toml
-	uv pip install -e .
+	uv sync
 
 report: tex/main.tex
 	cd tex && latexmk ${TEX_FLAGS} main.tex
