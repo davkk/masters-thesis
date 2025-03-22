@@ -21,8 +21,8 @@ class Args:
     pair: tuple[str, str]
     pair_tex: tuple[str, str]
     dataset: str
-    cor: str
     nocor: str
+    cor: str
     truth: str
 
 
