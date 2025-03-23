@@ -348,8 +348,11 @@ Illustrated in Figure \ref{fig:o2-flow}, the flow of data processing in O2Ph
     \label{fig:o2-flow}
 \end{figure}
 
-
 \section{CCDB}
+
+A key aspect of Run 3 upgrade involved shifting to a triggerless readout system, which requires real-time lossy data compression. Traditionally, certain data processing tasks executed offline, but the new system integrates them directly into the front-end of data acquisition. To facilitate this transition, ALICE introduced a centralized system called \textbf{C}alibration and \textbf{C}onditions \textbf{D}ata\textbf{b}ase (CCDB) \cite{ccdb-alice-run3}. As its main design goal, it stores and retrieves the calibration data and ensures real-time propagation of updates to the online cluster while asynchronously synchronizing content with GRID storage for later access. Researchers can retrieve the data through a REST API or a ROOT-based C++ client, which integrates directly with the O2 and O2Physics frameworks.
+
+This work uses the CCDB to efficiently store and retrieve the efficiency correction data, which then gets applied to correlation function in the form of weights.
 
 \section{GRID and HyperLoop}
 
