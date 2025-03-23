@@ -60,6 +60,7 @@
 \arrayrulecolor{plum}
 \renewcommand\thefootnote{\textcolor{plum}{\arabic{footnote}}}
 \usepackage[font={footnotesize},justification=centerlast]{caption}
+\captionsetup[figure]{skip=2pt}
 \numberwithin{equation}{chapter}
 \newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
 \usepackage{subfig}
@@ -164,7 +165,7 @@
                 dr hab. inż. Małgorzata Janik}\\
             \vspace{0.5cm}
             {\large second supervisor: \\
-                dr hab. inż. Łukasz Graczyk}
+                dr hab. inż. Łukasz Graczykowski}
         \end{center}
     \end{minipage}%
 
@@ -245,7 +246,7 @@
 
 \section{LHC and Run 3}
 
-The \textbf{Large Hadron Collider} (LHC), located at the European Organization for Nuclear Research (CERN) near Geneva, Switzerland, stands as the world's largest particle accelerator. Created in 2008, it accelerates and collides particles, primarily protons and heavy ions (e.g., lead). These collisions produce a variety of subatomic particles, allowing us to test predictions of the Standard Model and search for new phenomena beyond it.
+The \textbf{Large Hadron Collider} (LHC), located at the European Organization for Nuclear Research (CERN) near Geneva, Switzerland, stands as the world's largest particle accelerator. Created in 2008, it accelerates and collides particles, primarily protons and heavy ions (e.g., lead). These collisions produce a variety of subatomic particles, allowing us to test predictions of the Standard Model and search for new phenomena beyond it.
 
 The collider has completed two successful periods of data collection, the first Run 1 (2010--2013), and the other Run 2 (2015--2018). The current operational phase, \textbf{Run 3}, began in 2022 following the second, long shutdown (LS2) \cite{lhc-upgrade}. After numerous upgrades, the LHC now features proton-proton collisions at a center-of-mass energy of 13.6 [TeV], an increase from the 13 [TeV] utilized in Run 2. This higher energy helps in further studies and improves measurement precision and analysis statistics.
 
@@ -317,25 +318,7 @@ Therefore, calculation of reconstruction efficiency involves taking the ratio 
 
 However, ensuring the correct results in the efficiency calculations requires consideration of only the primary particles.
 
-The secondary contamination, $C$, described as the ratio of the number of secondary particles over all recorded particles, can affect the efficiency results. By taking it into account, one ensures that the final weights base only on the primary particles and not byproducts of other events.
-
-\begin{figure}[ht!]
-    \centering
-    \caption{}
-    \includegraphics[width=0.5\textwidth]{../data/LHC23d1k/p-p/contamination.pdf}
-    \label{fig:contamination_proton}
-\end{figure}
-
-\begin{figure}[ht!]
-    \centering
-    \caption{}
-    \includegraphics[width=\textwidth]{../data/LHC23d1k/pi-api/contamination.pdf}
-    \label{fig:contamination_pion_antipion}
-\end{figure}
-
-\pagebreak
-
-\pagebreak
+The secondary contamination, $C$, described as the ratio of the number of secondary particles over all recorded particles, can affect the efficiency results. By taking it into account, one ensures that the final weights base only on the primary particles and not byproducts of other events.
 
 % TODO: plot of hOrigin_MC, something with and without contamination ?
 
@@ -352,16 +335,16 @@ Having calculated all the necessary quantities, mainly the efficiency histogra
 
 \section{Framework — O2 and O2Physics}
 
-The major upgrade during Long Shutdown 2, introduced a new computing system called \textbf{Online-Offline (O2)}. This system replaces the previous data processing model with a more efficient approach that minimizes data volume through online track reconstruction. To support this, ALICE deployed two specialized computing farms: the First Level Processor (FLP) farm in Counting Room 1 (CR1) and the Event Processing Node (EPN) farm in Counting Room 0 (CR0). The FLP farm first reduces raw detector data from 3.5 TB/s to 900 GB/s by performing initial data suppression before sending it via Infiniband to the EPN farm. There, the first reconstruction pass further reduces the data to 130 GB/s, which then gets written to permanent storage. \cite{alice-o2}
+The major upgrade during Long Shutdown 2, introduced a new computing system called \textbf{Online-Offline (O2)}. This system replaces the previous data processing model with a more efficient approach that minimizes data volume through online track reconstruction. To support this, ALICE deployed two specialized computing farms: the First Level Processor (FLP) farm in Counting Room 1 (CR1) and the Event Processing Node (EPN) farm in Counting Room 0 (CR0). The FLP farm first reduces raw detector data from 3.5 TB/s to 900 GB/s by performing initial data suppression before sending it via Infiniband to the EPN farm. There, the first reconstruction pass further reduces the data to 130 GB/s, which then gets written to permanent storage. \cite{alice-o2}
 
-The O2 framework introduces an entirely new software ecosystem, designed from scratch to support this architecture, by handling detector readout, data quality control, and operational services. \textbf{O2Physics} on the other hand acts as the complementary part to O2 for the LHC data analysis. It provides a way to define and run analysis tasks, which then get executed in parallel on the cluster. Designed to be flexible and extendable, the framework allows physicists to add their own analyses and modify existing ones.
+The O2 framework introduces an entirely new software ecosystem, designed from scratch to support this architecture, by handling detector readout, data quality control, and operational services. \textbf{O2Physics} on the other hand acts as the complementary part to O2 for the LHC data analysis. It provides a way to define and run analysis tasks, which then get executed in parallel on the cluster. Designed to be flexible and extendable, the framework allows physicists to add their own analyses and modify existing ones.
 
-Illustrated in Figure \ref{fig:o2-flow}, the flow of data processing in O2Physics starts with a specialized task called "producer". It parses the data into tables with a shape well-defined as \textbf{FemtoDerived}. After preprocessing, the analysis tasks run against the tables, generating visualizations in form of histograms and other plot types.
+Illustrated in Figure \ref{fig:o2-flow}, the flow of data processing in O2Physics starts with a specialized task called a producer. It parses the data into tables with a well-defined structure named \textbf{FemtoDerived}. After preprocessing, the analysis tasks run against the tables, generating visualizations in form of histograms and other plot types.
 
 \begin{figure}[ht!]
     \centering
-    \caption{The data flow in O2Physics.}
     \includegraphics[width=\textwidth]{img/o2-flow.png}
+    \caption{The data flow in O2Physics.}
     \label{fig:o2-flow}
 \end{figure}
 
@@ -382,7 +365,7 @@ Illustrated in Figure \ref{fig:o2-flow}, the flow of data processing in O2Ph
 
 \section{The old approach}
 
-Up until now, the O2Physics framework has lacked a universal and automated implementation of the reconstruction efficiency correction. The older framework for Run 2 included this correction, but as in the recent Run 3, individual analysis tasks in the new software either did not apply the correction or implement it in an isolated, highly specific way.
+Up until now, the O2Physics framework has lacked a universal and automated implementation of the reconstruction efficiency correction. The older framework for Run 2 included this correction, but as in the recent Run 3, individual analysis tasks in the new software either did not apply the correction or implement it in an isolated, highly specific way.
 
 To calculate efficiency, the O2Physics framework relied on the \textbf{femtoUniverseEfficiencyBase.cxx} task. Since each task contains its own separate set of configurable parameters, this approach required manually synchronizing the efficiency task with the main analysis' task. Such an error-prone and time-consuming process, demanded a careful mirroring of every change across all analyses. Introduction of any potential inconsistencies could consequently reduce the reliability of the final results.
 
@@ -395,7 +378,7 @@ The goal of the new approach builds on the idea of using the CCDB to stor
 After many attempts to implement the corrections application in the O2Physics framework, the new approach replaces task-specific solutions with a single, reusable method. This effort led to the creation of a new class, \textbf{FemtoUniverseEfficiencyCorrection.h}, which serves as an abstraction for other analysis tasks to use.
 
 % TODO: code snippets?
-% TODO: how does it help
+% TODO: how does it help
 
 % -------
 
@@ -408,11 +391,28 @@ After many attempts to implement the corrections application in the O2Physic
 
 \section{MC closure}
 
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.5\textwidth]{../data/LHC23d1k/p-p/contamination.pdf}
+    \caption{}
+    \label{fig:contamination_proton}
+\end{figure}
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\textwidth]{../data/LHC23d1k/pi-api/contamination.pdf}
+    \caption{}
+    \label{fig:contamination_pion_antipion}
+\end{figure}
+
 \subsection{Correction influence on correlation functions}
 
 % TODO: overall impact of corrections on the correlation functions
 
-\subsection{Contamination factor impact}
+\pagebreak
+
+\pagebreak
+
 
 \subsection{Efficiency influence in 1d vs. 2d}
 

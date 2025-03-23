@@ -3,7 +3,8 @@
 SCRIPTS := analysis/mc-closure-ratio.py \
 		   analysis/corr-func.py \
 		   analysis/efficiency-pt.py \
-		   analysis/contamination.py
+		   analysis/contamination.py \
+		   analysis/origin.py
 TEX_FLAGS := -bibtex -pdf --silent --shell-escape
 
 install: pyproject.toml
