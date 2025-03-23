@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
 import uproot
+import uproot.exceptions
 from common import DATA_DIR
 from uproot.models import TH
 
@@ -72,11 +73,19 @@ assert isinstance(data_nocor, uproot.ReadOnlyDirectory)
 assert isinstance(data_cor, uproot.ReadOnlyDirectory)
 assert isinstance(data_truth, uproot.ReadOnlyDirectory)
 
-cf_truth, phi, eta = corr_func(
-    data_truth,
-    f"{TRUTH_TASK_NAME}/SameEvent/DeltaEtaDeltaPhi",
-    f"{TRUTH_TASK_NAME}/MixedEvent/DeltaEtaDeltaPhi",
-)
+try:
+    cf_truth, phi, eta = corr_func(
+        data_truth,
+        f"{TRUTH_TASK_NAME}/SameEvent/DeltaEtaDeltaPhi",
+        f"{TRUTH_TASK_NAME}/MixedEvent/DeltaEtaDeltaPhi",
+    )
+except uproot.exceptions.KeyInFileError:
+    cf_truth, phi, eta = corr_func(
+        data_truth,
+        f"{TRUTH_TASK_NAME}_{pair}/SameEvent/DeltaEtaDeltaPhi",
+        f"{TRUTH_TASK_NAME}_{pair}/MixedEvent/DeltaEtaDeltaPhi",
+    )
+
 phi = phi[:-1]
 
 cf_nocor, *_ = corr_func(

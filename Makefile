@@ -1,6 +1,9 @@
 .PHONY: install report dev hist hist-all clean
 
-SCRIPTS := analysis/mc-closure-ratio.py analysis/corr-func.py analysis/efficiency-pt.py
+SCRIPTS := analysis/mc-closure-ratio.py \
+		   analysis/corr-func.py \
+		   analysis/efficiency-pt.py \
+		   analysis/contamination.py
 TEX_FLAGS := -bibtex -pdf --silent --shell-escape
 
 install: pyproject.toml

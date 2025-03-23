@@ -118,63 +118,63 @@
 \pagestyle{empty}
 
 \begin{titlepage}
-	\begin{minipage}{\textwidth}
-		\begin{center}
-			\includegraphics[scale=0.2]{img/WF_ENG} \\
-			\vspace{1.5cm}
-			\includegraphics[width=0.7\textwidth]{img/mgr_en}
-		\end{center}
-	\end{minipage}
+    \begin{minipage}{\textwidth}
+        \begin{center}
+            \includegraphics[scale=0.2]{img/WF_ENG} \\
+            \vspace{1.5cm}
+            \includegraphics[width=0.7\textwidth]{img/mgr_en}
+        \end{center}
+    \end{minipage}
 
-	\vspace{1.5cm}
+    \vspace{1.5cm}
 
-	\begin{minipage}{\textwidth}
-		\begin{center}
-			{\large in the field of study Fizyka Techniczna \\
-				and specialization EDMI}
-		\end{center}
-	\end{minipage}
+    \begin{minipage}{\textwidth}
+        \begin{center}
+            {\large in the field of study Fizyka Techniczna \\
+                and specialization EDMI}
+        \end{center}
+    \end{minipage}
 
-	\vspace{1.5cm}
+    \vspace{1.5cm}
 
-	\begin{minipage}{\textwidth}
-		\begin{center}
-			{\LARGE \thesistitle}
-			\vspace{0.5cm}\\
-			% TODO: thesis number
-			{\large thesis number according to Faculty's thesis evidence: \{\}}
-		\end{center}
-	\end{minipage}
+    \begin{minipage}{\textwidth}
+        \begin{center}
+            {\LARGE \thesistitle}
+            \vspace{0.5cm}\\
+            % TODO: thesis number
+            {\large thesis number according to Faculty's thesis evidence: \{\}}
+        \end{center}
+    \end{minipage}
 
-	\vspace{1.5cm}
+    \vspace{1.5cm}
 
-	\begin{minipage}{\textwidth}
-		\begin{center}
-			{\LARGE Dawid Karpiński}
-			\vspace{0.5cm}\\
-			{\large student record book number: \INDEX}
-		\end{center}
-	\end{minipage}
+    \begin{minipage}{\textwidth}
+        \begin{center}
+            {\LARGE Dawid Karpiński}
+            \vspace{0.5cm}\\
+            {\large student record book number: \INDEX}
+        \end{center}
+    \end{minipage}
 
-	\vspace{1.5cm}
+    \vspace{1.5cm}
 
-	\begin{minipage}{\textwidth}
-		\begin{center}
-			{\large supervisor: \\
-				dr hab. inż. Małgorzata Janik}\\
-			\vspace{0.5cm}
-			{\large second supervisor: \\
-				dr hab. inż. Łukasz Graczyk}
-		\end{center}
-	\end{minipage}%
+    \begin{minipage}{\textwidth}
+        \begin{center}
+            {\large supervisor: \\
+                dr hab. inż. Małgorzata Janik}\\
+            \vspace{0.5cm}
+            {\large second supervisor: \\
+                dr hab. inż. Łukasz Graczyk}
+        \end{center}
+    \end{minipage}%
 
-	\vfill
+    \vfill
 
-	\begin{minipage}[b]{\textwidth}
-		\begin{center}
-			{\large WARSAW \the\year{}}
-		\end{center}
-	\end{minipage}
+    \begin{minipage}[b]{\textwidth}
+        \begin{center}
+            {\large WARSAW \the\year{}}
+        \end{center}
+    \end{minipage}
 \end{titlepage}
 
 \newpage
@@ -197,12 +197,12 @@
 \vfill
 
 \begin{multicols}{2}
-	\begin{flushleft}
-		supervisor's signature
-	\end{flushleft}
-	\begin{flushright}
-		student's signature
-	\end{flushright}
+    \begin{flushleft}
+        supervisor's signature
+    \end{flushleft}
+    \begin{flushright}
+        student's signature
+    \end{flushright}
 \end{multicols}
 
 \newpage
@@ -223,12 +223,12 @@
 \vfill
 
 \begin{multicols}{2}
-	\begin{flushleft}
-		podpis opiekuna naukowego
-	\end{flushleft}
-	\begin{flushright}
-		podpis studenta
-	\end{flushright}
+    \begin{flushleft}
+        podpis opiekuna naukowego
+    \end{flushleft}
+    \begin{flushright}
+        podpis studenta
+    \end{flushright}
 \end{multicols}
 
 \newpage
@@ -267,7 +267,7 @@ One can construct the angular correlation function using two quantities: pseudo
 
 First, the pseudorapidity, $\eta$, relates to the angle between the particle momentum $p$ and the beam axis as:
 \begin{equation}
-	\eta = -\ln\left[\tan\left(\frac{\theta}{2}\right)\right].
+    \eta = -\ln\left[\tan\left(\frac{\theta}{2}\right)\right].
 \end{equation}
 
 The azimuthal angle on the other hand represents the angle between the $x$-axis and the projection of the momentum vector onto the $xy$-plane.
@@ -280,7 +280,7 @@ However, the analysis of two-particle correlation accounts for the difference
 
 To construct the $\Delta\eta\Delta\varphi$ correlation function, one first obtains the so-called \textbf{signal distribution}, $S(\Delta\eta, \Delta\varphi)$, by pairing every particle with every other particle, all within the same event.
 
-Next, through the event mixing, in which pairs consist of particles from different events, one calculates the \textbf{background distribution}, $B(\Delta\eta, \Delta\varphi)$. This aids in eliminating any single-particle effects.
+Next, through the event mixing, in which pairs consist of particles from different events, one can calculate the \textbf{background distribution}, $B(\Delta\eta, \Delta\varphi)$. This aids in eliminating any single-particle effects.
 
 % TODO: write more why?
 
@@ -288,7 +288,7 @@ As the last step, one should normalize both distributions normalized by the 
 
 Finally, the formula for the angular correlation function takes the form:
 \begin{equation}
-	C(\Delta\eta, \Delta\varphi) = \frac{S(\Delta\eta, \Delta\varphi)}{N_{\text{same}}} \frac{N_{\text{mixed}}}{B(\Delta\eta, \Delta\varphi)}.
+    C(\Delta\eta, \Delta\varphi) = \frac{S(\Delta\eta, \Delta\varphi)}{N_{\text{same}}} \frac{N_{\text{mixed}}}{B(\Delta\eta, \Delta\varphi)}.
 \end{equation}
 
 \section{Correction procedure}
@@ -299,16 +299,16 @@ Obtaining the weights used for correction happens based on data collected throu
 
 \subsection{Reconstruction efficiency}
 
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=0.6\textwidth]{img/efficiency.png}
-	\caption{Tracks of simulated and reconstructed particles. Successful identification shown in green.}
-	\label{fig:reco-truth-tracks}
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.6\textwidth]{img/efficiency.png}
+    \caption{Tracks of simulated and reconstructed particles. Successful identification shown in green.}
+    \label{fig:reco-truth-tracks}
 \end{figure}
 
 Therefore, calculation of reconstruction efficiency involves taking the ratio of the number of reconstructed particles to the number of simulated (true) particles:
 \begin{equation}
-	\varepsilon = \frac{N_{\text{recon.}}}{N_{\text{truth}}}.
+    \varepsilon = \frac{N_{\text{recon.}}}{N_{\text{truth}}}.
 \end{equation}
 
 % TODO: transverse momentum, mc reco, mc truth, detection
@@ -317,15 +317,33 @@ Therefore, calculation of reconstruction efficiency involves taking the ratio 
 
 However, ensuring the correct results in the efficiency calculations requires consideration of only the primary particles.
 
-The secondary contamination, $C$, described as the ratio of the number of primary particles (such as protons, kaons, pions) over all recorded particles, can act as the correction factor to reconstruction efficiency. It ensures that the final weights base only on the expected particles.
+The secondary contamination, $C$, described as the ratio of the number of secondary particles over all recorded particles, can affect the efficiency results. By taking it into account, one ensures that the final weights base only on the primary particles and not byproducts of other events.
+
+\begin{figure}[ht!]
+    \centering
+    \caption{}
+    \includegraphics[width=0.5\textwidth]{../data/LHC23d1k/p-p/contamination.pdf}
+    \label{fig:contamination_proton}
+\end{figure}
+
+\begin{figure}[ht!]
+    \centering
+    \caption{}
+    \includegraphics[width=\textwidth]{../data/LHC23d1k/pi-api/contamination.pdf}
+    \label{fig:contamination_pion_antipion}
+\end{figure}
+
+\pagebreak
+
+\pagebreak
 
 % TODO: plot of hOrigin_MC, something with and without contamination ?
 
 \subsection{Efficiency correction weights}
 
-Having all the necessary quantities, mainly the efficiency histogram and secondary contamination, one can calculate the weights e.g. for each $p_T$ bin as:
+Having calculated all the necessary quantities, mainly the efficiency histogram and secondary contamination, one can calculate the weights as:
 \begin{equation}
-	w(p_T) = \frac{1 - C(p_T)}{\varepsilon(p_T)}.
+    w = \frac{1 - C}{\varepsilon}.
 \end{equation}
 
 % TODO: can be 2D
@@ -334,8 +352,19 @@ Having all the necessary quantities, mainly the efficiency histogram and seco
 
 \section{Framework — O2 and O2Physics}
 
+The major upgrade during Long Shutdown 2, introduced a new computing system called \textbf{Online-Offline (O2)}. This system replaces the previous data processing model with a more efficient approach that minimizes data volume through online track reconstruction. To support this, ALICE deployed two specialized computing farms: the First Level Processor (FLP) farm in Counting Room 1 (CR1) and the Event Processing Node (EPN) farm in Counting Room 0 (CR0). The FLP farm first reduces raw detector data from 3.5 TB/s to 900 GB/s by performing initial data suppression before sending it via Infiniband to the EPN farm. There, the first reconstruction pass further reduces the data to 130 GB/s, which then gets written to permanent storage. \cite{alice-o2}
 
-\cite{alice-o2}
+The O2 framework introduces an entirely new software ecosystem, designed from scratch to support this architecture, by handling detector readout, data quality control, and operational services. \textbf{O2Physics} on the other hand acts as the complementary part to O2 for the LHC data analysis. It provides a way to define and run analysis tasks, which then get executed in parallel on the cluster. Designed to be flexible and extendable, the framework allows physicists to add their own analyses and modify existing ones.
+
+Illustrated in Figure \ref{fig:o2-flow}, the flow of data processing in O2Physics starts with a specialized task called "producer". It parses the data into tables with a shape well-defined as \textbf{FemtoDerived}. After preprocessing, the analysis tasks run against the tables, generating visualizations in form of histograms and other plot types.
+
+\begin{figure}[ht!]
+    \centering
+    \caption{The data flow in O2Physics.}
+    \includegraphics[width=\textwidth]{img/o2-flow.png}
+    \label{fig:o2-flow}
+\end{figure}
+
 
 \section{CCDB}
 
@@ -353,10 +382,19 @@ Having all the necessary quantities, mainly the efficiency histogram and seco
 
 \section{The old approach}
 
-\section{The new additions}
+Up until now, the O2Physics framework has lacked a universal and automated implementation of the reconstruction efficiency correction. The older framework for Run 2 included this correction, but as in the recent Run 3, individual analysis tasks in the new software either did not apply the correction or implement it in an isolated, highly specific way.
 
-\section{The final workflow for data correction}
+To calculate efficiency, the O2Physics framework relied on the \textbf{femtoUniverseEfficiencyBase.cxx} task. Since each task contains its own separate set of configurable parameters, this approach required manually synchronizing the efficiency task with the main analysis' task. Such an error-prone and time-consuming process, demanded a careful mirroring of every change across all analyses. Introduction of any potential inconsistencies could consequently reduce the reliability of the final results.
 
+Therefore, a large part of this work revolves around developing a generic method in O2Physics, so that the application of the corrections can be easily added to any analysis task.
+
+\section{The new workflow for efficiency correction}
+
+The goal of the new approach builds on the idea of using the CCDB to store and retrieve the correction data efficiently. The O2 framework provides a programmatic interface to the service, which makes the process easy to integrate for own needs. With this, analysis tasks can access correction factors from a central place, ensuring consistency.
+
+After many attempts to implement the corrections application in the O2Physics framework, the new approach replaces task-specific solutions with a single, reusable method. This effort led to the creation of a new class, \textbf{FemtoUniverseEfficiencyCorrection.h}, which serves as an abstraction for other analysis tasks to use.
+
+% TODO: code snippets?
 % TODO: how does it help
 
 % -------
