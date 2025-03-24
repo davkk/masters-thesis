@@ -333,6 +333,15 @@ Having calculated all the necessary quantities, mainly the efficiency histogra
 
 % correction factor added to correlation function
 
+
+% -------
+
+\chapter{Extending FemtoUniverse in the O2Physics framework}
+\pagestyle{fancy}
+
+% TODO: Installing and learning the O2 framework, and modifying the FemtoUniverse package to incorporate reconstruction efficiency corrections.
+% TODO: Detail how you’ll use the O2 framework to handle big data challenges, such as efficiently processing Monte Carlo simulations and experimental data from LHC Run 3. Discuss data cleaning, transformation, and quality assurance (QA) steps.
+
 \section{Framework — O2 and O2Physics}
 
 The major upgrade during Long Shutdown 2, introduced a new computing system called \textbf{Online-Offline (O2)}. This system replaces the previous data processing model with a more efficient approach that minimizes data volume through online track reconstruction. To support this, ALICE deployed two specialized computing farms: the First Level Processor (FLP) farm in Counting Room 1 (CR1) and the Event Processing Node (EPN) farm in Counting Room 0 (CR0). The FLP farm first reduces raw detector data from 3.5 TB/s to 900 GB/s by performing initial data suppression before sending it via Infiniband to the EPN farm. There, the first reconstruction pass further reduces the data to 130 GB/s, which then gets written to permanent storage. \cite{alice-o2}
@@ -357,14 +366,6 @@ This work uses the CCDB to efficiently store and retrieve the efficiency cor
 \section{GRID and HyperLoop}
 
 % TODO: Highlight how the O2 framework utilizes HPC techniques, connecting to your "Podstawy High Performance Computing" course.
-
-% -------
-
-\chapter{Extending FemtoUniverse in the O2Physics framework}
-\pagestyle{fancy}
-
-% TODO: Installing and learning the O2 framework, and modifying the FemtoUniverse package to incorporate reconstruction efficiency corrections.
-% TODO: Detail how you’ll use the O2 framework to handle big data challenges, such as efficiently processing Monte Carlo simulations and experimental data from LHC Run 3. Discuss data cleaning, transformation, and quality assurance (QA) steps.
 
 \section{The old approach}
 
@@ -393,6 +394,8 @@ After many attempts to implement the corrections application in the O2Physic
 % TODO: Calculating reconstruction efficiencies for pions, kaons, and protons using Monte Carlo data.
 
 \section{MC closure}
+
+% NOTE: values are not reaching 1 because of hDCAxy_NoMCTruthOrigin
 
 \begin{figure}[ht!]
     \centering

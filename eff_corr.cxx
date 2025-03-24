@@ -64,31 +64,39 @@ void eff_calc(const fs::path& results_path, const fs::path& reco_path, const fs:
   // Calculate Contamination
   auto* hist_reco {get_histogram<TH1F>(result_file, reco_path / "hPt")};
 
-  const auto to_project {std::vector<std::string> {
-      "hDCAxy_Primary",
-      "hDCAxy_Daughter",
-      "hDCAxy_Material",
-      "hDCAxy_Fake",
+  const auto to_project {std::vector<std::vector<std::string>> {
+      {"hDCAxy_Primary"},
+      {"hDCAxy_Daughter", "hDCAxy_DaughterLambda", "hDCAxy_DaughterSigmaplus"},
+      {"hDCAxy_Material"},
+      {"hDCAxy_Fake"},
   }};
 
-  for (const auto& hist_name : to_project) {
-    auto* hist {get_histogram<TH2F>(result_file, reco_true_path / hist_name)};
-    assert(hist);
-    assert(hist->GetXaxis()->GetBinWidth(1) == hist_reco->GetXaxis()->GetBinWidth(1));
-    assert(hist->GetXaxis()->GetBinLowEdge(1) == hist_reco->GetXaxis()->GetBinLowEdge(1));
+  for (const auto& hist_names : to_project) {
+    TH1D* result_x {nullptr};
+    for (const auto& hist_name : hist_names) {
+      auto* hist {get_histogram<TH2F>(result_file, reco_true_path / hist_name)};
+      assert(hist);
+      assert(hist->GetXaxis()->GetBinWidth(1) == hist_reco->GetXaxis()->GetBinWidth(1));
+      assert(hist->GetXaxis()->GetBinLowEdge(1) == hist_reco->GetXaxis()->GetBinLowEdge(1));
 
-    const auto split {hist_name.find_first_of('_')};
-    assert(split != std::string::npos);
+      const auto split {hist_name.find_first_of('_')};
+      assert(split != std::string::npos);
 
-    const auto name {hist_name.substr(split + 1)};
-    auto* hist_x {hist->ProjectionX(("h" + name).c_str())};
-    for (int bin_idx = 1; bin_idx <= hist_x->GetNbinsX(); ++bin_idx) {
-      auto cont_value {hist_x->GetBinContent(bin_idx)};
-      auto reco_value {hist_reco->GetBinContent(bin_idx)};
-      hist_x->SetBinContent(bin_idx, reco_value > 0 ? cont_value / reco_value : 0);
+      const auto name {hist_name.substr(split + 1)};
+      auto* hist_x {hist->ProjectionX(("h" + name).c_str())};
+      for (int bin_idx = 1; bin_idx <= hist_x->GetNbinsX(); ++bin_idx) {
+        auto cont_value {hist_x->GetBinContent(bin_idx)};
+        auto reco_value {hist_reco->GetBinContent(bin_idx)};
+        hist_x->SetBinContent(bin_idx, reco_value > 0 ? cont_value / reco_value : 0);
+      }
+
+      if (result_x == nullptr) {
+        result_x = hist_x;
+      } else {
+        result_x->Add(hist_x);
+      }
     }
-
-    output_file->WriteTObject(hist_x);
+    output_file->WriteTObject(result_x);
   }
 
   auto* hist_secondary_x {get_histogram<TH1D>(output_file, "hDaughter")};
