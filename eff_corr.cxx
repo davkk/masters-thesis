@@ -41,7 +41,7 @@ void eff_calc(const fs::path& results_path, const fs::path& reco_path, const fs:
 
   // Retrieve reco and truth histograms
   const auto reco_true_path {fs::path(std::format("{}_MC", reco_path.c_str()))};
-  auto* hist_reco_true {get_histogram<TH1F>(result_file, reco_true_path / "hPt")};
+  auto* hist_reco_true {get_histogram<TH1F>(result_file, reco_true_path / "hPt_Primary")};
   assert(hist_reco_true);
 
   auto* hist_truth {get_histogram<TH1F>(result_file, truth_path / "hPt")};
