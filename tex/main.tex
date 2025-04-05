@@ -333,6 +333,7 @@ Obtaining the weights used for correction happens based on data collected throu
 
 Therefore, calculation of reconstruction efficiency involves taking the ratio of the number of reconstructed particles to the number of simulated (true) particles:
 \begin{equation}
+    \label{eq:efficiency}
     \varepsilon = \frac{N_{\text{recon.}}}{N_{\text{truth}}}.
 \end{equation}
 
@@ -405,44 +406,92 @@ After many attempts to implement the corrections application in the O2Physic
 My first solution leveraged the O2 framework's so-called callback service, which allows any task to register a callback function that would execute custom code on special dispatched events, e.g. \verb|Start|, \verb|Stop|, \verb|EndOfStream|, etc. The \verb|CallbackService.h| file lists all the available event IDs \cite{callback-service}. I have settled for \verb|Stop| event (listing \ref{lst:callback-service-code}), on which a callback uploaded the calculated correction factors to the CCDB only once, at the end of the analysis task execution. It used the \verb|CCDBApi::storeAsTFileAny| method to interact with the CCDB \cite{ccdbapi-store}. This flow has worked as expected when running locally.
 
 \begin{lstlisting}[caption={\label{lst:callback-service-code} Code snippet for the initial idea leveraging the callback service.}]
-// use the callback service
-auto& callbacks = ic.services().get<CallbackService>();
-// register the callback on the `Stop` event
-callbacks.set<o2::framework::CallbackService::Id::Stop>([this]() {
-    // iterate over all histograms, filled by the analysis task
-    for (auto i = 0UL; i < hOutput.size(); i++) {
-        const auto& output = hOutput[i];
-
-        // don't do anything if histogram is empty
-        if (isHistogramEmpty(output.get())) {
-            continue;
-        }
-
-        // define CCDB object lifetime
-        int64_t now = duration_cast<std::chrono::milliseconds>(
-            std::chrono::system_clock::now().time_since_epoch()
-        ).count();
-        int64_t oneYear = 365LL * 24 * 60 * 60 * 1000;
-
-        // save histogram to CCDB
+void init(InitContext&) {
+    // use the callback service
+    auto& callbacks = ic.services().get<CallbackService>();
+    // register the callback on the `Stop` event
+    callbacks.set<o2::framework::CallbackService::Id::Stop>([this]() {
         ccdbApi.storeAsTFileAny(
-            output.get(),
-            ccdbFullPath,
-            createMetadata(i),
-            now,
-            now + oneYear
+            hist, // histogram to upload
+            ccdbFullPath, // full path to CCDB
+            createMetadata() // metadata of the object
+            // ---
         );
-    }
-});
+    });
+    // ---
+}
 \end{lstlisting}
 
 However, the above idea has a major drawback. It assumes that the analysis task runs on a single machine, which is not the case when running in a parallel and a distributed environment, e.g. the Worldwide LHC Computing Grid.
 
-The \textbf{WLCG}, simply reffered to as \textit{Grid}, constitutes a global collaboration of approximately 170 computing centers across more than 40 countries. This computing infrastructure integrates around 1.4 million computer cores and 1.5 exabytes of storage. Its primary objective involves storing, distributing, and analyzing the substantial amounts of data generated annually by the Large Hadron Collider (LHC) at CERN.
+The \textbf{WLCG}, simply referred to as \textit{Grid}, constitutes a global collaboration of approximately 170 computing centers across more than 40 countries. This computing infrastructure integrates around 1.4 million computer cores and 1.5 exabytes of storage. Its primary objective involves storing, distributing, and analyzing the substantial amounts of data generated annually by the Large Hadron Collider (LHC) at CERN.
 
 Therefore, when running the task on the Grid, the system splits a given dataset into smaller chunks, processes each in parallel on individual nodes (machines), and eventually merges the results. This aspect causes the custom callback to execute as many times as the number of jobs created.
 
 \section{The new workflow for efficiency correction}
+
+The initial ideas for the correction procedure proved unusable at such large scale. I changed the workflow direction to accommodate the Grid's parallel nature. Unfortunately, we did not achieve full automation, but we have integrated key features that allow for flexibility.
+
+The first step requires generating a histogram of reconstruction efficiency weights for the desired particle type. For this, I have created a ROOT macro that acts as an initial utility for the rest of the flow. The macro retrieves the required histograms from a results file that Grid generated at the end of a run. Once it gets the data, it calculates the ratio bin-by-bin (listing \ref{lst:corr-macro-eff}), between reconstructed and truth histograms to calculate the efficiency as stated in the formula \ref{eq:efficiency}.
+
+\begin{lstlisting}[caption={\label{lst:corr-macro-eff} Snippet of the correction macro - efficiency calculation.}]
+auto* hist_eff {clone_histogram(hist_reco_true, "hEfficiency")};
+
+for (auto bin_idx {1}; bin_idx <= hist_eff->GetNbinsX(); ++bin_idx) {
+    auto reco_value {hist_reco_true->GetBinContent(bin_idx)};
+    auto truth_value {hist_truth->GetBinContent(bin_idx)};
+
+    auto eff {(truth_value > 0) ? reco_value / truth_value : 0};
+    hist_eff->SetBinContent(bin_idx, eff);
+}
+\end{lstlisting}
+
+% TODO: what is DCA, and why is it relevant
+Next, it assesses contamination from secondary sources by reusing already available histograms, that contain the information about the origin of each particle. For the workflow to work, the two-dimensional histograms of Distance of the Closest Approach (DCA) needed a projection onto $p_T$ axis, hence reducing to one dimension \ref{lst:corr-macro-cont}. Eventually, the contamination histogram consists of secondary contamination and contamination from material.
+
+\begin{lstlisting}[caption={\label{lst:corr-macro-cont} Snippet of the correction macro - secondary contamination.}]
+// Get the projection from DCA histograms
+auto* hist_x {hist->ProjectionX(("h" + name).c_str())};
+
+// ---
+// Calculate the contamination
+for (int bin_idx = 1; bin_idx <= hist_x->GetNbinsX(); ++bin_idx) {
+    auto cont_value {hist_x->GetBinContent(bin_idx)};
+    auto reco_value {hist_reco->GetBinContent(bin_idx)};
+    hist_x->SetBinContent(bin_idx, reco_value > 0 ? cont_value / reco_value : 0);
+}
+
+// ---
+auto* hist_secondary_x {get_histogram<TH1D>(output_file, "hDaughter")};
+auto* hist_material_x {get_histogram<TH1D>(output_file, "hMaterial")};
+hist_secondary_x->Add(hist_material_x);
+\end{lstlisting}
+
+The macro then computes the final weights by combining the efficiency and secondary contamination distributions to write the resulting histograms into a new ROOT file \ref{lst:corr-macro-weig}.
+
+\begin{lstlisting}[caption={\label{lst:corr-macro-weig} Snippet of the correction macro - correction weights.}]
+auto* weights {clone_histogram(hist_secondary_x, "hWeights")};
+for (int bin_idx = 1; bin_idx <= weights->GetNbinsX(); ++bin_idx) {
+    auto cont_value {hist_secondary_x->GetBinContent(bin_idx)};
+    auto eff_value {hist_eff->GetBinContent(bin_idx)};
+
+    // Combine efficiency and contamination
+    auto weight {(eff_value > 0) ? (1 - cont_value) / eff_value : 1};
+    weights->SetBinContent(bin_idx, weight);
+}
+\end{lstlisting}
+
+As the next major step, one needs to upload correction weights histogram to the CCDB, in a form of ROOT object file. The O2 developer environment (\verb|alienv|) comes with a helpful tool called \verb|o2-ccdb-upload| that abstracts all the details from the user, and allows to easily add any ROOT file to the CCDB. The listing \ref{lst:ccdb-upload-cmd} contains an exemplary usage of the tool for the case of the correction weights histogram.
+
+\begin{lstlisting}[language={bash},caption={\label{lst:ccdb-upload-cmd} Example command for the CCDB upload.}]
+o2-ccdb-upload \
+    --host http://alice-ccdb.cern.ch \
+    --path Users/d/dkarpins/Correction \
+    --file ./EfficiencyCorrection.root \
+    --key hWeights
+\end{lstlisting}
+
+The core of the final solution is \verb|FemtoUniverseEfficiencyCorrection| class \cite{efficiency-correction-class}, that extends analysis tasks within the O2Physics framework, and allows for querying for the uploaded files, through the same interface as in the initial idea (listing \ref{lst:callback-service-code}). Additionally, the class utilizes configurable parameters to determine whether to apply corrections, specify the CCDB URL and histogram paths and timestamps for histogram objects retrieval.
 
 % -------
 
@@ -463,6 +512,8 @@ Therefore, when running the task on the Grid, the system splits a given data
     \caption{}
     \label{fig:contamination_proton}
 \end{figure}
+
+% TODO: show why cut pt low 0.5 for protons - before after
 
 \begin{figure}[ht!]
     \centering
