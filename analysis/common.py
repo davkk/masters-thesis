@@ -26,13 +26,19 @@ class Args:
     truth: str
 
 
-# pair,dataset,eff,cor,nocor,truth
+# enable,pair,dataset,cor,nocor,truth
 def parse_args():
     assert len(sys.argv) > 1
-    pair = tuple(sys.argv[1].split("-"))
+
+    if int(sys.argv[1]) > 0:
+        print(f"{','.join(sys.argv[3:])} not enabled", file=sys.stderr)
+        exit(0)
+
+    pair = tuple(sys.argv[2].split("-"))
     assert len(pair) == 2
+
     pair_tex = (to_latex[pair[0]], to_latex[pair[1]])
-    return Args(pair, pair_tex, *sys.argv[2:])
+    return Args(pair, pair_tex, *sys.argv[3:])
 
 
 def setup_pyplot():
