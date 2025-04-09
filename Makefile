@@ -26,6 +26,7 @@ hist: datafiles.csv
 		::: `cat datafiles.csv | fzf --layout=reverse -m`
 
 hist-all: datafiles.csv
+	parallel --progress python analysis/eff-cor.py {/.} ::: data/*
 	parallel --progress ./run.sh {1} {2} \
 		::: ${SCRIPTS} \
 		::: `tail -n +2 datafiles.csv | grep -e "^1,"`

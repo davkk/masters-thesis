@@ -2,26 +2,23 @@
 
 set -euox pipefail
 
-name=`basename ${0%.*}`
+if [[ $# -ne 1 ]]; then
+    echo 'Usage: ./eff_corr.sh <path>'
+    exit 1
+fi
 
+if [[ -z "${O2PHYSICS_ROOT+x}" ]]; then
+    echo 'wrong environment'
+    exit 1
+fi
+
+IFS='/' read -r -a path <<< "$1"
+pair=${path[-2]}
+
+name=`basename ${0%.*}`
 g++ `root-config --libs --glibs --cflags` --std=c++20 -O3 ${name}.cxx -o ${name}.out
 
 ./${name}.out \
-    ./data/LHC23d1k/p-p/385462.root \
-    femto-universe-pair-task-track-track-extended_p-p_nocor/Tracks_one \
-    femto-universe-pair-task-track-track-extended_p-p_nocor/MCTruthTracks_one
-mv ./data/LHC23d1k/p-p/EfficiencyCorrection.root ./data/LHC23d1k/p-p/EfficiencyCorrection-new.root
-
-# ./${name}.out \
-#     ./data/LHC23d1k/pi-api/373670.root \
-#     femto-universe-pair-task-track-track-extended_pi-api_nocor/Tracks_one \
-#     femto-universe-pair-task-track-track-extended_pi-api_nocor/MCTruthTracks_one
-# mv ./data/LHC23d1k/pi-api/EfficiencyCorrection.root ./data/LHC23d1k/pi-api/EfficiencyCorrection1.root
-
-# ./${name}.out \
-#     ./data/LHC23d1k/pi-api/373670.root \
-#     femto-universe-pair-task-track-track-extended_pi-api_nocor/Tracks_two \
-#     femto-universe-pair-task-track-track-extended_pi-api_nocor/MCTruthTracks_two
-# mv ./data/LHC23d1k/pi-api/EfficiencyCorrection.root ./data/LHC23d1k/pi-api/EfficiencyCorrection2.root
-
-# rootbrowse ./data/LHC23d1k/pi-api/EfficiencyCorrection.root
+    $1 \
+    femto-universe-pair-task-track-track-extended_${pair}_nocor/Tracks_one \
+    femto-universe-pair-task-track-track-extended_${pair}_nocor/MCTruthTracks_one

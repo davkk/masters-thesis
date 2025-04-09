@@ -32,9 +32,10 @@ void eff_calc(const fs::path& results_path, const fs::path& reco_path, const fs:
   auto* result_file = TFile::Open(results_path.c_str());
   assert(result_file != nullptr && !result_file->IsZombie());
 
+  auto now = duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
   auto const output_path {
       (is_alien ? std::filesystem::current_path() : results_path.parent_path())  //
-      / "EfficiencyCorrection.root"
+      / std::format("{}-effcorr-{}.root", results_path.stem().string(), now)
   };
   auto* output_file {TFile::Open(output_path.c_str(), "RECREATE")};
   assert(output_file != nullptr && !output_file->IsZombie());

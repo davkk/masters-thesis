@@ -19,8 +19,11 @@ DATA_DIR /= "-".join(args.pair)
 files = [
     file
     for file in os.listdir(DATA_DIR)
-    if file.startswith("EfficiencyCorrection") and file.endswith(".root")
+    if "-effcorr-" in file and file.endswith(".root")
 ]
+
+if len(files) == 0:
+    exit(0)
 
 fig = plt.figure(figsize=(3 * len(files), 3), tight_layout=True)
 gs = fig.add_gridspec(1, len(files))
