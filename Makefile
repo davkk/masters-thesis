@@ -28,7 +28,7 @@ hist: datafiles.csv
 hist-all: datafiles.csv
 	parallel --progress ./run.sh {1} {2} \
 		::: ${SCRIPTS} \
-		::: `tail -n +2 datafiles.csv`
+		::: `tail -n +2 datafiles.csv | grep -e "^1,"`
 
 push:
 	git add .
