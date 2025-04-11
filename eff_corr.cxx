@@ -35,7 +35,7 @@ void eff_calc(const fs::path& results_path, const fs::path& reco_path, const fs:
   auto now = duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
   auto const output_path {
       (is_alien ? std::filesystem::current_path() : results_path.parent_path())  //
-      / std::format("{}-effcorr-{}.root", results_path.stem().string(), now)
+      / std::format("{}-effcor-{}.root", results_path.stem().string(), now)
   };
   auto* output_file {TFile::Open(output_path.c_str(), "RECREATE")};
   assert(output_file != nullptr && !output_file->IsZombie());
@@ -114,6 +114,7 @@ void eff_calc(const fs::path& results_path, const fs::path& reco_path, const fs:
     auto eff_value {hist_eff->GetBinContent(bin_idx)};
 
     auto weight {(eff_value > 0) ? (1 - cont_value) / eff_value : 1};
+    // auto weight {(eff_value > 0) ? 1 / eff_value : 1};
     weights->SetBinContent(bin_idx, weight);
   }
   output_file->WriteTObject(weights);

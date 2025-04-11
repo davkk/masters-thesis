@@ -10,9 +10,9 @@ FIG_DIR = Path(__file__).parent.parent / "figures"
 
 to_latex = {
     "p": r"p",
-    "pi": r"\pi",
+    "pi": r"\pi^+",
     "ap": r"\overline{p}",
-    "api": r"\overline{\pi}",
+    "api": r"\pi^-",
 }
 
 

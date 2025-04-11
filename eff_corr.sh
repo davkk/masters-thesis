@@ -22,3 +22,8 @@ g++ `root-config --libs --glibs --cflags` --std=c++20 -O3 ${name}.cxx -o ${name}
     $1 \
     femto-universe-pair-task-track-track-extended_${pair}_nocor/Tracks_one \
     femto-universe-pair-task-track-track-extended_${pair}_nocor/MCTruthTracks_one
+
+./${name}.out \
+    $1 \
+    femto-universe-pair-task-track-track-extended_${pair}_nocor/Tracks_two \
+    femto-universe-pair-task-track-track-extended_${pair}_nocor/MCTruthTracks_two
