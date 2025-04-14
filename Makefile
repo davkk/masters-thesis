@@ -11,12 +11,12 @@ install: pyproject.toml
 	uv sync
 
 report: tex/main.tex
-	cd tex && latexmk ${TEX_FLAGS} main.tex || true
+	cd tex && latexmk ${TEX_FLAGS} main.tex
 	make clean
 
 dev: tex/main.tex
 	fd .py | entr make hist-all &
-	cd tex && latexmk -pvc ${TEX_FLAGS} main.tex || true
+	cd tex && latexmk -pvc ${TEX_FLAGS} main.tex
 	make clean
 
 hist: datafiles.csv
