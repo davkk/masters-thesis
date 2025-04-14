@@ -85,7 +85,7 @@ for pair, files in pair_data.items():
         )
 
         ax_cor.set_xlabel(r"$p_T [\text{GeV/c}]$")
-        ax_cor.set_ylabel(r"C")
+        ax_cor.set_ylabel(r"f")
         ax_cor.legend(title="Cor. factor")
 
 
