@@ -19,8 +19,8 @@ DATA_DIR /= "-".join(args.pair)
 files = [
     file
     for file in os.listdir(DATA_DIR)
-    if "-effcorr-" in file and file.endswith(".root")
-]
+    if "-effcor-" in file and file.endswith(".root")
+][:2]
 
 if len(files) == 0:
     exit(0)

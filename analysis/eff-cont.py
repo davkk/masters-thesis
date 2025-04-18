@@ -37,13 +37,15 @@ def parse_hist(hist: TH.Model_TH1F_v3 | TH.Model_TH1D_v3):
     counts, pt = hist.to_numpy()
     assert isinstance(pt, np.ndarray)
 
+    vars = hist.variances()
     pt = pt[:-1]
 
     pt_cut = (0 < pt) & (pt < 4.2)
     pt = pt[pt_cut]
     counts = counts[pt_cut]
+    vars = vars[pt_cut]
 
-    return counts, pt
+    return counts, np.sqrt(vars), pt
 
 
 ax_eff = fig.add_subplot(gs[0])
@@ -54,40 +56,48 @@ for pair, files in pair_data.items():
         data = uproot.open(DATA_DIR / pair / file)
         assert isinstance(data, uproot.ReadOnlyDirectory)
 
-        # -- plot efficiency
+        # -- efficiency
         hist_eff = data["hEfficiency"]
         assert isinstance(hist_eff, TH.Model_TH1F_v3)
-        counts, pt = parse_hist(hist_eff)
 
-        ax_eff.plot(
-            pt,
-            counts * 100,
-            ".",
+        counts, errors, pts = parse_hist(hist_eff)
+
+        ax_eff.errorbar(
+            pts,
+            counts,
+            yerr=errors,
+            fmt=".",
             markersize=6,
             label=f"${common.to_latex[pair.split('-')[idx]]}$",
         )
 
-        ax_eff.set_xlabel(r"$p_T [\text{GeV/c}]$")
-        ax_eff.set_ylabel(r"[\%]")
+        ax_eff.set_title("(a)")
+        ax_eff.set_xlabel(r"$p_T\ [\text{GeV}/c]$")
         ax_eff.legend(title="Recon. efficiency")
 
-        # -- plot correction factor
-        hist_cor = data["hWeights"]
-        assert isinstance(hist_cor, TH.Model_TH1D_v3)
-        counts, pt = parse_hist(hist_cor)
+        # -- correction factor
+        hist_sec = data["hDaughter"]
+        hist_mat = data["hMaterial"]
+        assert isinstance(hist_sec, TH.Model_TH1D_v3)
+        assert isinstance(hist_mat, TH.Model_TH1D_v3)
 
-        ax_cor.plot(
-            pt,
-            counts,
-            ".",
+        sec_counts, sec_errs, pts = parse_hist(hist_sec)
+        mat_counts, mat_errs, _ = parse_hist(hist_mat)
+
+        total_counts = sec_counts + mat_counts
+        total_errors = np.sqrt(sec_errs**2 + mat_errs**2)
+
+        ax_cor.errorbar(
+            pts,
+            total_counts,
+            yerr=total_errors,
+            fmt=".",
             markersize=6,
             label=f"${common.to_latex[pair.split('-')[idx]]}$",
         )
 
-        ax_cor.set_xlabel(r"$p_T [\text{GeV/c}]$")
-        ax_cor.set_ylabel(r"f")
-        ax_cor.legend(title="Cor. factor")
+        ax_cor.set_title("(b)")
+        ax_cor.set_xlabel(r"$p_T\ [\text{GeV}/c]$")
+        ax_cor.legend(title="Secondary cont.")
 
-
-# fig.suptitle(f"Dataset: {dataset}")
 fig.savefig(DATA_DIR / f"{Path(__file__).stem}.pdf")

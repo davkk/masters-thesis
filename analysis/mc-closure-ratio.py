@@ -12,7 +12,6 @@ from uproot.models import TH
 
 args = common.parse_args()
 colors, markers = common.setup_pyplot()
-
 pair = "-".join(args.pair)
 
 TRUTH_TASK_NAME = "femto-universe-pair-task-track-track-mc-truth"
@@ -21,34 +20,36 @@ DATA_DIR /= args.dataset
 DATA_DIR /= pair
 
 
-def project(hist: TH.Model_TH2F_v4) -> tuple[npt.NDArray, Any, Any]:
+def project(hist: TH.Model_TH2F_v4) -> tuple[npt.NDArray, npt.NDArray, Any, Any]:
     hist_np = hist.to_numpy()
     assert len(hist_np) == 3
 
     signal, phi, eta = hist_np
-
-    # TODO: errorbars
-    # print(same_event.variances())
+    vars = hist.variances()
 
     proj = signal.sum(axis=1)
-    proj /= proj.sum()
+    proj_err = np.sqrt(vars.sum(axis=1))
 
-    return proj, phi, eta
+    norm = proj.sum()
+    proj /= norm
+    proj_err /= norm
+
+    return proj, proj_err, phi, eta
 
 
 def corr_func(
     file: uproot.ReadOnlyDirectory,
     path_same: str,
     path_mixed: str,
-) -> tuple[npt.NDArray, npt.NDArray, npt.NDArray]:
+) -> tuple[npt.NDArray, npt.NDArray, npt.NDArray, npt.NDArray]:
     same_event = file[path_same]
     mixed_event = file[path_mixed]
 
     assert isinstance(same_event, TH.Model_TH2F_v4)
     assert isinstance(mixed_event, TH.Model_TH2F_v4)
 
-    proj_num, same_phi, same_eta = project(same_event)
-    proj_den, mixed_phi, mixed_eta = project(mixed_event)
+    num, num_err, same_phi, same_eta = project(same_event)
+    den, den_err, mixed_phi, mixed_eta = project(mixed_event)
 
     assert same_phi.shape == mixed_phi.shape
     assert np.isclose(same_phi[0], mixed_phi[0])
@@ -58,11 +59,12 @@ def corr_func(
     assert np.isclose(same_eta[0], mixed_eta[0])
     assert np.isclose(same_eta[-1], mixed_eta[-1])
 
-    scale = proj_den.sum() / proj_num.sum()
-    corr = proj_num / proj_den
-    corr *= scale
+    scale = den.sum() / num.sum()
 
-    return corr, same_phi, same_eta
+    corr = (num / den) * scale
+    corr_err = corr * np.sqrt((num_err / num) ** 2 + (den_err / den) ** 2)
+
+    return corr, corr_err, same_phi, same_eta
 
 
 data_nocor = uproot.open(DATA_DIR / f"{args.nocor}.root")
@@ -74,13 +76,13 @@ assert isinstance(data_cor, uproot.ReadOnlyDirectory)
 assert isinstance(data_truth, uproot.ReadOnlyDirectory)
 
 try:
-    cf_truth, phi, eta = corr_func(
+    cf_truth, cf_truth_err, phi, eta = corr_func(
         data_truth,
         f"{TRUTH_TASK_NAME}/SameEvent/DeltaEtaDeltaPhi",
         f"{TRUTH_TASK_NAME}/MixedEvent/DeltaEtaDeltaPhi",
     )
 except uproot.exceptions.KeyInFileError:
-    cf_truth, phi, eta = corr_func(
+    cf_truth, cf_truth_err, phi, eta = corr_func(
         data_truth,
         f"{TRUTH_TASK_NAME}_{pair}/SameEvent/DeltaEtaDeltaPhi",
         f"{TRUTH_TASK_NAME}_{pair}/MixedEvent/DeltaEtaDeltaPhi",
@@ -88,12 +90,12 @@ except uproot.exceptions.KeyInFileError:
 
 phi = phi[:-1]
 
-cf_nocor, *_ = corr_func(
+cf_nocor, cf_nocor_err, *_ = corr_func(
     data_nocor,
     f"{TASK_NAME}_nocor/SameEvent_MC/DeltaEtaDeltaPhi",
     f"{TASK_NAME}_nocor/MixedEvent_MC/DeltaEtaDeltaPhi",
 )
-cf_cor, *_ = corr_func(
+cf_cor, cf_cor_err, *_ = corr_func(
     data_cor,
     f"{TASK_NAME}_cor/SameEvent_MC/DeltaEtaDeltaPhi",
     f"{TASK_NAME}_cor/MixedEvent_MC/DeltaEtaDeltaPhi",
@@ -104,25 +106,28 @@ gs = fig.add_gridspec(2, 1, height_ratios=[3, 2])
 
 top = fig.add_subplot(gs[0])
 
-top.plot(
+top.errorbar(
     phi,
     cf_truth,
-    "o",
+    yerr=cf_truth_err,
+    fmt="o",
     color=colors[0],
     label="Truth",
 )
-top.plot(
+top.errorbar(
     phi,
     cf_nocor,
-    "s",
+    yerr=cf_nocor_err,
+    fmt="s",
     color=colors[3],
     markerfacecolor="none",
     label="Recon. w/o corrections",
 )
-top.plot(
+top.errorbar(
     phi,
     cf_cor,
-    "o",
+    yerr=cf_cor_err,
+    fmt="o",
     color=colors[1],
     markerfacecolor="none",
     label="Recon. w/ corrections",
@@ -134,19 +139,17 @@ bot = fig.add_subplot(gs[1], sharex=top)
 plt.setp(top.get_xticklabels(), visible=False)
 
 ratio = cf_cor / cf_truth
-bot.plot(
+
+rel_err_cor = cf_cor_err / np.maximum(cf_cor, 1e-10)
+rel_err_truth = cf_truth_err / np.maximum(cf_truth, 1e-10)
+ratio_err = ratio * np.sqrt(rel_err_cor**2 + rel_err_truth**2)
+bot.errorbar(
     phi,
     ratio,
-    "_",
+    fmt=".",
+    yerr=ratio_err,
     color=colors[0],
 )
-for xi, yi in zip(phi, ratio):
-    bot.plot(
-        [xi, xi],
-        [1, yi],
-        color=colors[2] if yi > 1 else colors[0],
-        linestyle="-",
-    )
 
 bot.axhline(1, color=colors[0], linestyle="-", linewidth=0.3)
 bot.set_xlabel(r"$\Delta\varphi$")

@@ -397,9 +397,6 @@ A key aspect of the Run 3 upgrade involved shifting to a triggerless readou
 
 The goal of the new approach for correction builds on the idea of using the CCDB to store and retrieve the correction data efficiently. The O2 framework provides a programmatic interface to the service, which makes the process easy to integrate for own needs. With this, analysis tasks can access correction factors from a central place, ensuring consistency.
 
-% TODO: pierwsze rozwiazanie dzialalo lokalnie, ale nie w GRID + jak dziala GRID (dlaczego nie dziala?) -> dalej opisac jak to rozwiazalem
-% TODO: Highlight how the O2 framework utilizes HPC techniques, connecting to your "Podstawy High Performance Computing" course.
-
 After many attempts to implement the corrections application in the O2Physics framework, the new approach replaces task-specific solutions with a single, reusable method. This effort led to the creation of a new class, \textbf{FemtoUniverseEfficiencyCorrection.h}, which serves as an abstraction for other analysis tasks to use.
 
 My first solution leveraged the O2 framework's so-called callback service, which allows any task to register a callback function that would execute custom code on special dispatched events, e.g. \verb|Start|, \verb|Stop|, \verb|EndOfStream|, etc. The \verb|CallbackService.h| file lists all the available event IDs \cite{callback-service}. I have settled for \verb|Stop| event (listing \ref{lst:callback-service-code}), on which a callback uploaded the calculated correction factors to the CCDB only once, at the end of the analysis task execution. It used the \verb|CCDBApi::storeAsTFileAny| method to interact with the CCDB \cite{ccdbapi-store}. This flow has worked as expected when running locally.
@@ -446,6 +443,7 @@ for (auto bin_idx {1}; bin_idx <= hist_eff->GetNbinsX(); ++bin_idx) {
 \end{lstlisting}
 
 % TODO: what is DCA, and why is it relevant
+
 Next, it assesses contamination from secondary sources by reusing already available histograms, that contain the information about the origin of each particle. For the workflow to work, the two-dimensional histograms of Distance of the Closest Approach (DCA) needed a projection onto $p_T$ axis, hence reducing to one dimension \ref{lst:corr-macro-cont}. Eventually, the contamination histogram consists of secondary contamination and contamination from material.
 
 \begin{lstlisting}[caption={\label{lst:corr-macro-cont} Snippet of the correction macro - secondary contamination.}]
@@ -497,7 +495,14 @@ The core of the final solution is \verb|FemtoUniverseEfficiencyCorrection| cl
 \chapter{Data Analysis and Results}
 \pagestyle{fancy}
 
-\section{Reconstruction efficiency and purity}
+\section{Reconstruction efficiency and correction factor}
+
+\begin{figure}[ht!]
+    \centering
+    \caption{}
+    \includegraphics[width=\textwidth]{../data/LHC24f3c/eff-cont.pdf}
+\end{figure}
+
 
 % TODO: Calculating reconstruction efficiencies for pions, kaons, and protons using Monte Carlo data.
 
@@ -505,21 +510,21 @@ The core of the final solution is \verb|FemtoUniverseEfficiencyCorrection| cl
 
 % NOTE: values are not reaching 1 because of hDCAxy_NoMCTruthOrigin
 
-% \begin{figure}[ht!]
-%     \centering
-%     \includegraphics[width=0.5\textwidth]{../data/LHC23d1k/p-p/contamination.pdf}
-%     \caption{}
-%     \label{fig:contamination_proton}
-% \end{figure}
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.5\textwidth]{../data/LHC24f3c/p-p/contamination.pdf}
+    \caption{}
+    \label{fig:contamination_proton}
+\end{figure}
 
 % TODO: show why cut pt low 0.5 for protons - before after
 
-% \begin{figure}[ht!]
-%     \centering
-%     \includegraphics[width=\textwidth]{../data/LHC23d1k/pi-api/contamination.pdf}
-%     \caption{}
-%     \label{fig:contamination_pion_antipion}
-% \end{figure}
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\textwidth]{../data/LHC24f3c/pi-api/contamination.pdf}
+    \caption{}
+    \label{fig:contamination_pion_antipion}
+\end{figure}
 
 \subsection{Correction influence on correlation functions}
 
