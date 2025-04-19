@@ -16,14 +16,9 @@ colors, markers = common.setup_pyplot()
 dataset = sys.argv[1]
 DATA_DIR /= dataset
 
-eff_corr_pattern = r"\d+-effcor-\d+\.root"
 pair_data = {
     pair: sorted(
-        [
-            file
-            for file in os.listdir(DATA_DIR / pair)
-            if re.match(eff_corr_pattern, file)
-        ]
+        [file for file in os.listdir(DATA_DIR / pair) if "-effcor.root" in file]
     )[:2]
     for pair in os.listdir(DATA_DIR)
     if os.path.isdir(DATA_DIR / pair)

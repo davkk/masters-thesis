@@ -57,25 +57,24 @@ void eff_calc(const fs::path& results_path, const fs::path& reco_path, const fs:
   // Calculate Efficiency
   auto* hist_eff {clone_histogram(hist_reco_true, "hEfficiency")};
   for (auto bin_idx {1}; bin_idx <= hist_eff->GetNbinsX(); ++bin_idx) {
-    auto reco_value {hist_reco_true->GetBinContent(bin_idx)};
-    auto truth_value {hist_truth->GetBinContent(bin_idx)};
-    auto err_reco {hist_reco_true->GetBinError(bin_idx)};
-    auto err_truth {hist_truth->GetBinError(bin_idx)};
+    auto reco_val {hist_reco_true->GetBinContent(bin_idx)};
+    auto truth_val {hist_truth->GetBinContent(bin_idx)};
+    auto reco_err {hist_reco_true->GetBinError(bin_idx)};
+    auto truth_err {hist_truth->GetBinError(bin_idx)};
 
-    auto eff {(truth_value > 0) ? reco_value / truth_value : 0};
-    // propagate: σ_eff^2 = (σ_reco/truth)^2 + (reco_value*σ_truth/truth^2)^2
+    auto eff {(truth_val > 0) ? reco_val / truth_val : 0};
     auto eff_err {
-        (truth_value > 0) ? std::sqrt(
-                                ((err_reco / truth_value) * (err_reco / truth_value))
-                                + ((reco_value * err_truth / (truth_value * truth_value))
-                                   * (reco_value * err_truth / (truth_value * truth_value)))
-                            )
-                          : 0
+        (truth_val > 0) ? std::sqrt(
+                              std::pow(reco_err / truth_val, 2)  //
+                              + std::pow((reco_val * truth_err / std::pow(truth_val, 2)), 2)
+                          )
+                        : 0
     };
 
     hist_eff->SetBinContent(bin_idx, eff);
     hist_eff->SetBinError(bin_idx, eff_err);
   }
+
   output_file->WriteTObject(hist_eff);
 
   // Calculate Contamination
@@ -101,25 +100,21 @@ void eff_calc(const fs::path& results_path, const fs::path& reco_path, const fs:
 
       const auto name {hist_name.substr(split + 1)};
       auto* hist_x {hist->ProjectionX(("h" + name).c_str())};
-
       for (auto bin_idx {1}; bin_idx <= hist_x->GetNbinsX(); ++bin_idx) {
-        auto cont_value {hist_x->GetBinContent(bin_idx)};
-        auto reco_value {hist_reco->GetBinContent(bin_idx)};
-        auto sigma_value {hist_x->GetBinError(bin_idx)};
-        auto sigma_reco {hist_reco->GetBinError(bin_idx)};
+        auto x_val {hist_x->GetBinContent(bin_idx)};
+        auto reco_val {hist_reco->GetBinContent(bin_idx)};
 
-        auto cont {(reco_value > 0) ? cont_value / reco_value : 0};
-        // propagate: σ_cont^2 = (σ_count/reco)^2 + (cont_count*σ_reco/reco^2)^2
+        auto x_err {hist_x->GetBinError(bin_idx)};
+        auto reco_err {hist_reco->GetBinError(bin_idx)};
+
+        auto cont_val {(reco_val > 0) ? x_val / reco_val : 0};
         auto cont_err {
-            (reco_value > 0) ? std::sqrt(
-                                   ((sigma_value / reco_value) * (sigma_value / reco_value))
-                                   + ((cont_value * sigma_reco / (reco_value * reco_value))
-                                      * (cont_value * sigma_reco / (reco_value * reco_value)))
-                               )
-                             : 0
+            (reco_val > 0)
+                ? std::sqrt(std::pow(x_err / reco_val, 2) + std::pow((x_val * reco_err / std::pow(reco_val, 2)), 2))
+                : 0
         };
 
-        hist_x->SetBinContent(bin_idx, cont);
+        hist_x->SetBinContent(bin_idx, cont_val);
         hist_x->SetBinError(bin_idx, cont_err);
       }
 
@@ -142,20 +137,17 @@ void eff_calc(const fs::path& results_path, const fs::path& reco_path, const fs:
   // Calculate Weights
   auto* weights {clone_histogram(hist_secondary_x, "hWeights")};
   for (auto bin_idx {1}; bin_idx <= weights->GetNbinsX(); ++bin_idx) {
-    auto cont_value {hist_secondary_x->GetBinContent(bin_idx)};
-    auto eff_value {hist_eff->GetBinContent(bin_idx)};
-    auto sigma_cont {hist_secondary_x->GetBinError(bin_idx)};
-    auto sigma_eff {hist_eff->GetBinError(bin_idx)};
+    auto cont_val {hist_secondary_x->GetBinContent(bin_idx)};
+    auto eff_val {hist_eff->GetBinContent(bin_idx)};
 
-    auto weight {(eff_value > 0) ? (1 - cont_value) / eff_value : 1};
-    // propagate: σ_w^2 = (σ_cont/eff)^2 + ((1-cont)*σ_eff/eff^2)^2
+    auto cont_err {hist_secondary_x->GetBinError(bin_idx)};
+    auto eff_err {hist_eff->GetBinError(bin_idx)};
+
+    auto weight {(eff_val > 0) ? (1 - cont_val) / eff_val : 1};
     auto weight_err {
-        (eff_value > 0) ? std::sqrt(
-                              ((sigma_cont / eff_value) * (sigma_cont / eff_value))
-                              + (((1 - cont_value) * sigma_eff / (eff_value * eff_value))
-                                 * ((1 - cont_value) * sigma_eff / (eff_value * eff_value)))
-                          )
-                        : 0
+        (eff_val > 0)
+            ? std::sqrt(std::pow(cont_err / eff_val, 2) + std::pow((1 - cont_val) * eff_err / std::pow(eff_val, 2), 2))
+            : 0
     };
 
     weights->SetBinContent(bin_idx, weight);

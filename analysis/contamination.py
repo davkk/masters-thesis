@@ -16,11 +16,7 @@ colors, markers = common.setup_pyplot()
 DATA_DIR /= args.dataset
 DATA_DIR /= "-".join(args.pair)
 
-files = [
-    file
-    for file in os.listdir(DATA_DIR)
-    if "-effcor-" in file and file.endswith(".root")
-][:2]
+files = [file for file in os.listdir(DATA_DIR) if "-effcor.root" in file][:2]
 
 if len(files) == 0:
     exit(0)
