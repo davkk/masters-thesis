@@ -397,7 +397,7 @@ A key aspect of the Run 3 upgrade involved shifting to a triggerless readou
 
 The goal of the new approach for correction builds on the idea of using the CCDB to store and retrieve the correction data efficiently. The O2 framework provides a programmatic interface to the service, which makes the process easy to integrate for own needs. With this, analysis tasks can access correction factors from a central place, ensuring consistency.
 
-After many attempts to implement the corrections application in the O2Physics framework, the new approach replaces task-specific solutions with a single, reusable method. This effort led to the creation of a new class, \textbf{FemtoUniverseEfficiencyCorrection.h}, which serves as an abstraction for other analysis tasks to use.
+After many attempts to implement the corrections application in the O2Physics framework, the new approach would replace task-specific solutions with a single, reusable method. This effort led to the creation of a class, \textbf{FemtoUniverseEfficiencyCorrection.h}, which serves as an abstraction for other analysis tasks to use.
 
 My first solution leveraged the O2 framework's so-called callback service, which allows any task to register a callback function that would execute custom code on special dispatched events, e.g. \verb|Start|, \verb|Stop|, \verb|EndOfStream|, etc. The \verb|CallbackService.h| file lists all the available event IDs \cite{callback-service}. I have settled for \verb|Stop| event (listing \ref{lst:callback-service-code}), on which a callback uploaded the calculated correction factors to the CCDB only once, at the end of the analysis task execution. It used the \verb|CCDBApi::storeAsTFileAny| method to interact with the CCDB \cite{ccdbapi-store}. This flow has worked as expected when running locally.
 
@@ -418,7 +418,7 @@ void init(InitContext&) {
 }
 \end{lstlisting}
 
-However, the above idea has a major drawback. It assumes that the analysis task runs on a single machine, which is not the case when running in a parallel and a distributed environment, e.g. the Worldwide LHC Computing Grid.
+However, the above idea has a major drawback. It assumes that the analysis task runs on a single machine, which is not the case when running in a parallel and a distributed environment, e.g. the Worldwide LHC Computing Grid.
 
 The \textbf{WLCG}, simply referred to as \textit{Grid}, constitutes a global collaboration of approximately 170 computing centers across more than 40 countries. This computing infrastructure integrates around 1.4 million computer cores and 1.5 exabytes of storage. Its primary objective involves storing, distributing, and analyzing the substantial amounts of data generated annually by the Large Hadron Collider (LHC) at CERN.
 
@@ -442,7 +442,7 @@ for (auto bin_idx {1}; bin_idx <= hist_eff->GetNbinsX(); ++bin_idx) {
 }
 \end{lstlisting}
 
-% TODO: what is DCA, and why is it relevant
+% TODO: what is DCA, and why is it relevant
 
 Next, it assesses contamination from secondary sources by reusing already available histograms, that contain the information about the origin of each particle. For the workflow to work, the two-dimensional histograms of Distance of the Closest Approach (DCA) needed a projection onto $p_T$ axis, hence reducing to one dimension \ref{lst:corr-macro-cont}. Eventually, the contamination histogram consists of secondary contamination and contamination from material.
 
@@ -488,7 +488,7 @@ o2-ccdb-upload \
     --key hWeights
 \end{lstlisting}
 
-The core of the final solution is \verb|FemtoUniverseEfficiencyCorrection| class \cite{efficiency-correction-class}, that extends analysis tasks within the O2Physics framework, and allows for querying for the uploaded files, through the same interface as in the initial idea (listing \ref{lst:callback-service-code}). Additionally, the class utilizes configurable parameters to determine whether to apply corrections, specify the CCDB URL and histogram paths and timestamps for histogram objects retrieval.
+The core of the final solution is \verb|FemtoUniverseEfficiencyCorrection| class \cite{efficiency-correction-class}, that extends analysis tasks within the O2Physics framework, and allows for querying for the uploaded files, through the same interface as in the initial idea (listing \ref{lst:callback-service-code}). Additionally, the class utilizes configurable parameters to determine whether to apply corrections, specify the CCDB URL and histogram paths and timestamps for histogram objects retrieval.
 
 % -------
 
@@ -507,6 +507,8 @@ The core of the final solution is \verb|FemtoUniverseEfficiencyCorrection| cl
 % TODO: Calculating reconstruction efficiencies for pions, kaons, and protons using Monte Carlo data.
 
 \section{MC closure}
+
+The main method of verifying correctness of the applied weights is to do so-called Monte Carlo closure. This is a process of comparing the reconstructed particles to the true ones, and calculating the ratio of the number of reconstructed particles to the number of true particles. The ratio is then compared to the theoretical value, which is the expected number of particles in the detector, given the efficiency of the reconstruction.
 
 % NOTE: values are not reaching 1 because of hDCAxy_NoMCTruthOrigin
 
