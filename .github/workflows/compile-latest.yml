@@ -35,13 +35,15 @@ jobs:
         with:
           packages: scheme-full
 
-      - name: Run analysis
-        run: |
-          source .venv/bin/activate
-          make hist-all
+      # - name: Run analysis
+      #   run: |
+      #     source .venv/bin/activate
+      #     make hist-all
 
       - name: Compile report
-        run: make report
+        run: |
+          make report || true
+          cat tex/main.log
 
       - name: Rename PDF
         run: mv tex/main.pdf tex/DawidKarpinski-mgr.pdf

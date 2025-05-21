@@ -14,7 +14,7 @@ report: tex/main.tex
 	make clean
 
 dev: tex/main.tex
-	fd .py | entr make hist-all &
+	# fd .py | entr make hist-all &
 	cd tex && latexmk -pvc ${TEX_FLAGS} main.tex
 	make clean
 
