@@ -349,11 +349,11 @@ However, ensuring the correct results in the efficiency calculations requires
 
 The secondary contamination, $C$, described as the ratio of the number of secondary particles over all recorded particles, can affect the efficiency results. By taking it into account, one ensures that the final weights base only on the primary particles and not byproducts of other events.
 
-\begin{figure}[ht!]
-    \centering
-    \caption{\label{fig:origins} Histogram of different particle origins registered after proton-proton collisions.}
-    \includegraphics[width=0.7\textwidth]{../data/LHC24f3c/p-p/origin.pdf}
-\end{figure}
+% \begin{figure}[ht!]
+%     \centering
+%     \caption{\label{fig:origins} Histogram of different particle origins registered after proton-proton collisions.}
+%     \includegraphics[width=0.7\textwidth]{../data/LHC24f3c/p-p/origin.pdf}
+% \end{figure}
 
 \pagebreak
 
@@ -404,7 +404,14 @@ The goal of the new approach for correction builds on the idea of using the
 
 After many attempts to implement the corrections application in the O2Physics framework, the new approach would replace task-specific solutions with a single, reusable method. This effort led to the creation of a class, \textbf{FemtoUniverseEfficiencyCorrection.h}, which serves as an abstraction for other analysis tasks to use.
 
-My first solution leveraged the O2 framework's so-called callback service, which allows any task to register a callback function that would execute custom code on special dispatched events, e.g. \verb|Start|, \verb|Stop|, \verb|EndOfStream|, etc. The \verb|CallbackService.h| file lists all the available event IDs \cite{callback-service}. I have settled for \verb|Stop| event (listing \ref{lst:callback-service-code}), on which a callback uploaded the calculated correction factors to the CCDB only once, at the end of the analysis task execution. It used the \verb|CCDBApi::storeAsTFileAny| method to interact with the CCDB \cite{ccdbapi-store}. This flow has worked as expected when running locally.
+My first solution (fig. \ref{fig:workflow-initial}) leveraged the O2 framework's so-called callback service, which allows any task to register a callback function that would execute custom code on special dispatched events, e.g. \verb|Start|, \verb|Stop|, \verb|EndOfStream|, etc. The \verb|CallbackService.h| file lists all the available event IDs \cite{callback-service}. I have settled for \verb|Stop| event (listing \ref{lst:callback-service-code}), on which a callback uploaded the calculated correction factors to the CCDB only once, at the end of the analysis task execution. It used the \verb|CCDBApi::storeAsTFileAny| method to interact with the CCDB \cite{ccdbapi-store}. This flow has worked as expected when running locally.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/workflow-initial.png}
+    \caption{Visualization of the initial workflow for efficiency correction.}
+    \label{fig:workflow-initial}
+\end{figure}
 
 \begin{lstlisting}[caption={\label{lst:callback-service-code} Code snippet for the initial idea leveraging the callback service.}]
 void init(InitContext&) {
@@ -431,7 +438,14 @@ Therefore, when running the task on the Grid, the system splits a given data
 
 \section{The new workflow for efficiency correction}
 
-The initial ideas for the correction procedure proved unusable at such large scale. I changed the workflow direction to accommodate the Grid's parallel nature. Unfortunately, we did not achieve full automation, but we have integrated key features that allow for flexibility.
+The initial ideas for the correction procedure proved unusable at such large scale. I changed the workflow direction to accommodate the Grid's parallel nature. Unfortunately, I did not achieve full automation, but I have integrated key features that allow for flexibility (fig. \ref{fig:workflow-temp}).
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\textwidth]{img/workflow-temp.png}
+    \caption{Visualization of the next workflow idea for efficiency correction.}
+    \label{fig:workflow-temp}
+\end{figure}
 
 The first step requires generating a histogram of reconstruction efficiency weights for the desired particle type. For this, I have created a ROOT macro that acts as an initial utility for the rest of the flow. The macro retrieves the required histograms from a results file that Grid generated at the end of a run. Once it gets the data, it calculates the ratio bin-by-bin (listing \ref{lst:corr-macro-eff}), between reconstructed and truth histograms to calculate the efficiency as stated in the formula \ref{eq:efficiency}.
 
@@ -446,8 +460,6 @@ for (auto bin_idx {1}; bin_idx <= hist_eff->GetNbinsX(); ++bin_idx) {
     hist_eff->SetBinContent(bin_idx, eff);
 }
 \end{lstlisting}
-
-% TODO: what is DCA, and why is it relevant
 
 Next, it assesses contamination from secondary sources by reusing already available histograms, that contain the information about the origin of each particle. For the workflow to work, the two-dimensional histograms of Distance of the Closest Approach (DCA) needed a projection onto $p_T$ axis, hence reducing to one dimension \ref{lst:corr-macro-cont}. Eventually, the contamination histogram consists of secondary contamination and contamination from material.
 
@@ -493,7 +505,31 @@ o2-ccdb-upload \
     --key hWeights
 \end{lstlisting}
 
-The core of the final solution is \verb|FemtoUniverseEfficiencyCorrection| class \cite{efficiency-correction-class}, that extends analysis tasks within the O2Physics framework, and allows for querying for the uploaded files, through the same interface as in the initial idea (listing \ref{lst:callback-service-code}). Additionally, the class utilizes configurable parameters to determine whether to apply corrections, specify the CCDB URL and histogram paths and timestamps for histogram objects retrieval.
+The core of this solution is \verb|FemtoUniverseEfficiencyCorrection| class \cite{efficiency-correction-class}, that extends analysis tasks within the O2Physics framework, and allows for querying for the uploaded files, through the same interface as in the initial idea (listing \ref{lst:callback-service-code}). Additionally, the class utilizes configurable parameters to determine whether to apply corrections, specify the CCDB URL and histogram paths and timestamps for histogram objects retrieval.
+
+\section{Extending corrections beyond 1D - the final solution}
+
+As the final development step, we wanted to generalize the correction procedure. Hence, I opted to expand it beyond a single dimension ($p_{T}$ axis) to support two‐ and three‐dimensional correction weights by filling 3D histograms with variables such as $p_{T}$, $\eta$ and event centrality (or multiplicity). This approach unifies the calculation of reconstruction efficiency, secondary contamination and final weights across any combination of the variables.
+
+When the user specifies a projection through a flag, the macro calls ROOT's \verb|Project3D()| method to collapse the third axis into a 1D or 2D distribution (lst. \ref{lst:corr-macro-proj}).
+
+\begin{lstlisting}[caption={\label{lst:corr-macro-proj} Snippet of the correction macro - projection.}]
+auto* hist_truth_3d {get_hist(results_file, hist_path / "hMCTruth")};
+auto* hist_primary_3d {get_hist(results_file, hist_path / "hPrimary")};
+auto* hist_secondary_3d {get_hist(results_file, hist_path / "hSecondary")};
+
+TH1* hist_truth {hist_truth_3d};
+TH1* hist_primary {hist_primary_3d};
+TH1* hist_secondary {hist_secondary_3d};
+
+if (!projection.empty()) {
+    hist_primary = hist_primary_3d->Project3D(projection);
+    hist_secondary = hist_secondary_3d->Project3D(projection);
+    hist_truth = hist_truth_3d->Project3D(projection);
+}
+\end{lstlisting}
+
+The rest of the correction macro, along with the remaining steps of the correction procedure, follow the same structure as the previous workflow.
 
 % -------
 
@@ -502,11 +538,11 @@ The core of the final solution is \verb|FemtoUniverseEfficiencyCorrection| c
 
 \section{Reconstruction efficiency and correction factor}
 
-\begin{figure}[ht!]
-    \centering
-    \caption{}
-    \includegraphics[width=\textwidth]{../data/LHC24f3c/eff-cont.pdf}
-\end{figure}
+% \begin{figure}[ht!]
+%     \centering
+%     \caption{}
+%     \includegraphics[width=\textwidth]{../data/LHC24f3c/eff-cont.pdf}
+% \end{figure}
 
 
 % TODO: Calculating reconstruction efficiencies for pions, kaons, and protons using Monte Carlo data.
@@ -515,23 +551,19 @@ The core of the final solution is \verb|FemtoUniverseEfficiencyCorrection| c
 
 The main method of verifying correctness of the applied weights is to do so-called Monte Carlo closure. This is a process of comparing the reconstructed particles to the true ones, and calculating the ratio of the number of reconstructed particles to the number of true particles. The ratio is then compared to the theoretical value, which is the expected number of particles in the detector, given the efficiency of the reconstruction.
 
-% NOTE: values are not reaching 1 because of hDCAxy_NoMCTruthOrigin
+% \begin{figure}[ht!]
+%     \centering
+%     \includegraphics[width=0.5\textwidth]{../data/LHC24f3c/p-p/contamination.pdf}
+%     \caption{}
+%     \label{fig:contamination_proton}
+% \end{figure}
 
-\begin{figure}[ht!]
-    \centering
-    \includegraphics[width=0.5\textwidth]{../data/LHC24f3c/p-p/contamination.pdf}
-    \caption{}
-    \label{fig:contamination_proton}
-\end{figure}
-
-% TODO: show why cut pt low 0.5 for protons - before after
-
-\begin{figure}[ht!]
-    \centering
-    \includegraphics[width=\textwidth]{../data/LHC24f3c/pi-api/contamination.pdf}
-    \caption{}
-    \label{fig:contamination_pion_antipion}
-\end{figure}
+% \begin{figure}[ht!]
+%     \centering
+%     \includegraphics[width=\textwidth]{../data/LHC24f3c/pi-api/contamination.pdf}
+%     \caption{}
+%     \label{fig:contamination_pion_antipion}
+% \end{figure}
 
 \subsection{Correction influence on correlation functions}
 
