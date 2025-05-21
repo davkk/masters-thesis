@@ -1,4 +1,4 @@
--L/home/davkk/work/alice/sw/slc9_x86-64/ROOT/v6-32-06-alice1-17/lib
+-L/home/davkk/work/alice/sw/slc9_x86-64/ROOT/latest/lib
 -lGui
 -lCore
 -lImt
@@ -19,7 +19,7 @@
 -lThread
 -lMultiProc
 -lROOTDataFrame
--Wl,-rpath,/home/davkk/work/alice/sw/slc9_x86-64/ROOT/v6-32-06-alice1-17/lib
+-Wl,-rpath,/home/davkk/work/alice/sw/slc9_x86-64/ROOT/latest/lib
 -pthread
 -lm
 -ldl
@@ -27,4 +27,4 @@
 -pthread
 -std=c++20
 -m64
--I/home/davkk/work/alice/sw/slc9_x86-64/ROOT/v6-32-06-alice1-17/include
+-I/home/davkk/work/alice/sw/slc9_x86-64/ROOT/latest/include

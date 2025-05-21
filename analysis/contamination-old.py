@@ -28,21 +28,27 @@ gs = fig.add_gridspec(1, len(files))
 def parse_hist(
     hist: TH.Model_TH1D_v3 | TH.Model_TH1F_v3,
 ) -> tuple[npt.NDArray, npt.NDArray]:
-    counts, pt, *_ = hist.to_numpy()
-    assert isinstance(pt, np.ndarray) and isinstance(counts, np.ndarray)
-    return counts.sum(axis=(1, 2)), pt[:-1]
+    counts, pt = hist.to_numpy()
+    assert isinstance(pt, np.ndarray)
+
+    pt = pt[:-1]
+
+    pt_cut = (0 < pt) & (pt < 4.2)
+    pt = pt[pt_cut]
+    counts = counts[pt_cut]
+
+    return counts, pt
 
 
 hist_names = [
     "hPrimary",
-    "hSecondary",
+    "hDaughter",
     "hMaterial",
     "hFake",
-    "hOther",
 ]
 
 for idx, file in enumerate(files):
-    data = uproot.open(file)
+    data = uproot.open(DATA_DIR / file)
     assert isinstance(data, uproot.ReadOnlyDirectory)
 
     ax = fig.add_subplot(gs[idx])
@@ -50,10 +56,8 @@ for idx, file in enumerate(files):
     bottom = None
 
     for hist_name in hist_names:
-        hist = data[
-            f"femto-universe-pair-task-track-track-extended/EfficiencyCorrection/one/{hist_name}"
-        ]
-        assert isinstance(hist, TH.Model_TH3F_v4)
+        hist = data[hist_name]
+        assert isinstance(hist, TH.Model_TH1D_v3)
         counts, pt = parse_hist(hist)
 
         if bottom is None:

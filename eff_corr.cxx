@@ -143,15 +143,15 @@ void eff_calc(const fs::path& results_path, const fs::path& reco_path, const fs:
     auto cont_err {hist_secondary_x->GetBinError(bin_idx)};
     auto eff_err {hist_eff->GetBinError(bin_idx)};
 
-    // auto weight {(eff_val > 0) ? (1 - cont_val) / eff_val : 1};
-    // auto weight_err {
-    //     (eff_val > 0)
-    //         ? std::sqrt(std::pow(cont_err / eff_val, 2) + std::pow((1 - cont_val) * eff_err / std::pow(eff_val, 2),
-    //         2)) : 0
-    // };
+    auto weight {(eff_val > 0) ? (1 - cont_val) / eff_val : 1};
+    auto weight_err {
+        (eff_val > 0)
+            ? std::sqrt(std::pow(cont_err / eff_val, 2) + std::pow((1 - cont_val) * eff_err / std::pow(eff_val, 2),
+            2)) : 0
+    };
 
-    auto weight {(eff_val > 0) ? 1 / eff_val : 1};
-    auto weight_err {(eff_val > 0) ? std::sqrt(std::pow(1 * eff_err / std::pow(eff_val, 2), 2)) : 0};
+    // auto weight {(eff_val > 0) ? 1 / eff_val : 1};
+    // auto weight_err {(eff_val > 0) ? std::sqrt(std::pow(1 * eff_err / std::pow(eff_val, 2), 2)) : 0};
 
     weights->SetBinContent(bin_idx, weight);
     weights->SetBinError(bin_idx, weight_err);

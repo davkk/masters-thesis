@@ -289,14 +289,19 @@ This thesis focuses on $\Delta\eta\Delta\varphi$ particle correlations derived f
 
 One can construct the angular correlation function using two quantities: pseudorapidity, $\eta$, and azimuthal angle, $\phi$. Both represent different aspects of a particle's trajectory in the detector.
 
-First, the pseudorapidity, $\eta$, relates to the angle between the particle momentum $p$ and the beam axis as:
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/detector-angles.png}
+    \caption{Showcase of the angles considered in angular correlation function analysis.}
+    \label{fig:detector-angles}
+\end{figure}
+
+First, the pseudorapidity, $\eta$, relates to the angle between the particle momentum $p$ and the beam axis ($\theta$, fig. \ref{fig:detector-angles}) as:
 \begin{equation}
     \eta = -\ln\left[\tan\left(\frac{\theta}{2}\right)\right].
 \end{equation}
 
-The azimuthal angle on the other hand represents the angle between the $x$-axis and the projection of the momentum vector onto the $xy$-plane.
-
-% TODO: image showing both angles
+The azimuthal angle on the other hand represents the angle between the $x$-axis and the projection, $p_T$, of the momentum vector onto the $xy$-plane ($\varphi$, fig. \ref{fig:detector-angles}).
 
 However, the analysis of two-particle correlation accounts for the differences between both angles, expressed as $\Delta\eta = \eta_1 - \eta_2$ and $\Delta\varphi = \varphi_1 - \varphi_2$.
 
