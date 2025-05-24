@@ -14,7 +14,12 @@ colors, markers = common.setup_pyplot()
 
 pair = "-".join(args.pair)
 
-TASK_NAME = f"femto-universe-pair-task-track-track-extended_{pair}_cor"
+TASK_NAME = f"femto-universe-pair-task-track-track-extended_{pair}"
+if args.dim == "0":
+    TASK_NAME += "_cor"
+else:
+    TASK_NAME += f"_{args.dim}d"
+
 DATA_DIR /= args.dataset
 DATA_DIR /= pair
 

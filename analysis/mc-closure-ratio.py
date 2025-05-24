@@ -15,7 +15,7 @@ colors, markers = common.setup_pyplot()
 pair = "-".join(args.pair)
 
 TRUTH_TASK_NAME = "femto-universe-pair-task-track-track-mc-truth"
-TASK_NAME = f"femto-universe-pair-task-track-track-extended_{pair}"
+TASK_NAME_BASE = f"femto-universe-pair-task-track-track-extended_{pair}"
 DATA_DIR /= args.dataset
 DATA_DIR /= pair
 
@@ -92,13 +92,15 @@ phi = phi[:-1]
 
 cf_nocor, cf_nocor_err, *_ = corr_func(
     data_nocor,
-    f"{TASK_NAME}_nocor/SameEvent_MC/DeltaEtaDeltaPhi",
-    f"{TASK_NAME}_nocor/MixedEvent_MC/DeltaEtaDeltaPhi",
+    f"{TASK_NAME_BASE}_nocor/SameEvent_MC/DeltaEtaDeltaPhi",
+    f"{TASK_NAME_BASE}_nocor/MixedEvent_MC/DeltaEtaDeltaPhi",
 )
+
+TASK_NAME_COR = TASK_NAME_BASE + (f"_{args.dim}d" if int(args.dim) > 0 else "")
 cf_cor, cf_cor_err, *_ = corr_func(
     data_cor,
-    f"{TASK_NAME}_cor/SameEvent_MC/DeltaEtaDeltaPhi",
-    f"{TASK_NAME}_cor/MixedEvent_MC/DeltaEtaDeltaPhi",
+    f"{TASK_NAME_COR}/SameEvent_MC/DeltaEtaDeltaPhi",
+    f"{TASK_NAME_COR}/MixedEvent_MC/DeltaEtaDeltaPhi",
 )
 
 fig = plt.figure(figsize=(5, 5), tight_layout=True)
@@ -155,4 +157,4 @@ bot.axhline(1, color=colors[0], linestyle="-", linewidth=0.3)
 bot.set_xlabel(r"$\Delta\varphi$")
 bot.set_ylabel("Ratio (recon. w/ corr. over truth)")
 
-fig.savefig(DATA_DIR / f"{Path(__file__).stem}.pdf")
+fig.savefig(DATA_DIR / f"{Path(__file__).stem}_{args.dim}d.pdf")

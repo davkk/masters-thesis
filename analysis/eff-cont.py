@@ -1,5 +1,4 @@
 import os
-import re
 import sys
 from pathlib import Path
 
@@ -15,27 +14,34 @@ colors, markers = common.setup_pyplot()
 
 dataset = sys.argv[1]
 DATA_DIR /= dataset
+DATA_DIR /= "effcor"
 
 pair_data = {
-    pair: sorted(
-        [file for file in os.listdir(DATA_DIR / pair) if "-effcor.root" in file]
-    )[:2]
-    for pair in os.listdir(DATA_DIR)
-    if os.path.isdir(DATA_DIR / pair)
+    particle: sorted(
+        [  #
+            file  #
+            for file in os.listdir(DATA_DIR / particle)  #
+            if "-1d.root" in file
+        ]
+    )
+    for particle in os.listdir(DATA_DIR)
+    if os.path.isdir(DATA_DIR / particle)
 }
+
+print(pair_data)
 
 fig = plt.figure(figsize=(6, 3), tight_layout=True)
 gs = fig.add_gridspec(1, 2)
 
 
-def parse_hist(hist: TH.Model_TH1F_v3 | TH.Model_TH1D_v3):
+def parse_hist(hist: TH.Model_TH1D_v3 | TH.Model_TH1D_v3):
     counts, pt = hist.to_numpy()
     assert isinstance(pt, np.ndarray)
 
     vars = hist.variances()
     pt = pt[:-1]
 
-    pt_cut = (0 < pt) & (pt < 4.2)
+    pt_cut = (0.5 < pt) & (pt < 4.2)
     pt = pt[pt_cut]
     counts = counts[pt_cut]
     vars = vars[pt_cut]
@@ -53,7 +59,7 @@ for pair, files in pair_data.items():
 
         # -- efficiency
         hist_eff = data["hEfficiency"]
-        assert isinstance(hist_eff, TH.Model_TH1F_v3)
+        assert isinstance(hist_eff, TH.Model_TH1D_v3)
 
         counts, errors, pts = parse_hist(hist_eff)
 
@@ -61,7 +67,7 @@ for pair, files in pair_data.items():
             pts,
             counts,
             yerr=errors,
-            fmt=".",
+            fmt=",",
             markersize=6,
             label=f"${common.to_latex[pair.split('-')[idx]]}$",
         )
@@ -71,22 +77,16 @@ for pair, files in pair_data.items():
         ax_eff.legend(title="Recon. efficiency")
 
         # -- correction factor
-        hist_sec = data["hDaughter"]
-        hist_mat = data["hMaterial"]
+        hist_sec = data["hSecondaryCont"]
         assert isinstance(hist_sec, TH.Model_TH1D_v3)
-        assert isinstance(hist_mat, TH.Model_TH1D_v3)
 
         sec_counts, sec_errs, pts = parse_hist(hist_sec)
-        mat_counts, mat_errs, _ = parse_hist(hist_mat)
-
-        total_counts = sec_counts + mat_counts
-        total_errors = np.sqrt(sec_errs**2 + mat_errs**2)
 
         ax_cor.errorbar(
             pts,
-            total_counts,
-            yerr=total_errors,
-            fmt=".",
+            sec_counts,
+            yerr=sec_errs,
+            fmt=",",
             markersize=6,
             label=f"${common.to_latex[pair.split('-')[idx]]}$",
         )

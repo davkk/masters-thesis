@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 import common
@@ -13,16 +12,17 @@ from uproot.models import TH
 args = common.parse_args()
 colors, markers = common.setup_pyplot()
 
+pair = "-".join(args.pair)
+
+TASK_NAME = f"femto-universe-pair-task-track-track-extended_{pair}_nocor"
 DATA_DIR /= args.dataset
-DATA_DIR /= "-".join(args.pair)
+DATA_DIR /= pair
 
-files = [file for file in os.listdir(DATA_DIR) if "-effcor.root" in file][:2]
+part1, part2 = args.pair
+parts = 1 + (part1 != part2)
 
-if len(files) == 0:
-    exit(0)
-
-fig = plt.figure(figsize=(3 * len(files), 3), tight_layout=True)
-gs = fig.add_gridspec(1, len(files))
+fig = plt.figure(figsize=(3 * parts, 3), tight_layout=True)
+gs = fig.add_gridspec(1, parts)
 
 
 def parse_hist(
@@ -30,38 +30,62 @@ def parse_hist(
 ) -> tuple[npt.NDArray, npt.NDArray]:
     counts, pt, *_ = hist.to_numpy()
     assert isinstance(pt, np.ndarray) and isinstance(counts, np.ndarray)
-    return counts.sum(axis=(1, 2)), pt[:-1]
+    pt = pt[:-1]
+
+    pt_cut = (0 < pt) & (pt < 4.2)
+    pt = pt[pt_cut]
+    counts = counts.sum(axis=(1, 2))
+    counts = counts[pt_cut]
+
+    return counts, pt
 
 
 hist_names = [
     "hPrimary",
     "hSecondary",
     "hMaterial",
-    "hFake",
-    "hOther",
 ]
 
-for idx, file in enumerate(files):
-    data = uproot.open(file)
+part_name = ["one", "two"]
+
+for idx in range(parts):
+    data = uproot.open(DATA_DIR / f"{args.nocor}.root")
     assert isinstance(data, uproot.ReadOnlyDirectory)
 
     ax = fig.add_subplot(gs[idx])
     hists = []
     bottom = None
+    total_counts = None
 
     for hist_name in hist_names:
-        hist = data[
-            f"femto-universe-pair-task-track-track-extended/EfficiencyCorrection/one/{hist_name}"
-        ]
+        hist = data[f"{TASK_NAME}/EfficiencyCorrection/{part_name[idx]}/{hist_name}"]
+        assert isinstance(hist, TH.Model_TH3F_v4)
+        counts, pt = parse_hist(hist)
+
+        if total_counts is None:
+            total_counts = counts
+        else:
+            total_counts += counts
+
+    assert total_counts is not None
+
+    for hist_name in hist_names:
+        hist = data[f"{TASK_NAME}/EfficiencyCorrection/{part_name[idx]}/{hist_name}"]
         assert isinstance(hist, TH.Model_TH3F_v4)
         counts, pt = parse_hist(hist)
 
         if bottom is None:
             bottom = np.zeros_like(counts, dtype=counts.dtype)
 
+        ratio = np.divide(
+            counts,
+            total_counts,
+            out=np.zeros_like(counts, dtype=float),
+            where=total_counts != 0,
+        )
         ax.bar(
             pt,
-            counts * 100,
+            ratio * 100,
             align="edge",
             bottom=bottom * 100,
             label=hist_name[1:].lower(),
@@ -69,7 +93,7 @@ for idx, file in enumerate(files):
             width=pt[1] - pt[0],
         )
 
-        bottom += counts
+        bottom += ratio
 
     ax.legend(
         title=f"Contamination - ${args.pair_tex[idx]}$",

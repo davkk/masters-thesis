@@ -128,7 +128,7 @@ auto calc_eff_cor(const fs::path& results_path, const fs::path& hist_path, const
   hist_eff->Reset();
   set_titles(hist_eff, projection);
 
-  auto* hist_cont {clone_hist(hist_primary, "hCont")};
+  auto* hist_cont {clone_hist(hist_primary, "hSecondaryCont")};
   hist_cont->Reset();
   set_titles(hist_cont, projection);
 
@@ -184,6 +184,7 @@ auto calc_eff_cor(const fs::path& results_path, const fs::path& hist_path, const
   });
 
   output_file->WriteTObject(hist_eff);
+  output_file->WriteTObject(hist_cont);
   output_file->WriteTObject(hist_wei);
 
   output_file->Close();
