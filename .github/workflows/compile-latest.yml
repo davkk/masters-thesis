@@ -40,14 +40,12 @@ jobs:
           source .venv/bin/activate
           make hist-all
 
-      # - name: Compile report
-      #   run: |
-      #     make report || true
-      #     cat tex/main.log
-
       - name: Setup Typst
         uses: typst-community/setup-typst@v4
-        run: typst compile typst/main.typ --root .
+
+      - name: Compile report
+        run: |
+          make report
 
       - name: Rename PDF
         run: mv typst/main.pdf typst/DawidKarpinski-mgr.pdf

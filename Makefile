@@ -3,19 +3,22 @@
 SCRIPTS := analysis/mc_closure_ratio.py \
 		   analysis/corr_func.py \
 		   analysis/contamination.py
-TEX_FLAGS := -f -bibtex -pdf --silent --shell-escape
+
+# TEX_FLAGS := -f -bibtex -pdf --silent --shell-escape
 
 install: pyproject.toml
 	uv venv
 	uv sync
 
-report: tex/main.tex
-	cd tex && latexmk ${TEX_FLAGS} main.tex
+report: typst/main.typ
+	# cd tex && latexmk ${TEX_FLAGS} main.tex
+	typst compile typst/main.typ --root .
 	make clean
 
-dev: tex/main.tex
+dev: typst/main.typ
 	fd .py | entr make hist-all &
-	cd tex && latexmk -pvc ${TEX_FLAGS} main.tex
+	# cd tex && latexmk -pvc ${TEX_FLAGS} main.tex
+	typst watch typst/main.typ --root . --input INDEX=$(INDEX) --input EVIDENCE=$(EVIDENCE)
 	make clean
 
 hist: datafiles.csv
