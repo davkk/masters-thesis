@@ -13,6 +13,8 @@ to_latex = {
     "pi": r"\pi^+",
     "ap": r"\overline{p}",
     "api": r"\pi^-",
+    "k": r"K^+",
+    "ak": r"K^-",
 }
 
 

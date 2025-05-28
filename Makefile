@@ -1,7 +1,7 @@
 .PHONY: install report dev hist hist-all clean
 
-SCRIPTS := analysis/mc-closure-ratio.py \
-		   analysis/corr-func.py \
+SCRIPTS := analysis/mc_closure_ratio.py \
+		   analysis/corr_func.py \
 		   analysis/contamination.py
 TEX_FLAGS := -f -bibtex -pdf --silent --shell-escape
 
@@ -24,7 +24,7 @@ hist: datafiles.csv
 		::: `cat datafiles.csv | fzf --layout=reverse -m`
 
 hist-all: datafiles.csv
-	parallel --progress python analysis/eff-cont.py {/.} ::: data/*
+	parallel --progress python analysis/eff_cont.py {/.} ::: data/*
 	parallel --progress ./run.sh {1} {2} \
 		::: ${SCRIPTS} \
 		::: `tail -n +2 datafiles.csv | grep -e "^1,"`

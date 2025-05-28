@@ -1,22 +1,34 @@
 #!/usr/bin/env bash
 
-if [[ -z "${O2PHYSICS_ROOT+x}" ]]; then
-    echo 'wrong environment'
+# if [[ -z "${O2PHYSICS_ROOT+x}" ]]; then
+#     echo 'wrong environment'
+#     exit 1
+# fi
+
+path=$1
+
+# data/<dataset>/effcor/<particle>/<run>-1d.root
+IFS='/' read -ra segments <<< "$path"
+data_dir=${segments[0]}
+effcor_dir=${segments[2]}
+
+if [[ -z $data_dir ]] || [[ -z $effcor_dir ]] || [[ $data_dir != "data" ]] || [[ $effcor_dir != "effcor" ]]; then
+    echo "Wrong path: $path"
     exit 1
 fi
 
-file=$1
-train_run=$2
-particle=$3
+dataset=${segments[1]}
+particle=${segments[3]}
+run=${segments[4]%%-*}
 
-if [[ -z $file ]] || [[ -z $train_run ]]; then
-    echo "Usage: $0 <file> <train_run>"
+if [[ -z $dataset ]] || [[ -z $particle ]] || [[ -z $run ]]; then
+    echo "Wrong path: $path"
     exit 1
 fi
 
 o2-ccdb-upload \
     --host http://alice-ccdb.cern.ch \
     --path Users/d/dkarpins/Correction \
-    --file $file \
+    --file $path \
     --key hWeights \
-    --meta "dataset=LHC24f3c;particle=${particle};trainRun=${train_run}"
+    --meta "dataset=${dataset};particle=${particle};trainRun=${run}"

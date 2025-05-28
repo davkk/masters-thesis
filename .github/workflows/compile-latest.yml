@@ -30,23 +30,27 @@ jobs:
       - name: Install analysis
         run: make install
 
-      - name: Setup TeX Live
-        uses: teatimeguest/setup-texlive-action@v3
-        with:
-          packages: scheme-full
+      # - name: Setup TeX Live
+      #   uses: teatimeguest/setup-texlive-action@v3
+      #   with:
+      #     packages: scheme-full
 
-      # - name: Run analysis
-      #   run: |
-      #     source .venv/bin/activate
-      #     make hist-all
-
-      - name: Compile report
+      - name: Run analysis
         run: |
-          make report || true
-          cat tex/main.log
+          source .venv/bin/activate
+          make hist-all
+
+      # - name: Compile report
+      #   run: |
+      #     make report || true
+      #     cat tex/main.log
+
+      - name: Setup Typst
+        uses: typst-community/setup-typst@v4
+        run: typst compile typst/main.typ --root .
 
       - name: Rename PDF
-        run: mv tex/main.pdf tex/DawidKarpinski-mgr.pdf
+        run: mv typst/main.pdf typst/DawidKarpinski-mgr.pdf
 
       - name: Release
         uses: softprops/action-gh-release@v2
@@ -55,4 +59,4 @@ jobs:
           name: "Master's Thesis"
           tag_name: "latest"
           files: |
-            tex/DawidKarpinski-mgr.pdf
+            typst/DawidKarpinski-mgr.pdf
