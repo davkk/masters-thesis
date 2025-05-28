@@ -113,4 +113,4 @@ if __name__ == "__main__":
         ax.set_xlabel(r"$p_T [\text{GeV/c}]$")
         ax.set_ylabel(r"[\%]")
 
-    fig.savefig(DATA_DIR / f"{Path(__file__).stem}.svg")
+    fig.savefig(DATA_DIR / f"{Path(__file__).stem}.pdf")

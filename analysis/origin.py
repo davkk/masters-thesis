@@ -68,4 +68,4 @@ if __name__ == "__main__":
         ax.set_xlabel("Particle origin")
         ax.set_ylabel("Entries")
 
-    fig.savefig(DATA_DIR / f"{Path(__file__).stem}.svg")
+    fig.savefig(DATA_DIR / f"{Path(__file__).stem}.pdf")

@@ -157,4 +157,4 @@ if __name__ == "__main__":
     bot.set_xlabel(r"$\Delta\varphi$")
     bot.set_ylabel("Ratio (recon. w/ corr. over truth)")
 
-    fig.savefig(DATA_DIR / f"{Path(__file__).stem}_{args.dim}d.svg")
+    fig.savefig(DATA_DIR / f"{Path(__file__).stem}_{args.dim}d.pdf")

@@ -1,5 +1,8 @@
 #import "@preview/oxifmt:0.3.0": strfmt
 
+#import "@preview/muchpdf:0.1.1": muchpdf
+#let pdf(path, ..args) = box(muchpdf(read(path, encoding: none), ..args), inset: (y: -1em))
+
 #set page("a4", margin: (inside: 3cm, outside: 2cm, top: 2.5cm, bottom: 3.5cm))
 
 #let text-main = rgb(10, 10, 20)
@@ -14,7 +17,7 @@
     str(loc) + "." + str(num)
   })
 }
-#show figure: set block(inset: (top: 1em, bottom: 1em))
+#show figure: set block(inset: (top: 0.5em, bottom: 0.5em))
 #show figure.caption: set text(size: 0.8em)
 
 #show heading.where(level: 1): it => {
@@ -491,7 +494,7 @@ The rest of the correction macro, along with the remaining steps of the co
 == Reconstruction efficiency and correction factor
 
 #figure(
-  image("../data/LHC24f3c/effcor/eff_cont.svg", width: 100%),
+  pdf("../data/LHC24f3c/effcor/eff_cont.pdf", width: 100%),
   caption: [
     A comparison of the reconstruction efficiency (a) and the contamination factor (b) for different particle types.
   ],
@@ -503,19 +506,15 @@ The rest of the correction macro, along with the remaining steps of the co
 
 The main method of verifying correctness of the applied weights is to do so-called Monte Carlo closure. This is a process of comparing the reconstructed particles to the true ones, and calculating the ratio of the number of reconstructed particles to the number of true particles. The ratio is then compared to the theoretical value, which is the expected number of particles in the detector, given the efficiency of the reconstruction.
 
-// \begin{figure}[ht!]
-//     \centering
-//     \includegraphics[width=0.5\textwidth]{../data/LHC24f3c/p-p/contamination.pdf}
-//     \caption{}
-//     \label{fig:contamination_proton}
-// \end{figure}
-
-// \begin{figure}[ht!]
-//     \centering
-//     \includegraphics[width=\textwidth]{../data/LHC24f3c/pi-api/contamination.pdf}
-//     \caption{}
-//     \label{fig:contamination_pion_antipion}
-// \end{figure}
+#figure(
+  stack(dir: ltr,
+    pdf("../data/LHC24f3c/pi-pi/contamination.pdf", width: 50%),
+    pdf("../data/LHC24f3c/p-p/contamination.pdf", width: 50%),
+  ),
+  caption: [
+    Showcase of the contamination factors for pions and protons.
+  ],
+) <fig:contamination-proton>
 
 === Correction influence on correlation functions
 

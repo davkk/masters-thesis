@@ -98,4 +98,4 @@ if __name__ == "__main__":
             ax_cor.set_xlabel(r"$p_T\ [\text{GeV}/c]$")
             ax_cor.legend(title="Secondary cont.")
 
-    fig.savefig(DATA_DIR / f"{Path(__file__).stem}.svg")
+    fig.savefig(DATA_DIR / f"{Path(__file__).stem}.pdf")

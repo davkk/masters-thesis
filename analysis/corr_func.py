@@ -94,4 +94,4 @@ if __name__ == "__main__":
     # ---
     fig.add_subplot(gs[3]).axis("off")
 
-    fig.savefig(DATA_DIR / f"{Path(__file__).stem}.svg")
+    fig.savefig(DATA_DIR / f"{Path(__file__).stem}.pdf")
