@@ -1,4 +1,4 @@
-.PHONY: install report dev hist hist-all
+.PHONY: install report dev hist hist-all push
 
 SCRIPTS := analysis/mc_closure_ratio.py \
 		   analysis/corr_func.py \

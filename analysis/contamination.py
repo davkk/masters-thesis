@@ -111,6 +111,6 @@ if __name__ == "__main__":
             fontsize=6,
         )
         ax.set_xlabel(r"$p_T [\text{GeV/c}]$")
-        ax.set_ylabel(r"[\%]")
+        ax.set_ylabel(r"[%]")
 
     fig.savefig(DATA_DIR / f"{Path(__file__).stem}.pdf")

@@ -15,8 +15,8 @@
   numbering: num => {
     let loc = counter(heading).get().first()
     str(loc) + "." + str(num)
-  })
-}
+  }
+)
 #show figure: set block(inset: (top: 0.5em, bottom: 0.5em))
 #show figure.caption: set text(size: 0.8em)
 
@@ -55,8 +55,8 @@
   numbering: num => {
     let loc = counter(heading).get().first()
     "(" + str(loc) + "." + str(num) + ")"
-  })
-}
+  }
+)
 #show math.equation.where(block: true): set block(spacing: 1.5em)
 
 #show raw.where(block: true): it => {
@@ -109,7 +109,10 @@
       and specialization EDMI
     ],
     stack(spacing: 2em,
-      text(size: 1.5em, weight: "bold")[#thesis-title-en],
+      text(size: 1.5em, weight: "bold")[
+        #set par(justify: false)
+        #thesis-title-en
+      ],
       text(size: 1.1em)[
         thesis number according to Faculty's thesis evidence: #EVIDENCE
       ],
@@ -273,7 +276,7 @@ $ <eq:efficiency>
   ],
 ) <fig:reco-truth-tracks>
 
-Here, the values of $N_"recon."$ and $N_"truth"$ are typically derived from histograms binned in transverse momentum ($p_T$) or in two dimensions as a function of both $p_T$ and pseudorapidity ($eta$), allowing for more accurate study of the efficiency.
+The values of $N_"recon."$ and $N_"truth"$ typically come from histograms binned in transverse momentum ($p_T$) or in two dimensions as a function of both $p_T$ and pseudorapidity ($eta$), enabling a more accurate study of the efficiency.
 
 // TODO: transverse momentum, mc reco, mc truth, detection
 
@@ -283,7 +286,20 @@ However, ensuring the correct results in the efficiency calculations requires
 
 The secondary contamination, $C$, described as the ratio of the number of secondary particles over all recorded particles, can affect the efficiency results. By taking it into account, one ensures that the final weights base only on the primary particles and not byproducts of other events.
 
-// TODO: insert some histogram showcasing contamination
+#figure(
+  grid(
+    columns: 2,
+    rows: 2,
+    gutter: 2em,
+    pdf("../data/LHC24f3c/pi-pi/contamination.pdf"),
+    pdf("../data/LHC24f3c/p-p/contamination.pdf"),
+    pdf("../data/LHC24f3/k-k/contamination.pdf"),
+  ),
+  caption: [
+    Showcase of the contamination factors for pions, protons, kaons.
+  ],
+) <fig:contamination-proton>
+
 
 === Efficiency correction weights
 
@@ -291,8 +307,6 @@ Having calculated the efficiency histogram and secondary contamination, one ca
 $
 w = (1 - C) / epsilon.
 $
-
-// -------
 
 = Extending FemtoUniverse in the O2Physics framework
 
@@ -327,7 +341,7 @@ The goal of the new approach for correction builds on the idea of using the
 
 After many attempts to implement the corrections application in the O2Physics framework, the new approach would replace task-specific solutions with a single, reusable method. This effort led to the creation of a class, `FemtoUniverseEfficiencyCorrection.h`, which serves as an abstraction for other analysis tasks to use.
 
-My first solution (fig. @fig:workflow-initial) leveraged the O2 framework's so-called callback service, which allows any task to register a callback function that would execute custom code on special dispatched events, e.g. `Start`, `Stop`, `EndOfStream`, etc. The `CallbackService.h` file lists all the available event IDs @callback-service. I have settled for `Stop` event (listing @lst:callback-service-code), on which a callback uploaded the calculated correction factors to the CCDB only once, at the end of the analysis task execution. It used the `CCDBApi::storeAsTFileAny` method to interact with the CCDB @ccdbapi-store. This flow has worked as expected when running locally.
+My first solution (@fig:workflow-initial) leveraged the O2 framework's so-called callback service, which allows any task to register a callback function that would execute custom code on special dispatched events, e.g. `Start`, `Stop`, `EndOfStream`, etc. The `CallbackService.h` file lists all the available event IDs @callback-service. I have settled for `Stop` event (listing @lst:callback-service-code), on which a callback uploaded the calculated correction factors to the CCDB only once, at the end of the analysis task execution. It used the `CCDBApi::storeAsTFileAny` method to interact with the CCDB @ccdbapi-store. This flow has worked as expected when running locally.
 
 #figure(
   image("img/workflow-initial.png", width: 70%),
@@ -347,10 +361,10 @@ My first solution (fig. @fig:workflow-initial) leveraged the O2 framework's so-
               hist, // histogram to upload
               ccdbFullPath, // full path to CCDB
               createMetadata() // metadata of the object
-              // ...
+              // …
           );
       });
-      // ...
+      // …
   }
   ```,
   caption: [
@@ -366,7 +380,7 @@ Therefore, when running the task on the Grid, the system splits a given data
 
 == The new workflow for efficiency correction
 
-The initial ideas for the correction procedure proved unusable at such large scale. I changed the workflow direction to accommodate the Grid's parallel nature. Unfortunately, I did not achieve full automation, but I have integrated key features that allow for flexibility (fig. @fig:workflow-temp).
+The initial ideas for the correction procedure proved unusable at such large scale. I changed the workflow direction to accommodate the Grid's parallel nature. Unfortunately, I did not achieve full automation, but I have integrated key features that allow for flexibility (@fig:workflow-temp).
 
 #figure(
   image("img/workflow-temp.png", width: 100%),
@@ -401,7 +415,7 @@ Next, it assesses contamination from secondary sources by reusing already avai
   // Get the projection from DCA histograms
   auto* hist_x {hist->ProjectionX(("h" + name).c_str())};
 
-  // ---
+  // …
   // Calculate the contamination
   for (int bin_idx = 1; bin_idx <= hist_x->GetNbinsX(); ++bin_idx) {
       auto cont_value {hist_x->GetBinContent(bin_idx)};
@@ -409,7 +423,7 @@ Next, it assesses contamination from secondary sources by reusing already avai
       hist_x->SetBinContent(bin_idx, reco_value > 0 ? cont_value / reco_value : 0);
   }
 
-  // ---
+  // …
   auto* hist_secondary_x {get_histogram<TH1D>(output_file, "hDaughter")};
   auto* hist_material_x {get_histogram<TH1D>(output_file, "hMaterial")};
   hist_secondary_x->Add(hist_material_x);
@@ -459,7 +473,7 @@ The core of this solution is `FemtoUniverseEfficiencyCorrection` class @effic
 
 As the final development step, we wanted to generalize the correction procedure. Hence, I opted to expand it beyond a single dimension ($p_{T}$ axis) to support two‐ and three‐dimensional correction weights by filling 3D histograms with variables such as $p_{T}$, $eta$ and event centrality (or multiplicity). This approach unifies the calculation of reconstruction efficiency, secondary contamination and final weights across any combination of the variables.
 
-When the user specifies a projection through a flag, the macro calls ROOT's `Project3D()` method to collapse the third axis into a 1D or 2D distribution (lst. @lst:corr-macro-proj).
+When the user specifies a projection through a flag, the macro calls ROOT's `Project3D()` method to collapse the third axis into a 1D or 2D distribution (@lst:corr-macro-proj).
 
 The rest of the correction macro, along with the remaining steps of the correction procedure, follow the same structure as the previous workflow.
 
@@ -485,13 +499,18 @@ The rest of the correction macro, along with the remaining steps of the co
   ],
 ) <lst:corr-macro-proj>
 
-// -------
-
 = Data Analysis and Results
 
 // TODO: talk about analyses, datasets, histograms, format etc.
+This chapter showcases the analysis results of the correction procedure workflow. The data used in the analysis comes from the following datasets:
 
-== Reconstruction efficiency and correction factor
+- *LHC24f3c*: // TODO
+- *LHC24f3*: // TODO
+
+
+== Reconstruction efficiency, contamination and correction factor
+
+Each particle type displays a distinct reconstruction efficiency and contamination factor. In the case of pions or kaons, the large data sample results in negligible secondary contamination, as seen in @fig:eff-cont. For protons, the smaller event count leads to a significant contribution in the overall sample, which correction calculations must account for.
 
 #figure(
   pdf("../data/LHC24f3c/effcor/eff_cont.pdf", width: 100%),
@@ -501,29 +520,15 @@ The rest of the correction macro, along with the remaining steps of the co
 ) <fig:eff-cont>
 
 // TODO: Calculating reconstruction efficiencies for pions, kaons, and protons using Monte Carlo data.
+// TODO: plot correction factors / weights
 
 == MC closure
 
 The main method of verifying correctness of the applied weights is to do so-called Monte Carlo closure. This is a process of comparing the reconstructed particles to the true ones, and calculating the ratio of the number of reconstructed particles to the number of true particles. The ratio is then compared to the theoretical value, which is the expected number of particles in the detector, given the efficiency of the reconstruction.
 
-#figure(
-  stack(dir: ltr,
-    pdf("../data/LHC24f3c/pi-pi/contamination.pdf", width: 50%),
-    pdf("../data/LHC24f3c/p-p/contamination.pdf", width: 50%),
-  ),
-  caption: [
-    Showcase of the contamination factors for pions and protons.
-  ],
-) <fig:contamination-proton>
-
 === Correction influence on correlation functions
 
 // TODO: overall impact of corrections on the correlation functions
-
-\pagebreak
-
-\pagebreak
-
 
 === Efficiency influence in 1d vs. 2d
 
