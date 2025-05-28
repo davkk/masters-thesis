@@ -30,10 +30,10 @@ jobs:
       - name: Install analysis
         run: make install
 
-      # - name: Setup TeX Live
-      #   uses: teatimeguest/setup-texlive-action@v3
-      #   with:
-      #     packages: scheme-full
+      - name: Setup TeX Live
+        uses: teatimeguest/setup-texlive-action@v3
+        with:
+          packages: scheme-basic
 
       - name: Run analysis
         run: |

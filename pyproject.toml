@@ -7,7 +7,6 @@ dependencies = [
     "mplhep>=0.3.57",
     "pyroot>=0.3.1",
     "scienceplots>=2.1.1",
-    "scipy>=1.15.3",
     "uproot>=5.5.2",
 ]
 
