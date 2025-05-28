@@ -41,15 +41,8 @@ def parse_args():
 def setup_pyplot():
     plt.style.use(["science", "ieee"])
 
-    # custom font
-    plt.rcParams["text.latex.preamble"] += r"""\usepackage[T1]{fontenc}
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-%\usepackage[sfdefault,scale=0.95]{FiraSans}
-\usepackage[lf]{Baskervaldx} % lining figures
-\usepackage[bigdelims,vvarbb]{newtxmath} % math italic letters from nimbus Roman
-\usepackage[cal=boondoxo]{mathalfa} % mathcal from STIX, unslanted a bit
-\renewcommand*\oldstylenums[1]{\textosf{#1}}"""
+    plt.rcParams["text.usetex"] = False
+    plt.rcParams["font.family"] = "Baskervaldx"
 
     plt.rcParams["path.simplify"] = True
 
