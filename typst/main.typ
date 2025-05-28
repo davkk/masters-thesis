@@ -9,7 +9,7 @@
 #let bg-main = rgb(150, 95, 120)
 #let bg-light = rgb(245, 245, 245)
 
-#set text(font: "Baskervaldx", size: 11pt, fill: text-main)
+#set text(font: "Baskervald ADF Std", size: 11pt, fill: text-main)
 #set par(leading: 1em, spacing: 2em, justify: true)
 #set figure(
   numbering: num => {

@@ -1,8 +1,10 @@
+import os
 import sys
 from dataclasses import dataclass
 from pathlib import Path
 
 import scienceplots
+from matplotlib import font_manager as fm
 from matplotlib import pyplot as plt
 
 DATA_DIR = Path(__file__).parent.parent / "data"
@@ -42,7 +44,12 @@ def setup_pyplot():
     plt.style.use(["science", "ieee"])
 
     plt.rcParams["text.usetex"] = False
-    plt.rcParams["font.family"] = "Baskervaldx"
+
+    font_path = "fonts/BaskervaldADFStd.otf"
+    fm.fontManager.addfont(font_path)
+    font_prop = fm.FontProperties(fname=font_path)
+    font_name = font_prop.get_name()
+    plt.rcParams["font.family"] = font_name
 
     plt.rcParams["path.simplify"] = True
 
