@@ -1,8 +1,9 @@
 .PHONY: install report dev hist hist-all push
 
-SCRIPTS := analysis/mc_closure_ratio.py \
-		   analysis/corr_func.py \
-		   analysis/contamination.py
+SCRIPTS_DATASET := analysis/eff_cont.py analysis/weights.py
+SCRIPTS_RUN := analysis/mc_closure_ratio.py \
+			   analysis/corr_func.py \
+			   analysis/contamination.py
 
 install: pyproject.toml
 	uv venv
@@ -17,13 +18,13 @@ dev: typst/main.typ
 
 hist: datafiles.csv
 	parallel --progress ./run.sh {1} {2} \
-		::: ${SCRIPTS} \
+		::: ${SCRIPTS_RUN} \
 		::: `cat datafiles.csv | fzf --layout=reverse -m`
 
 hist-all: datafiles.csv
-	parallel --progress python analysis/eff_cont.py {/.} ::: data/*
+	parallel --progress python {} ::: ${SCRIPTS_DATASET}
 	parallel --progress ./run.sh {1} {2} \
-		::: ${SCRIPTS} \
+		::: ${SCRIPTS_RUN} \
 		::: `tail -n +2 datafiles.csv | grep -e "^1,"`
 
 push:

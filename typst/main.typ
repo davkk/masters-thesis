@@ -109,7 +109,7 @@
       and specialization EDMI
     ],
     stack(spacing: 2em,
-      text(size: 1.5em, weight: "bold")[
+      text(size: 1.6em, weight: "bold")[
         #set par(justify: false)
         #thesis-title-en
       ],
@@ -296,7 +296,7 @@ The secondary contamination, $C$, described as the ratio of the number of 
     pdf("../data/LHC24f3/k-k/contamination.pdf"),
   ),
   caption: [
-    Showcase of the contamination factors for pions, protons, kaons.
+    Showcase of the contamination percentage in the given data sample for pions, protons, kaons.
   ],
 ) <fig:contamination-proton>
 

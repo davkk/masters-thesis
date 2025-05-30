@@ -1,5 +1,4 @@
 import os
-import sys
 from pathlib import Path
 
 import common
@@ -29,73 +28,75 @@ def parse_hist(hist: TH.Model_TH1D_v3):
 if __name__ == "__main__":
     colors, markers = common.setup_pyplot()
 
-    dataset = sys.argv[1]
-    DATA_DIR /= dataset
-    DATA_DIR /= "effcor"
-
-    pair_data = {
-        particle: sorted(
-            [  #
-                file  #
-                for file in os.listdir(DATA_DIR / particle)  #
-                if "-1d.root" in file
-            ]
-        )
-        for particle in os.listdir(DATA_DIR)
-        if os.path.isdir(DATA_DIR / particle)
-    }
-
     fig = plt.figure(figsize=(6, 3), tight_layout=True)
     gs = fig.add_gridspec(1, 2)
 
     ax_eff = fig.add_subplot(gs[0])
     ax_cor = fig.add_subplot(gs[1])
 
-    for pair, files in pair_data.items():
-        for idx, file in enumerate(files):
-            data = uproot.open(DATA_DIR / pair / file)
-            assert isinstance(data, uproot.ReadOnlyDirectory)
+    datasets = [ds for ds in os.listdir(DATA_DIR) if os.path.isdir(DATA_DIR / ds)]
+    for dataset in datasets:
+        path = Path(DATA_DIR)
+        path /= dataset
+        path /= "effcor"
 
-            # -- efficiency
-            hist_eff = data["hEfficiency"]
-            assert isinstance(hist_eff, TH.Model_TH1D_v3)
-
-            counts, errors, pts = parse_hist(hist_eff)
-
-            ax_eff.errorbar(
-                pts,
-                counts,
-                yerr=errors,
-                fmt=".",
-                markersize=3,
-                label=f"${common.to_latex[pair.split('-')[idx]]}$",
+        pair_data = {
+            particle: sorted(
+                [  #
+                    file  #
+                    for file in os.listdir(path / particle)  #
+                    if "-1d.root" in file
+                ]
             )
+            for particle in os.listdir(path)
+            if os.path.isdir(path / particle)
+        }
 
-            ax_eff.set_xticks(np.arange(0, 4.2, 1))
+        for pair, files in pair_data.items():
+            for idx, file in enumerate(files):
+                data = uproot.open(path / pair / file)
+                assert isinstance(data, uproot.ReadOnlyDirectory)
 
-            ax_eff.set_title("(a)")
-            ax_eff.set_xlabel(r"$p_T\ [\text{GeV}/c]$")
-            ax_eff.legend(title="Recon. efficiency")
+                # -- efficiency
+                hist_eff = data["hEfficiency"]
+                assert isinstance(hist_eff, TH.Model_TH1D_v3)
 
-            # -- correction factor
-            hist_sec = data["hSecondaryCont"]
-            assert isinstance(hist_sec, TH.Model_TH1D_v3)
+                counts, errors, pts = parse_hist(hist_eff)
 
-            sec_counts, sec_errs, pts = parse_hist(hist_sec)
+                ax_eff.errorbar(
+                    pts,
+                    counts,
+                    yerr=errors,
+                    fmt=".",
+                    markersize=3,
+                    label=f"${common.to_latex[pair.split('-')[idx]]}$",
+                )
 
-            ax_cor.errorbar(
-                pts,
-                sec_counts,
-                yerr=sec_errs,
-                fmt=".",
-                markersize=3,
-                label=f"${common.to_latex[pair.split('-')[idx]]}$",
-            )
+                # -- secondary contamination
+                hist_sec = data["hSecondaryCont"]
+                assert isinstance(hist_sec, TH.Model_TH1D_v3)
 
-            ax_cor.set_xticks(np.arange(0, 4.2, 1))
+                sec_counts, sec_errs, pts = parse_hist(hist_sec)
 
-            ax_cor.set_title("(b)")
-            ax_cor.set_xlabel(r"$p_T\ [\text{GeV}/c]$")
-            ax_cor.legend(title="Secondary cont.")
+                ax_cor.errorbar(
+                    pts,
+                    sec_counts,
+                    yerr=sec_errs,
+                    fmt=".",
+                    markersize=3,
+                    label=f"${common.to_latex[pair.split('-')[idx]]}$",
+                )
+
+    ax_eff.set_xticks(np.arange(0, 4.2, 1))
+
+    ax_eff.set_title("(a)")
+    ax_eff.set_xlabel(r"$p_T\ [\text{GeV}/c]$")
+    ax_eff.legend(title="Recon. efficiency")
+
+    ax_cor.set_xticks(np.arange(0, 4.2, 1))
+
+    ax_cor.set_title("(b)")
+    ax_cor.set_xlabel(r"$p_T\ [\text{GeV}/c]$")
+    ax_cor.legend(title="Secondary cont.")
 
     fig.savefig(DATA_DIR / f"{Path(__file__).stem}.pdf")
