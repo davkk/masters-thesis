@@ -1,5 +1,4 @@
 import os
-import sys
 from pathlib import Path
 
 import common
@@ -55,8 +54,9 @@ if __name__ == "__main__":
                     pts,
                     counts,
                     yerr=errors,
-                    fmt=".",
-                    markersize=3,
+                    markersize=1,
+                    marker=markers[(particles - 1) % len(markers)],
+                    linestyle="none",
                     label=f"${common.to_latex[part.split('-')[idx]]}$",
                 )
 
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     ax.legend(
         loc="lower center",
         bbox_to_anchor=(0.5, 1.02),
-        ncols=particles,
+        ncols=particles // 2,
         fontsize=6,
     )
 

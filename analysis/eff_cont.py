@@ -34,6 +34,8 @@ if __name__ == "__main__":
     ax_eff = fig.add_subplot(gs[0])
     ax_cor = fig.add_subplot(gs[1])
 
+    particles = 0
+
     datasets = [ds for ds in os.listdir(DATA_DIR) if os.path.isdir(DATA_DIR / ds)]
     for dataset in datasets:
         path = Path(DATA_DIR)
@@ -54,6 +56,8 @@ if __name__ == "__main__":
 
         for pair, files in pair_data.items():
             for idx, file in enumerate(files):
+                particles += 1
+
                 data = uproot.open(path / pair / file)
                 assert isinstance(data, uproot.ReadOnlyDirectory)
 
@@ -67,8 +71,9 @@ if __name__ == "__main__":
                     pts,
                     counts,
                     yerr=errors,
-                    fmt=".",
-                    markersize=3,
+                    markersize=1,
+                    marker=markers[(particles - 1) % len(markers)],
+                    linestyle="none",
                     label=f"${common.to_latex[pair.split('-')[idx]]}$",
                 )
 
@@ -82,8 +87,9 @@ if __name__ == "__main__":
                     pts,
                     sec_counts,
                     yerr=sec_errs,
-                    fmt=".",
-                    markersize=3,
+                    markersize=1,
+                    marker=markers[(particles - 1) % len(markers)],
+                    linestyle="none",
                     label=f"${common.to_latex[pair.split('-')[idx]]}$",
                 )
 

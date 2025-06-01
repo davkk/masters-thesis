@@ -66,5 +66,5 @@ def setup_pyplot():
     plt.rcParams["ytick.major.pad"] = 2
 
     colors = plt.rcParams["axes.prop_cycle"].by_key()["color"]
-    markers = [".", "D", "*"]
+    markers = ["o", "D", "s"]
     return colors, markers
