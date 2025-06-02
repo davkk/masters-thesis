@@ -1,7 +1,10 @@
 #import "@preview/oxifmt:0.3.0": strfmt
 
 #import "@preview/muchpdf:0.1.1": muchpdf
-#let pdf(path, ..args) = box(muchpdf(read(path, encoding: none), ..args), inset: (y: -1em))
+#let pdf(path, ..args) = box(
+  muchpdf(read(path, encoding: none), ..args),
+  inset: (y: -1em),
+)
 
 #set page("a4", margin: (inside: 3cm, outside: 2cm, top: 2.5cm, bottom: 3.5cm))
 
@@ -11,32 +14,25 @@
 
 #set text(font: "Baskervald ADF Std", size: 11pt, fill: text-main)
 #set par(leading: 1em, spacing: 2em, justify: true)
-#set figure(
-  numbering: num => {
-    let loc = counter(heading).get().first()
-    str(loc) + "." + str(num)
-  }
-)
+#set figure(numbering: num => {
+  let loc = counter(heading).get().first()
+  str(loc) + "." + str(num)
+})
 #show figure: set block(inset: (top: 0.5em, bottom: 0.5em))
 #show figure.caption: set text(size: 0.8em)
 
 #show heading.where(level: 1): it => {
-    let num = counter(heading).at(here()).first()
-    set text(24pt, weight: "bold")
-    set par(justify: false)
+  let num = counter(heading).at(here()).first()
+  set text(24pt, weight: "bold")
+  set par(justify: false)
 
-    pagebreak(to: "odd", weak: false)
+  pagebreak(to: "odd", weak: false)
 
-    v(3em)
+  v(3em)
 
-    stack(
-      dir: ttb,
-      spacing: 2em,
-      text(size: 20pt, [Chapter #num]),
-      it.body
-    )
+  stack(dir: ttb, spacing: 2em, text(size: 20pt, [Chapter #num]), it.body)
 
-    v(1em)
+  v(1em)
 }
 #show heading: set block(inset: (y: 0.8em))
 #show heading.where(level: 2): set text(size: 14pt)
@@ -51,35 +47,30 @@
 #set block(spacing: box-spacing)
 #set columns(gutter: box-spacing)
 
-#set math.equation(
-  numbering: num => {
-    let loc = counter(heading).get().first()
-    "(" + str(loc) + "." + str(num) + ")"
-  }
-)
+#set math.equation(numbering: num => {
+  let loc = counter(heading).get().first()
+  "(" + str(loc) + "." + str(num) + ")"
+})
 #show math.equation.where(block: true): set block(spacing: 1.5em)
 
 #show raw.where(block: true): it => {
   set text(size: 1.1em)
-  block(
-    width: 100%,
-    inset: 1em,
-    fill: bg-light,
-    {
-      let lines = it.text.split("\n")
-      let numbered = range(1, lines.len() + 1).map(str)
-      grid(
-        align: horizon + left,
-        columns: (auto, 1fr),
-        row-gutter: 0.7em,
-        column-gutter: 2em,
-        ..numbered.map(n => (
+  block(width: 100%, inset: 1em, fill: bg-light, {
+    let lines = it.text.split("\n")
+    let numbered = range(1, lines.len() + 1).map(str)
+    grid(
+      align: horizon + left,
+      columns: (auto, 1fr),
+      row-gutter: 0.7em,
+      column-gutter: 2em,
+      ..numbered
+        .map(n => (
           grid.cell(text(fill: bg-main, strfmt("{:>02}", n))),
-          grid.cell(raw(lines.at(int(n) - 1), lang: it.lang))
-        )).flatten()
-      )
-    }
-  )
+          grid.cell(raw(lines.at(int(n) - 1), lang: it.lang)),
+        ))
+        .flatten()
+    )
+  })
 }
 
 #let hr = box(inset: (y: 1em), line(length: 100%, stroke: 2pt + bg-main))
@@ -101,14 +92,17 @@
 #let thesis-title-pl = "Wpływ wydajności rekonstrukcji śladów cząstek na kątowe funkcje korelacyjne w oprogramowaniu Run 3 w eksperymencie ALICE."
 
 #align(center)[
-  #stack(dir: ttb, spacing: 4.5em,
+  #stack(
+    dir: ttb,
+    spacing: 4.5em,
     image("img/WF_ENG.png", width: 100%),
     image("img/mgr_en.png", width: 70%),
     text(size: 1.1em)[
       in the field of study Fizyka Techniczna \
       and specialization EDMI
     ],
-    stack(spacing: 2em,
+    stack(
+      spacing: 2em,
       text(size: 1.6em, weight: "bold")[
         #set par(justify: false)
         #thesis-title-en
@@ -117,11 +111,11 @@
         thesis number according to Faculty's thesis evidence: #EVIDENCE
       ],
     ),
-    stack(spacing: 2em,
-      text(size: 1.5em)[Dawid Karpiński],
-      text(size: 1.1em)[student record book number: #INDEX],
-    ),
-    stack(spacing: 2em,
+    stack(spacing: 2em, text(size: 1.5em)[Dawid Karpiński], text(
+      size: 1.1em,
+    )[student record book number: #INDEX]),
+    stack(
+      spacing: 2em,
       text(size: 1.1em)[
         supervisor: \
         dr hab. inż. Małgorzata Janik
@@ -150,12 +144,7 @@
 _Keywords:_
 
 #v(1fr)
-#stack(
-  dir: ltr,
-  spacing: 1fr,
-  "supervisor's signature",
-  "student's signature",
-)
+#stack(dir: ltr, spacing: 1fr, "supervisor's signature", "student's signature")
 
 #clearpage()
 
@@ -171,12 +160,7 @@ _Keywords:_
 _Słowa kluczowe:_
 
 #v(1fr)
-#stack(
-  dir: ltr,
-  spacing: 1fr,
-  "podpis opiekuna naukowego",
-  "podpis studenta",
-)
+#stack(dir: ltr, spacing: 1fr, "podpis opiekuna naukowego", "podpis studenta")
 
 #clearpage()
 
@@ -186,18 +170,16 @@ _Słowa kluczowe:_
 
 #clearpage()
 
-#set page(
-  footer: context {
-    let page-number = counter(page).get().first()
-    let is-even = calc.rem(page-number, 2) == 0
+#set page(footer: context {
+  let page-number = counter(page).get().first()
+  let is-even = calc.rem(page-number, 2) == 0
 
-    rect(stroke: (top: 2pt + bg-main), width: 100%, inset: (top: 1em))[
-      #align(if is-even {left} else {right})[
-        #counter(page).display()
-      ]
+  rect(stroke: (top: 2pt + bg-main), width: 100%, inset: (top: 1em))[
+    #align(if is-even { left } else { right })[
+      #counter(page).display()
     ]
-  }
-)
+  ]
+})
 
 = Introduction
 
@@ -224,16 +206,13 @@ This thesis focuses on $Delta eta Delta phi$ particle correlations derived from 
 
 One can construct the angular correlation function using two quantities: pseudorapidity, $eta$, and azimuthal angle, $phi$. Both represent different aspects of a particle's trajectory in the detector.
 
-#figure(
-  image("img/detector-angles.png", width: 80%),
-  caption: [
-    Showcase of the angles considered in angular correlation function analysis.
-  ],
-) <fig:detector-angles>
+#figure(image("img/detector-angles.png", width: 80%), caption: [
+  Showcase of the angles considered in angular correlation function analysis.
+]) <fig:detector-angles>
 
 First, the pseudorapidity, $eta$, relates to the angle between the particle momentum $p$ and the beam axis ($theta$, @fig:detector-angles) as:
 $
-eta = -ln [tan(theta/2)].
+  eta = -ln [tan(theta/2)].
 $
 
 The azimuthal angle on the other hand represents the angle between the $x$-axis and the projection, $p_T$, of the momentum vector onto the $x y$-plane ($phi$, @fig:detector-angles).
@@ -252,7 +231,7 @@ As the last step, one should normalize both distributions normalized by the 
 
 Finally, the formula for the angular correlation function takes the form:
 $
-C(Delta eta, Delta phi) = S(Delta eta, Delta phi) / N_"same" N_"mixed" / B(Delta eta, Delta phi).
+  C(Delta eta, Delta phi) = S(Delta eta, Delta phi) / N_"same" N_"mixed" / B(Delta eta, Delta phi).
 $
 
 == Correction procedure
@@ -261,22 +240,19 @@ The correction procedure aims to mitigate biases, that arise during the actua
 
 Obtaining the weights used for correction happens based on data collected through Monto Carlo simulations (MC for short). Generated collisions follow set parameters, producing many particles referred to as *MC truth*. Extracted directly from the event itself, these particles remain unaffected by any effects that might come e.g. from detectors. Furthermore, the tracks of the same particles run through detectors for reconstruction and classification, hence called *MC reconstructed*.
 
+#pagebreak()
+
 === Reconstruction efficiency
 
 Therefore, calculation of reconstruction efficiency involves taking the ratio of the number of reconstructed particles to the number of simulated (true) particles:
 $
-epsilon = N_"recon." / N_"truth".
+  epsilon = N_"recon." / N_"truth".
 $ <eq:efficiency>
 
-#figure(
-  image("img/efficiency.png", width: 60%),
-  caption: [
-    Tracks of simulated and reconstructed particles. Successful
-    identification shown in green.
-  ],
-) <fig:reco-truth-tracks>
-
-The values of $N_"recon."$ and $N_"truth"$ typically come from histograms binned in transverse momentum ($p_T$) or in two dimensions as a function of both $p_T$ and pseudorapidity ($eta$), enabling a more accurate study of the efficiency.
+#figure(image("img/efficiency.png", width: 60%), caption: [
+  Tracks of simulated and reconstructed particles. Successful
+  identification shown in green.
+]) <fig:reco-truth-tracks>
 
 // TODO: transverse momentum, mc reco, mc truth, detection
 
@@ -291,9 +267,11 @@ The secondary contamination, $C$, described as the ratio of the number of 
     columns: 2,
     rows: 2,
     gutter: 2em,
-    pdf("../data/LHC24f3c/pi-pi/contamination.pdf"),
-    pdf("../data/LHC24f3c/p-p/contamination.pdf"),
-    pdf("../data/LHC24f3/k-k/contamination.pdf"),
+    pdf("../data/LHC24f3c/pi-api/contamination_pi.pdf"),
+    pdf("../data/LHC24f3c/pi-api/contamination_api.pdf"),
+    // pdf("../data/LHC24f3c/p-p/contamination.pdf"),
+    pdf("../data/LHC24f3/k-ak/contamination_ak.pdf"),
+    pdf("../data/LHC24f3/k-ak/contamination_ak.pdf"),
   ),
   caption: [
     Showcase of the contamination percentage in the given data sample for pions, protons, kaons.
@@ -305,8 +283,10 @@ The secondary contamination, $C$, described as the ratio of the number of 
 
 Having calculated the efficiency histogram and secondary contamination, one can calculate the weights as:
 $
-w = (1 - C) / epsilon.
+  w(p_T, …) = (1 - C(p_T, …)) / epsilon(p_T, …).
 $
+
+The values of $C$ and $epsilon$ typically come from histograms binned in transverse momentum ($p_T$) or in two dimensions as a function of both $p_T$ and pseudorapidity ($eta$), enabling a more accurate study of the efficiency and efficiency corrections.
 
 = Extending FemtoUniverse in the O2Physics framework
 
@@ -318,12 +298,9 @@ The O2 framework introduces an entirely new software ecosystem, designed from s
 
 Illustrated in Figure \ref{fig:o2-flow}, the flow of data processing in O2Physics starts with a specialized task called a producer. It parses the data into tables with a well-defined structure named *FemtoDerived*. After preprocessing, the analysis tasks run against the tables, generating visualizations in form of histograms and other plot types.
 
-#figure(
-  image("img/o2-flow.png", width: 90%),
-  caption: [
-    The data flow in O2Physics.
-  ],
-) <fig:o2-flow>
+#figure(image("img/o2-flow.png", width: 90%), caption: [
+  The data flow in O2Physics.
+]) <fig:o2-flow>
 
 == The old approach for efficiency correction
 
@@ -343,12 +320,9 @@ After many attempts to implement the corrections application in the O2Physic
 
 My first solution (@fig:workflow-initial) leveraged the O2 framework's so-called callback service, which allows any task to register a callback function that would execute custom code on special dispatched events, e.g. `Start`, `Stop`, `EndOfStream`, etc. The `CallbackService.h` file lists all the available event IDs @callback-service. I have settled for `Stop` event (listing @lst:callback-service-code), on which a callback uploaded the calculated correction factors to the CCDB only once, at the end of the analysis task execution. It used the `CCDBApi::storeAsTFileAny` method to interact with the CCDB @ccdbapi-store. This flow has worked as expected when running locally.
 
-#figure(
-  image("img/workflow-initial.png", width: 70%),
-  caption: [
-    Visualization of the initial workflow for efficiency correction.
-  ],
-) <fig:workflow-initial>
+#figure(image("img/workflow-initial.png", width: 70%), caption: [
+  Visualization of the initial workflow for efficiency correction.
+]) <fig:workflow-initial>
 
 #figure(
   ```cpp
@@ -382,12 +356,9 @@ Therefore, when running the task on the Grid, the system splits a given data
 
 The initial ideas for the correction procedure proved unusable at such large scale. I changed the workflow direction to accommodate the Grid's parallel nature. Unfortunately, I did not achieve full automation, but I have integrated key features that allow for flexibility (@fig:workflow-temp).
 
-#figure(
-  image("img/workflow-temp.png", width: 100%),
-  caption: [
-    Visualization of the next workflow idea for efficiency correction.
-  ],
-) <fig:workflow-temp>
+#figure(image("img/workflow-temp.png", width: 100%), caption: [
+  Visualization of the next workflow idea for efficiency correction.
+]) <fig:workflow-temp>
 
 The first step requires generating a histogram of reconstruction efficiency weights for the desired particle type. For this, I have created a ROOT macro that acts as an initial utility for the rest of the flow. The macro retrieves the required histograms from a results file that Grid generated at the end of a run. Once it gets the data, it calculates the ratio bin-by-bin (listing @lst:corr-macro-eff), between reconstructed and truth histograms to calculate the efficiency as stated in the formula @eq:efficiency.
 
@@ -464,7 +435,7 @@ As the next major step, one needs to upload correction weights histogram to 
   ```,
   caption: [
     Example command for the CCDB upload.
-  ]
+  ],
 ) <lst:ccdb-upload-cmd>
 
 The core of this solution is `FemtoUniverseEfficiencyCorrection` class @efficiency-correction-class, that extends analysis tasks within the O2Physics framework, and allows for querying for the uploaded files, through the same interface as in the initial idea (listing @lst:callback-service-code). Additionally, the class utilizes configurable parameters to determine whether to apply corrections, specify the CCDB URL and histogram paths and timestamps for histogram objects retrieval.

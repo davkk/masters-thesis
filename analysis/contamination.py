@@ -41,9 +41,6 @@ if __name__ == "__main__":
     part1, part2 = args.pair
     parts = 1 + (part1 != part2)
 
-    fig = plt.figure(figsize=(3 * parts, 3), tight_layout=True)
-    gs = fig.add_gridspec(1, parts)
-
     hist_names = [
         "hPrimary",
         "hSecondary",
@@ -52,26 +49,32 @@ if __name__ == "__main__":
 
     part_name = ["one", "two"]
 
-    for idx in range(parts):
-        data = uproot.open(DATA_DIR / f"{args.nocor}.root")
-        assert isinstance(data, uproot.ReadOnlyDirectory)
+    data = uproot.open(DATA_DIR / f"{args.nocor}.root")
+    assert isinstance(data, uproot.ReadOnlyDirectory)
 
-        ax = fig.add_subplot(gs[idx])
+    for idx in range(parts):
+        fig = plt.figure(figsize=(3, 3), tight_layout=True)
+        gs = fig.add_gridspec(1, 1)
+        ax = fig.add_subplot(gs[0])
+
         hists = []
         bottom = None
         total_counts = None
 
         for hist_name in hist_names:
-            hist = data[
-                f"{TASK_NAME}/EfficiencyCorrection/{part_name[idx]}/{hist_name}"
-            ]
-            assert isinstance(hist, TH.Model_TH3F_v4)
-            counts, pt = parse_hist(hist)
+            try:
+                hist = data[
+                    f"{TASK_NAME}/EfficiencyCorrection/{part_name[idx]}/{hist_name}"
+                ]
+                assert isinstance(hist, TH.Model_TH3F_v4)
+                counts, pt = parse_hist(hist)
 
-            if total_counts is None:
-                total_counts = counts
-            else:
-                total_counts += counts
+                if total_counts is None:
+                    total_counts = counts
+                else:
+                    total_counts += counts
+            except uproot.exceptions.KeyInFileError:
+                exit(0)
 
         assert total_counts is not None
 
@@ -113,4 +116,4 @@ if __name__ == "__main__":
         ax.set_xlabel(r"$p_T [\text{GeV/c}]$")
         ax.set_ylabel(r"[%]")
 
-    fig.savefig(DATA_DIR / f"{Path(__file__).stem}.pdf")
+        fig.savefig(DATA_DIR / f"{Path(__file__).stem}_{args.pair[idx]}.pdf")
