@@ -484,7 +484,7 @@ This chapter showcases the analysis results of the correction procedure workflow
 Each particle type displays a distinct reconstruction efficiency and contamination factor. In the case of pions or kaons, the large data sample results in negligible secondary contamination, as seen in @fig:eff-cont. For protons, the smaller event count leads to a significant contribution in the overall sample, which correction calculations must account for.
 
 #figure(
-  pdf("../data/LHC24f3c/effcor/eff_cont.pdf", width: 100%),
+  pdf("../data/eff_cont.pdf", width: 100%),
   caption: [
     A comparison of the reconstruction efficiency (a) and the contamination factor (b) for different particle types.
   ],
