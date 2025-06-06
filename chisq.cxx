@@ -68,7 +68,7 @@ auto chisq(const int dim, const fs::path& file_path) -> void {
   assert(recon_corr != nullptr);
 
   auto chi2 {truth_corr->Chi2Test(recon_corr, "UW CHI2/NDF")};
-  std::println("chi2: {}", chi2);
+  std::println("{}", chi2);
 }
 
 auto main(int argc, char** argv) -> int {

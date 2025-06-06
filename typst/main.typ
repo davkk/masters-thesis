@@ -26,13 +26,20 @@
   set text(24pt, weight: "bold")
   set par(justify: false)
 
+  state("content.switch").update(false)
   pagebreak(to: "odd", weak: false)
+  state("content.switch").update(true)
 
   v(3em)
 
   stack(dir: ttb, spacing: 2em, text(size: 20pt, [Chapter #num]), it.body)
 
   v(1em)
+
+  state("content.pages", (0,)).update(it => {
+    it.push(page)
+    return it
+  })
 }
 #show heading: set block(inset: (y: 0.8em))
 #show heading.where(level: 2): set text(size: 14pt)
@@ -171,12 +178,12 @@ _Słowa kluczowe:_
 #clearpage()
 
 #set page(footer: context {
-  let page-number = counter(page).get().first()
+  let page-number = here().page()
   let is-even = calc.rem(page-number, 2) == 0
 
   rect(stroke: (top: 2pt + bg-main), width: 100%, inset: (top: 1em))[
     #align(if is-even { left } else { right })[
-      #counter(page).display()
+      #page-number
     ]
   ]
 })
@@ -267,11 +274,11 @@ The secondary contamination, $C$, described as the ratio of the number of 
     columns: 2,
     rows: 2,
     gutter: 2em,
+    pdf("../data/LHC24f3c_fix/p-ap/contamination_p.pdf"),
+    pdf("../data/LHC24f3c_fix/p-ap/contamination_ap.pdf"),
+
     pdf("../data/LHC24f3c/pi-api/contamination_pi.pdf"),
     pdf("../data/LHC24f3c/pi-api/contamination_api.pdf"),
-    // pdf("../data/LHC24f3c/p-p/contamination.pdf"),
-    pdf("../data/LHC24f3/k-ak/contamination_ak.pdf"),
-    pdf("../data/LHC24f3/k-ak/contamination_ak.pdf"),
   ),
   caption: [
     Showcase of the contamination percentage in the given data sample for pions, protons, kaons.
@@ -287,6 +294,7 @@ $
 $
 
 The values of $C$ and $epsilon$ typically come from histograms binned in transverse momentum ($p_T$) or in two dimensions as a function of both $p_T$ and pseudorapidity ($eta$), enabling a more accurate study of the efficiency and efficiency corrections.
+
 
 = Extending FemtoUniverse in the O2Physics framework
 
@@ -475,8 +483,9 @@ The rest of the correction macro, along with the remaining steps of the co
 // TODO: talk about analyses, datasets, histograms, format etc.
 This chapter showcases the analysis results of the correction procedure workflow. The data used in the analysis comes from the following datasets:
 
-- *LHC24f3c*: // TODO
 - *LHC24f3*: // TODO
+- *LHC24f3c*: // TODO
+- *LHC24f3c_fix*: // TODO
 
 
 == Reconstruction efficiency, contamination and correction factor
@@ -490,6 +499,14 @@ Each particle type displays a distinct reconstruction efficiency and contaminati
   ],
 ) <fig:eff-cont>
 
+#figure(
+  pdf("../data/weights.pdf", width: 50%),
+  caption: [
+    Comparison of the weights for different particle types.
+  ],
+) <fig:weights>
+
+
 // TODO: Calculating reconstruction efficiencies for pions, kaons, and protons using Monte Carlo data.
 // TODO: plot correction factors / weights
 
@@ -497,11 +514,73 @@ Each particle type displays a distinct reconstruction efficiency and contaminati
 
 The main method of verifying correctness of the applied weights is to do so-called Monte Carlo closure. This is a process of comparing the reconstructed particles to the true ones, and calculating the ratio of the number of reconstructed particles to the number of true particles. The ratio is then compared to the theoretical value, which is the expected number of particles in the detector, given the efficiency of the reconstruction.
 
-=== Correction influence on correlation functions
+=== $p p$ collisions
 
-// TODO: overall impact of corrections on the correlation functions
+#figure(pdf("../data/LHC24f3c_fix/p-p/mc_closure_ratio_1d.pdf"), caption: [
+  MC closure in 1D for proton-proton collisions.
+]) <fig:closure-p-p-1>
+
+#figure(pdf("../data/LHC24f3c_fix/p-p/mc_closure_ratio_2d.pdf"), caption: [
+  MC closure in 2D for proton-proton collisions.
+]) <fig:closure-p-p-2>
+
+=== $p overline(p)$ collisions
+
+#figure(pdf("../data/LHC24f3c_fix/p-ap/mc_closure_ratio_1d.pdf"), caption: [
+  MC closure in 1D for proton anti-proton collisions.
+]) <fig:closure-p-ap-1>
+
+#figure(pdf("../data/LHC24f3c_fix/p-ap/mc_closure_ratio_2d.pdf"), caption: [
+  MC closure in 2D for proton anti-proton collisions.
+]) <fig:closure-p-ap-2>
+
+=== $K^+ K^+$ collisions
+
+#figure(pdf("../data/LHC24f3/k-k/mc_closure_ratio_1d.pdf"), caption: [
+  MC closure in 1D for kaon+ kaon+ collisions.
+]) <fig:closure-k-k-1>
+
+#figure(pdf("../data/LHC24f3/k-k/mc_closure_ratio_2d.pdf"), caption: [
+  MC closure in 2D for kaon+ kaon+ collisions.
+]) <fig:closure-k-k-2>
+
+=== $K^+ K^-$ collisions
+
+#figure(pdf("../data/LHC24f3/k-ak/mc_closure_ratio_1d.pdf"), caption: [
+  MC closure in 1D for kaon+ kaon- collisions.
+]) <fig:closure-k-ak-1>
+
+#figure(pdf("../data/LHC24f3/k-ak/mc_closure_ratio_2d.pdf"), caption: [
+  MC closure in 2D for kaon+ kaon- collisions.
+]) <fig:closure-k-ak-2>
+
+=== $pi^+ pi^+$ collisions
+
+#figure(pdf("../data/LHC24f3c/pi-pi/mc_closure_ratio_1d.pdf"), caption: [
+  MC closure in 1D for pion+ pion+ collisions.
+]) <fig:closure-pi-pi-1>
+
+#figure(pdf("../data/LHC24f3c/pi-pi/mc_closure_ratio_2d.pdf"), caption: [
+  MC closure in 2D for pion+ pion+ collisions.
+]) <fig:closure-pi-pi-2>
+
+=== $pi^+ pi^-$ collisions
+
+#figure(pdf("../data/LHC24f3c/pi-api/mc_closure_ratio_1d.pdf"), caption: [
+  MC closure in 1D for pion+ pion- collisions.
+]) <fig:closure-pi-api-1>
+
+#figure(pdf("../data/LHC24f3c/pi-api/mc_closure_ratio_2d.pdf"), caption: [
+  MC closure in 2D for pion+ pion- collisions.
+]) <fig:closure-pi-api-2>
+
 
 === Efficiency influence in 1d vs. 2d
+
+#figure(pdf("../data/chisq_test.pdf", width: 90%), caption: [
+  Comparison of the chi-squared values for truth vs. 1D and truth vs. 2D corrections.
+]) <fig:chisq-comparison>
+
 
 == Correction on real data
 

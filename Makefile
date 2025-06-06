@@ -22,6 +22,7 @@ hist: datafiles.csv
 		::: `cat datafiles.csv | fzf --layout=reverse -m`
 
 hist-all: datafiles.csv
+	python analysis/chisq_test.py
 	parallel --progress python {} ::: ${SCRIPTS_DATASET}
 	parallel --progress ./run.sh {1} {2} \
 		::: ${SCRIPTS_RUN} \
