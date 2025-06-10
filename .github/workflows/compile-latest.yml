@@ -1,4 +1,4 @@
-name: Compile LaTeX and update release
+name: Compile Typst and update release
 
 on:
   push:
@@ -48,7 +48,7 @@ jobs:
         run: mv typst/main.pdf typst/DawidKarpinski-mgr.pdf
 
       - name: Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
           name: "Master's Thesis"
