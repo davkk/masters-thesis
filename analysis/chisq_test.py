@@ -48,8 +48,6 @@ for bars in [bars1, bars2]:
             fontsize=8,
         )
 
-ax.set_title("Chi-squared: 1D vs 2D")
-
 ax.set_xlabel("Particle pair")
 ax.set_xticks(x)
 ax.set_xticklabels(labels, ha="center")

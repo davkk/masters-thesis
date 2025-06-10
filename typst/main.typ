@@ -601,8 +601,11 @@ Each particle type displays a distinct reconstruction efficiency and contamina
   MC closure in 2D for pion+ pion- collisions.
 ]) <fig:closure-pi-api-2>
 
+#pagebreak()
 
 == Efficiency influence in 1d vs. 2d
+
+To quantify the impact of the correction on the efficiency, I have compared the chi-squared values of the truth and the 1D and 2D corrections. Presented in @fig:chisq-comparison, the results show an improvement across every particle pair.
 
 #figure(
   pdf("../data/chisq_test.pdf", width: 90%),
