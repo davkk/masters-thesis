@@ -5,6 +5,7 @@ requires-python = ">=3.13"
 dependencies = [
     "matplotlib>=3.10.1",
     "mplhep>=0.3.57",
+    "pymupdf>=1.26.1",
     "pyroot>=0.3.1",
     "scienceplots>=2.1.1",
     "scipy>=1.15.3",

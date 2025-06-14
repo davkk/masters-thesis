@@ -183,6 +183,9 @@ _Słowa kluczowe:_
 
 = Introduction
 
+// TODO: opisac motywacje i cel pracy
+
+
 == LHC and Run 3
 
 The *Large Hadron Collider* (LHC), located at the European Organization for Nuclear Research (CERN) near Geneva, Switzerland, stands as the world's largest particle accelerator. Created in 2008, it accelerates and collides particles, primarily protons and heavy ions (e.g., lead). These collisions produce a variety of subatomic particles, allowing us to test predictions of the Standard Model and search for new phenomena beyond it.
@@ -227,7 +230,7 @@ Next, through the event mixing, in which pairs consist of particles from diff
 
 // TODO: write more why?
 
-As the last step, one should normalize both distributions normalized by the corresponding numbers of pairs in the same events, $N_"same"$, and mixed events, $N_"mixed"}$, respectively.
+As the last step, one should normalize both distributions normalized by the corresponding numbers of pairs in the same events, $N_"same"$, and mixed events, $N_"mixed"$, respectively.
 
 Finally, the formula for the angular correlation function takes the form:
 $
@@ -297,7 +300,7 @@ The values of $C$ and $epsilon$ typically come from histograms binned in tra
 
 == Framework — O2 and O2Physics
 
-The major upgrade during Long Shutdown 2, introduced a new computing system called *Online-Offline (O2)*. This system replaces the previous data processing model with a more efficient approach that minimizes data volume through online track reconstruction. To support this, ALICE deployed two specialized computing farms: the First Level Processor (FLP) farm in Counting Room 1 (CR1) and the Event Processing Node (EPN) farm in Counting Room 0 (CR0). The FLP farm first reduces raw detector data from 3.5 TB/s to 900 GB/s by performing initial data suppression before sending it via Infiniband to the EPN farm. There, the first reconstruction pass further reduces the data to 130 GB/s, which then gets written to permanent storage. @alice-o2
+The major upgrade during Long Shutdown 2, introduced a new computing system called *Online-Offline (O2)*. This system replaces the previous data processing model with a more efficient approach that minimizes data volume through online track reconstruction. To support this, ALICE deployed two specialized computing farms: the First Level Processor (FLP) farm in Counting Room 1 (CR1) and the Event Processing Node (EPN) farm in Counting Room 0 (CR0). The FLP farm first reduces raw detector data from 3.5 TB/s to 900 GB/s by performing initial data suppression before sending it via Infiniband to the EPN farm. There, the first reconstruction pass further reduces the data to 130 GB/s, which then gets written to permanent storage @alice-o2.
 
 The O2 framework introduces an entirely new software ecosystem, designed from scratch to support this architecture, by handling detector readout, data quality control, and operational services. *O2Physics* on the other hand acts as the complementary part to O2 for the LHC data analysis. It provides a way to define and run analysis tasks, which then get executed in parallel on the cluster. Designed to be flexible and extendable, the framework allows physicists to add their own analyses and modify existing ones.
 
@@ -353,7 +356,7 @@ My first solution (@fig:workflow-initial) leveraged the O2 framework's so-calle
 
 However, the above idea has a major drawback. It assumes that the analysis task runs on a single machine, which is not the case when running in a parallel and a distributed environment, e.g. the Worldwide LHC Computing Grid.
 
-The *WLCG*, simply referred to as _Grid_, constitutes a global collaboration of approximately 170 computing centers across more than 40 countries. This computing infrastructure integrates around 1.4 million computer cores and 1.5 exabytes of storage. Its primary objective involves storing, distributing, and analyzing the substantial amounts of data generated annually by the Large Hadron Collider (LHC) at CERN.
+The *WLCG*, simply referred to as _Grid_, constitutes a global collaboration of approximately 170 computing centers across more than 40 countries. This computing infrastructure integrates around 1.4 million computer cores and 1.5 exabytes of storage. Its primary objective involves storing, distributing, and analyzing the substantial amounts of data generated annually by the LHC at CERN.
 
 Therefore, when running the task on the Grid, the system splits a given dataset into smaller chunks, processes each in parallel on individual nodes (machines), and eventually merges the results. This aspect causes the custom callback to execute as many times as the number of jobs created.
 
@@ -409,7 +412,7 @@ Next, it assesses contamination from secondary sources by reusing already avai
   ],
 ) <lst:corr-macro-cont>
 
-The macro then computes the final weights by combining the efficiency and secondary contamination distributions to write the resulting histograms into a new ROOT file @lst:corr-macro-weig.
+The macro then computes the final weights by combining the efficiency and secondary contamination distributions to write the resulting histograms into a new ROOT file (@lst:corr-macro-weig).
 
 #figure(
   ```cpp
@@ -428,7 +431,7 @@ The macro then computes the final weights by combining the efficiency and s
   ],
 ) <lst:corr-macro-weig>
 
-As the next major step, one needs to upload correction weights histogram to the CCDB, in a form of ROOT object file. The O2 developer environment (`alienv`) comes with a helpful tool called `o2-ccdb-upload` that abstracts all the details from the user, and allows to easily add any ROOT file to the CCDB. The listing \ref{lst:ccdb-upload-cmd} contains an exemplary usage of the tool for the case of the correction weights histogram.
+As the next major step, one needs to upload correction weights histogram to the CCDB, in a form of ROOT object file. The O2 developer environment (`alienv`) comes with a helpful tool called `o2-ccdb-upload` that abstracts all the details from the user, and allows to easily add any ROOT file to the CCDB. The @lst:ccdb-upload-cmd contains an exemplary usage of the tool for the case of the correction weights histogram.
 
 #figure(
   ```bash
@@ -541,65 +544,69 @@ Each particle type displays a distinct reconstruction efficiency and contamina
   Comparison of the weights for different particle types.
 ]) <fig:weights>
 
-== $p p$ collisions
 
-#figure(pdf("../data/LHC24f3c_fix/p-p/mc_closure_ratio_1d.pdf"), caption: [
-  MC closure in 1D for proton-proton collisions.
-]) <fig:closure-p-p-1>
-
-#figure(pdf("../data/LHC24f3c_fix/p-p/mc_closure_ratio_2d.pdf"), caption: [
-  MC closure in 2D for proton-proton collisions.
-]) <fig:closure-p-p-2>
-
-== $p overline(p)$ collisions
-
-#figure(pdf("../data/LHC24f3c_fix/p-ap/mc_closure_ratio_1d.pdf"), caption: [
-  MC closure in 1D for proton anti-proton collisions.
-]) <fig:closure-p-ap-1>
-
-#figure(pdf("../data/LHC24f3c_fix/p-ap/mc_closure_ratio_2d.pdf"), caption: [
-  MC closure in 2D for proton anti-proton collisions.
-]) <fig:closure-p-ap-2>
-
-== $K^+ K^+$ collisions
-
-#figure(pdf("../data/LHC24f3/k-k/mc_closure_ratio_1d.pdf"), caption: [
-  MC closure in 1D for kaon+ kaon+ collisions.
-]) <fig:closure-k-k-1>
-
-#figure(pdf("../data/LHC24f3/k-k/mc_closure_ratio_2d.pdf"), caption: [
-  MC closure in 2D for kaon+ kaon+ collisions.
-]) <fig:closure-k-k-2>
-
-== $K^+ K^-$ collisions
-
-#figure(pdf("../data/LHC24f3/k-ak/mc_closure_ratio_1d.pdf"), caption: [
-  MC closure in 1D for kaon+ kaon- collisions.
-]) <fig:closure-k-ak-1>
-
-#figure(pdf("../data/LHC24f3/k-ak/mc_closure_ratio_2d.pdf"), caption: [
-  MC closure in 2D for kaon+ kaon- collisions.
-]) <fig:closure-k-ak-2>
-
-== $pi^+ pi^+$ collisions
+== $pi^+ pi^+$ correlation functions
 
 #figure(pdf("../data/LHC24f3c/pi-pi/mc_closure_ratio_1d.pdf"), caption: [
-  MC closure in 1D for pion+ pion+ collisions.
+  MC closure in 1D for pion+ pion+ from proton-proton collisions.
 ]) <fig:closure-pi-pi-1>
 
 #figure(pdf("../data/LHC24f3c/pi-pi/mc_closure_ratio_2d.pdf"), caption: [
-  MC closure in 2D for pion+ pion+ collisions.
+  MC closure in 2D for pion+ pion+ from proton-proton collisions.
 ]) <fig:closure-pi-pi-2>
 
-== $pi^+ pi^-$ collisions
+== $pi^+ pi^-$ correlation functions
 
 #figure(pdf("../data/LHC24f3c/pi-api/mc_closure_ratio_1d.pdf"), caption: [
-  MC closure in 1D for pion+ pion- collisions.
+  MC closure in 1D for pion+ pion- from proton-proton collisions.
 ]) <fig:closure-pi-api-1>
 
 #figure(pdf("../data/LHC24f3c/pi-api/mc_closure_ratio_2d.pdf"), caption: [
-  MC closure in 2D for pion+ pion- collisions.
+  MC closure in 2D for pion+ pion- from proton-proton collisions.
 ]) <fig:closure-pi-api-2>
+
+
+== $K^+ K^+$ correlation functions
+
+#figure(pdf("../data/LHC24f3/k-k/mc_closure_ratio_1d.pdf"), caption: [
+  MC closure in 1D for kaon+ kaon+ from proton-proton collisions.
+]) <fig:closure-k-k-1>
+
+#figure(pdf("../data/LHC24f3/k-k/mc_closure_ratio_2d.pdf"), caption: [
+  MC closure in 2D for kaon+ kaon+ from proton-proton collisions.
+]) <fig:closure-k-k-2>
+
+== $K^+ K^-$ correlation functions
+
+#figure(pdf("../data/LHC24f3/k-ak/mc_closure_ratio_1d.pdf"), caption: [
+  MC closure in 1D for kaon+ kaon- from proton-proton collisions.
+]) <fig:closure-k-ak-1>
+
+#figure(pdf("../data/LHC24f3/k-ak/mc_closure_ratio_2d.pdf"), caption: [
+  MC closure in 2D for kaon+ kaon- from proton-proton collisions.
+]) <fig:closure-k-ak-2>
+
+
+== $p p$ correlation functions
+
+#figure(pdf("../data/LHC24f3c_fix/p-p/mc_closure_ratio_1d.pdf"), caption: [
+  MC closure in 1D for proton-proton from proton-proton collisions.
+]) <fig:closure-p-p-1>
+
+#figure(pdf("../data/LHC24f3c_fix/p-p/mc_closure_ratio_2d.pdf"), caption: [
+  MC closure in 2D for proton-proton from proton-proton collisions.
+]) <fig:closure-p-p-2>
+
+== $p overline(p)$ correlation functions
+
+#figure(pdf("../data/LHC24f3c_fix/p-ap/mc_closure_ratio_1d.pdf"), caption: [
+  MC closure in 1D for proton anti-proton from proton-proton collisions.
+]) <fig:closure-p-ap-1>
+
+#figure(pdf("../data/LHC24f3c_fix/p-ap/mc_closure_ratio_2d.pdf"), caption: [
+  MC closure in 2D for proton anti-proton from proton-proton collisions.
+]) <fig:closure-p-ap-2>
+
 
 #pagebreak()
 
