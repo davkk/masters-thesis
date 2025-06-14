@@ -13,10 +13,6 @@ TH2* get_hist(TFile* file, const std::string& name) {
   return dynamic_cast<TH2*>(file->Get(name.c_str()));
 }
 
-TH1* project_hist(TH2* hist, const std::string& projection) {
-  return hist->ProjectionX(projection.c_str());
-}
-
 template <typename H>
 H* clone_hist(H* hist, const std::string& name) {
   return dynamic_cast<H*>(hist->Clone(name.c_str()));
