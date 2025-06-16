@@ -210,7 +210,7 @@ One can construct the angular correlation function using two quantities: pseudo
   Showcase of the angles considered in angular correlation function analysis.
 ]) <fig:detector-angles>
 
-First, the pseudorapidity, $eta$, relates to the angle between the particle momentum $p$ and the beam axis ($theta$, @fig:detector-angles) as:
+First, the pseudorapidity, $eta$, relates to the angle between the particle momentum $p$ and the beam axis ($theta$, @fig:detector-angles) as
 $
   eta = -ln [tan(theta/2)].
 $
@@ -229,7 +229,7 @@ Next, through the event mixing, in which pairs consist of particles from diff
 
 As the last step, one should normalize both distributions normalized by the corresponding numbers of pairs in the signal distribution, $N_"same"$, and background distribution, $N_"mixed"$, respectively.
 
-Finally, the formula for the angular correlation function takes the form:
+Finally, the formula for the angular correlation function takes the form
 $
   C(Delta eta, Delta phi) = S(Delta eta, Delta phi) / B(Delta eta, Delta phi) N_"mixed" / N_"same".
 $
@@ -246,7 +246,7 @@ To model how these particles would appear in the detector, their trajectories
 
 === Reconstruction efficiency
 
-Calculation of reconstruction efficiency involves taking the ratio of the number of reconstructed particles to the number of simulated (true) particles:
+Calculation of reconstruction efficiency involves taking the ratio of the number of reconstructed particles to the number of simulated (true) particles
 $
   epsilon = N_"recon." / N_"truth".
 $ <eq:efficiency>
@@ -276,15 +276,17 @@ Ensuring the correct results in the efficiency calculations requires consider
   ],
 ) <fig:contamination-proton>
 
-As shown in @fig:contamination-proton, contamination for protons exceeds that of pions. This difference results from the lower number of protons in the data sample, especially in lower range of transverse momentum.
+As shown in @fig:contamination-proton, contamination for protons exceeds that of pions. This difference results from the lower number of protons in the data sample, most prominently in the lower range of transverse momentum.
 
-// TODO: talk about material
+The contamination includes contributions from both secondary particles and particles produced through interactions with detector material. In this work, both sources contribute to the contamination factor used for corrections.
+
+// TODO: talk about why there is more material for protons?
 
 #pagebreak()
 
 === Efficiency correction weights
 
-Having calculated the efficiency histogram and secondary contamination, one can calculate the weights as:
+Having calculated the efficiency histogram and secondary contamination, one can calculate the weights as
 $
   w = (1 - C) / epsilon.
 $
@@ -324,7 +326,7 @@ The goal of the new approach for correction builds on the idea of using the
 
 After many attempts to implement the corrections application in the O2Physics framework, the new approach would replace task-specific solutions with a single, reusable method. This effort led to the creation of a class, `FemtoUniverseEfficiencyCorrection.h`, which serves as an abstraction for other analysis tasks to use.
 
-My first solution (@fig:workflow-initial) leveraged the O2 framework's so-called callback service, which allows any task to register a callback function that would execute custom code on special dispatched events, e.g. `Start`, `Stop`, `EndOfStream`, etc. The `CallbackService.h` file lists all the available event IDs @callback-service. I have settled for `Stop` event (listing @lst:callback-service-code), on which a callback uploaded the calculated correction factors to the CCDB only once, at the end of the analysis task execution. It used the `CCDBApi::storeAsTFileAny` method to interact with the CCDB @ccdbapi-store. This flow has worked as expected when running locally.
+My first solution (@fig:workflow-initial) leveraged the O2 framework's so-called callback service, which allows any task to register a callback function that would execute custom code on special dispatched events, e.g. `Start`, `Stop`, `EndOfStream`, etc. The `CallbackService.h` file lists all the available event IDs @callback-service. I have settled for `Stop` event (@lst:callback-service-code), on which a callback uploaded the calculated correction factors to the CCDB only once, at the end of the analysis task execution. It used the `CCDBApi::storeAsTFileAny` method to interact with the CCDB @ccdbapi-store. This flow has worked as expected when running locally.
 
 #figure(image("img/workflow-initial.png", width: 70%), caption: [
   Visualization of the initial workflow for efficiency correction.
@@ -366,7 +368,7 @@ The initial ideas for the correction procedure proved unusable at such large s
   Visualization of the next workflow idea for efficiency correction.
 ]) <fig:workflow-temp>
 
-The first step requires generating a histogram of reconstruction efficiency weights for the desired particle type. For this, I have created a ROOT macro that acts as an initial utility for the rest of the flow. The macro retrieves the required histograms from a results file that Grid generated at the end of a run. Once it gets the data, it calculates the ratio bin-by-bin (listing @lst:corr-macro-eff), between reconstructed and truth histograms to calculate the efficiency as stated in the formula @eq:efficiency.
+The first step requires generating a histogram of reconstruction efficiency weights for the desired particle type. For this, I have created a ROOT macro that acts as an initial utility for the rest of the flow. The macro retrieves the required histograms from a results file that Grid generated at the end of a run. Once it gets the data, it calculates the ratio bin-by-bin (@lst:corr-macro-eff), between reconstructed and truth histograms to calculate the efficiency as stated in the formula @eq:efficiency.
 
 #figure(
   ```cpp
@@ -410,6 +412,15 @@ Next, it assesses contamination from secondary sources by reusing already avai
   ],
 ) <lst:corr-macro-cont>
 
+Each particle type shows a distinct reconstruction efficiency and contamination factor. In the case of kaons, secondary contamination remains negligible. For pions, contamination stays low but nonzero, as shown in @fig:eff-cont. Protons, on the other hand, exhibit a more significant contribution from secondary contamination, which correction calculations must account for.
+
+#figure(
+  pdf("../data/eff_cont.pdf", width: 100%),
+  caption: [
+    A comparison of the reconstruction efficiency (a) and the contamination factor (b) for different particle types.
+  ],
+) <fig:eff-cont>
+
 The macro then computes the final weights by combining the efficiency and secondary contamination distributions to write the resulting histograms into a new ROOT file (@lst:corr-macro-weig).
 
 #figure(
@@ -444,11 +455,15 @@ As the next major step, one needs to upload correction weights histogram to 
   ],
 ) <lst:ccdb-upload-cmd>
 
-The core of this solution is `FemtoUniverseEfficiencyCorrection` class @efficiency-correction-class, that extends analysis tasks within the O2Physics framework, and allows for querying for the uploaded files, through the same interface as in the initial idea (listing @lst:callback-service-code). Additionally, the class utilizes configurable parameters to determine whether to apply corrections, specify the CCDB URL and histogram paths and timestamps for histogram objects retrieval.
+#figure(pdf("../data/weights.pdf", width: 69%), caption: [
+  Comparison of the weights for different particle types.
+]) <fig:weights>
+
+The core of this solution is `FemtoUniverseEfficiencyCorrection` class @efficiency-correction-class, that extends analysis tasks within the O2Physics framework, and allows for querying for the uploaded files, through the same interface as in the initial idea (@lst:callback-service-code). Additionally, the class utilizes configurable parameters to determine whether to apply corrections, specify the CCDB URL and histogram paths and timestamps for histogram objects retrieval.
 
 == Extending corrections beyond 1D - the final solution
 
-As the final development step, we wanted to generalize the correction procedure. Hence, I opted to expand it beyond a single dimension ($p_{T}$ axis) to support two‐ and three‐dimensional correction weights by filling 3D histograms with variables such as $p_{T}$, $eta$ and event centrality (or multiplicity). This approach unifies the calculation of reconstruction efficiency, secondary contamination and final weights across any combination of the variables.
+As the final development step, we wanted to generalize the correction procedure. Hence, I opted to expand it beyond a single dimension ($p_T$ axis) to support two‐ and three‐dimensional correction weights by filling 3D histograms with variables such as $p_T$, $eta$ and event centrality (or multiplicity). This approach unifies the calculation of reconstruction efficiency, secondary contamination and final weights across any combination of the variables.
 
 When the user specifies a projection through a flag, the macro calls ROOT's `Project3D()` method to collapse the third axis into a 1D or 2D distribution (@lst:corr-macro-proj).
 
@@ -475,22 +490,6 @@ The rest of the correction macro, along with the remaining steps of the co
     Snippet of the correction macro - projection.
   ],
 ) <lst:corr-macro-proj>
-
-
-== Reconstruction efficiency, contamination and correction factor
-
-Each particle type shows a distinct reconstruction efficiency and contamination factor. In the case of kaons, secondary contamination remains negligible. For pions, contamination stays low but nonzero, as shown in @fig:eff-cont. Protons, on the other hand, exhibit a more significant contribution from secondary contamination, which correction calculations must account for.
-
-#figure(
-  pdf("../data/eff_cont.pdf", width: 100%),
-  caption: [
-    A comparison of the reconstruction efficiency (a) and the contamination factor (b) for different particle types.
-  ],
-) <fig:eff-cont>
-
-#figure(pdf("../data/weights.pdf", width: 69%), caption: [
-  Comparison of the weights for different particle types.
-]) <fig:weights>
 
 
 = MC closure
@@ -540,72 +539,45 @@ All datasets used for the MC closure test come from simulations based on the P
 
 == $pi^+ pi^+$ correlation functions
 
-#figure(pdf("../data/LHC24f3c/pi-pi/mc_closure_ratio_1d.pdf"), caption: [
-  MC closure in 1D for pion+ pion+ from proton-proton collisions.
-]) <fig:closure-pi-pi-1>
-
-#figure(pdf("../data/LHC24f3c/pi-pi/mc_closure_ratio_2d.pdf"), caption: [
-  MC closure in 2D for pion+ pion+ from proton-proton collisions.
-]) <fig:closure-pi-pi-2>
+#figure(pdf("../data/LHC24f3c/pi-pi/mc_closure_ratio.pdf"), caption: [
+  MC closure in 1D and 2D for pion+ pion+ from proton-proton collisions.
+]) <fig:closure-pi-pi>
 
 == $pi^+ pi^-$ correlation functions
 
-#figure(pdf("../data/LHC24f3c/pi-api/mc_closure_ratio_1d.pdf"), caption: [
-  MC closure in 1D for pion+ pion- from proton-proton collisions.
-]) <fig:closure-pi-api-1>
-
-#figure(pdf("../data/LHC24f3c/pi-api/mc_closure_ratio_2d.pdf"), caption: [
-  MC closure in 2D for pion+ pion- from proton-proton collisions.
-]) <fig:closure-pi-api-2>
-
+#figure(pdf("../data/LHC24f3c/pi-api/mc_closure_ratio.pdf"), caption: [
+  MC closure in 1D and 2D for pion+ pion- from proton-proton collisions.
+]) <fig:closure-pi-api>
 
 == $K^+ K^+$ correlation functions
 
-#figure(pdf("../data/LHC24f3/k-k/mc_closure_ratio_1d.pdf"), caption: [
-  MC closure in 1D for kaon+ kaon+ from proton-proton collisions.
+#figure(pdf("../data/LHC24f3/k-k/mc_closure_ratio.pdf"), caption: [
+  MC closure in 1D and 2D for kaon+ kaon+ from proton-proton collisions.
 ]) <fig:closure-k-k-1>
-
-#figure(pdf("../data/LHC24f3/k-k/mc_closure_ratio_2d.pdf"), caption: [
-  MC closure in 2D for kaon+ kaon+ from proton-proton collisions.
-]) <fig:closure-k-k-2>
 
 == $K^+ K^-$ correlation functions
 
-#figure(pdf("../data/LHC24f3/k-ak/mc_closure_ratio_1d.pdf"), caption: [
-  MC closure in 1D for kaon+ kaon- from proton-proton collisions.
+#figure(pdf("../data/LHC24f3/k-ak/mc_closure_ratio.pdf"), caption: [
+  MC closure in 1D and 2D for kaon+ kaon- from proton-proton collisions.
 ]) <fig:closure-k-ak-1>
-
-#figure(pdf("../data/LHC24f3/k-ak/mc_closure_ratio_2d.pdf"), caption: [
-  MC closure in 2D for kaon+ kaon- from proton-proton collisions.
-]) <fig:closure-k-ak-2>
-
 
 == $p p$ correlation functions
 
-#figure(pdf("../data/LHC24f3c_fix/p-p/mc_closure_ratio_1d.pdf"), caption: [
-  MC closure in 1D for proton-proton from proton-proton collisions.
+#figure(pdf("../data/LHC24f3c_fix/p-p/mc_closure_ratio.pdf"), caption: [
+  MC closure in 1D and 2D for proton-proton from proton-proton collisions.
 ]) <fig:closure-p-p-1>
-
-#figure(pdf("../data/LHC24f3c_fix/p-p/mc_closure_ratio_2d.pdf"), caption: [
-  MC closure in 2D for proton-proton from proton-proton collisions.
-]) <fig:closure-p-p-2>
 
 == $p overline(p)$ correlation functions
 
-#figure(pdf("../data/LHC24f3c_fix/p-ap/mc_closure_ratio_1d.pdf"), caption: [
-  MC closure in 1D for proton anti-proton from proton-proton collisions.
+#figure(pdf("../data/LHC24f3c_fix/p-ap/mc_closure_ratio.pdf"), caption: [
+  MC closure in 1D and 2D for proton anti-proton from proton-proton collisions.
 ]) <fig:closure-p-ap-1>
-
-#figure(pdf("../data/LHC24f3c_fix/p-ap/mc_closure_ratio_2d.pdf"), caption: [
-  MC closure in 2D for proton anti-proton from proton-proton collisions.
-]) <fig:closure-p-ap-2>
-
 
 #pagebreak()
 
 == Efficiency influence in 1d vs. 2d
 
-To quantify the influence of efficiency corrections, I have computed the unweighted $chi^2$ values between the MC truth and the corrected correlation functions. For both 1D and 2D corrections, I have compared the resulting angular correlation functions using ROOT's `Chi2Test` method with. As shown in @fig:chisq-comparison, the results suggest a consistent improvement in corrected functions when applying for two dimensions, across all analyzed particle pairs.
+To quantify the influence of efficiency corrections, I have computed the unweighted $chi^2$ values between the MC truth and the corrected correlation functions. For both 1D and 2D corrections, I have compared the resulting angular correlation functions using ROOT's `Chi2Test` method. As shown in @fig:chisq-comparison, the results suggest a consistent improvement in corrected functions when applying for two dimensions, across all analyzed particle pairs.
 
 #figure(
   pdf("../data/chisq_test.pdf", width: 90%),

@@ -13,7 +13,7 @@ from uproot.models import TH
 if __name__ == "__main__":
     colors, markers = common.setup_pyplot()
 
-    fig = plt.figure(figsize=(3, 3), tight_layout=True)
+    fig = plt.figure(figsize=(4, 3), tight_layout=True)
     gs = fig.add_gridspec(1, 1)
     ax = fig.add_subplot(gs[0])
 
@@ -50,12 +50,14 @@ if __name__ == "__main__":
 
                 counts, errors, pts = parse_hist(hist_eff)
 
+                marker = list(markers.keys())[(particles - 1) % len(markers)]
+
                 ax.errorbar(
                     pts,
                     counts,
                     yerr=errors,
-                    markersize=1,
-                    marker=markers[(particles - 1) % len(markers)],
+                    markersize=markers[marker],
+                    marker=marker,
                     linestyle="none",
                     label=f"${common.to_latex[part.split('-')[idx]]}$",
                 )
@@ -64,10 +66,9 @@ if __name__ == "__main__":
     ax.set_xlabel(r"$p_T\ [\text{GeV}/c]$")
 
     ax.legend(
-        loc="lower center",
-        bbox_to_anchor=(0.5, 1.02),
-        ncols=particles // 2,
-        fontsize=6,
+        loc="center left",
+        bbox_to_anchor=(1.0, 0.5),
+        ncols=1,
     )
 
     fig.savefig(DATA_DIR / f"{Path(__file__).stem}.pdf")

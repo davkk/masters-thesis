@@ -1,4 +1,3 @@
-import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -90,7 +89,7 @@ def corr_func(
 
 
 args = common.parse_args()
-colors, markers = common.setup_pyplot(base_size=5)
+colors, markers = common.setup_pyplot()
 pair = "-".join(args.pair)
 
 TRUTH_TASK_NAME = "femto-universe-pair-task-track-track-mc-truth"
@@ -125,42 +124,33 @@ cf_nocors = corr_func(
     f"{TASK_NAME_BASE}_nocor/MixedEvent_MC/DeltaEtaDeltaPhi",
 )
 
-TASK_NAME_COR = TASK_NAME_BASE + ("_1d" if int(args.dim) > 0 else "")
-cf_cors_1d = corr_func(
+TASK_NAME_COR = TASK_NAME_BASE + (f"_{args.dim}d" if int(args.dim) > 0 else "")
+cf_cors = corr_func(
     data_cor,
     f"{TASK_NAME_COR}/SameEvent_MC/DeltaEtaDeltaPhi",
     f"{TASK_NAME_COR}/MixedEvent_MC/DeltaEtaDeltaPhi",
 )
-
-TASK_NAME_COR = TASK_NAME_BASE + ("_2d" if int(args.dim) > 0 else "")
-cf_cors_2d = corr_func(
-    data_cor,
-    f"{TASK_NAME_COR}/SameEvent_MC/DeltaEtaDeltaPhi",
-    f"{TASK_NAME_COR}/MixedEvent_MC/DeltaEtaDeltaPhi",
-)
-
 
 if __name__ == "__main__":
-    if int(args.dim) > 1:
-        sys.exit(0)
-
-    fig = plt.figure(figsize=(8, 4))
+    fig = plt.figure(figsize=(10, 5), tight_layout=True)
     gs = fig.add_gridspec(2, 2, height_ratios=[3, 2])
-    fig.subplots_adjust(top=1, hspace=0.05, wspace=0.2)
 
     X_labels = [r"\Delta\varphi", r"\Delta\eta"]
 
-    for idx, (cf_truth, cf_nocor, cf_cor_1d, cf_cor_2d) in enumerate(
-        zip(cf_truths, cf_nocors, cf_cors_1d, cf_cors_2d)
+    for idx, (cf_truth, cf_nocor, cf_cor) in enumerate(
+        zip(cf_truths, cf_nocors, cf_cors)
     ):
         mask = [phi_mask, eta_mask][idx]
         X = [cf_truth.phi[mask], cf_truth.eta[mask]]
 
         top = fig.add_subplot(gs[0, idx])
 
-        top.plot(
+        top.errorbar(
             X[idx],
             cf_truth.val[mask],
+            yerr=cf_truth.err[mask],
+            fmt="o",
+            color=colors[0],
             label="Truth",
         )
         top.errorbar(
@@ -168,73 +158,40 @@ if __name__ == "__main__":
             cf_nocor.val[mask],
             yerr=cf_nocor.err[mask],
             fmt="s",
-            markersize=markers["s"],
+            color=colors[3],
             markerfacecolor="none",
             label="Recon. w/o corrections",
         )
         top.errorbar(
             X[idx],
-            cf_cor_1d.val[mask],
-            yerr=cf_cor_1d.err[mask],
+            cf_cor.val[mask],
+            yerr=cf_cor.err[mask],
             fmt="o",
-            markersize=markers["o"],
+            color=colors[1],
             markerfacecolor="none",
-            label="Recon. w/ 1D corrections",
-        )
-        top.errorbar(
-            X[idx],
-            cf_cor_2d.val[mask],
-            yerr=cf_cor_2d.err[mask],
-            fmt="h",
-            markersize=markers["h"],
-            markerfacecolor="none",
-            label="Recon. w/ 2D corrections",
+            label="Recon. w/ corrections",
         )
         top.set_ylabel(f"$C({X_labels[idx]})$")
-        if idx == 0:
-            top.legend(
-                loc="lower center",
-                bbox_to_anchor=(0.5, 1.02),
-                bbox_transform=fig.transFigure,
-                ncols=4,
-                title=f"Correlation function - ${''.join(args.pair_tex)}$",
-            )
+        top.legend(title=f"Correlation function - ${''.join(args.pair_tex)}$")
 
         bot = fig.add_subplot(gs[1, idx], sharex=top)
         plt.setp(top.get_xticklabels(), visible=False)
 
-        ratio_1d = cf_cor_1d.val[mask] / cf_truth.val[mask]
+        ratio = cf_cor.val[mask] / cf_truth.val[mask]
 
-        rel_err_cor_1d = cf_cor_1d.err[mask] / np.maximum(cf_cor_1d.val[mask], 1e-10)
-        rel_err_truth_1d = cf_truth.err[mask] / np.maximum(cf_truth.val[mask], 1e-10)
-        ratio_err_1d = ratio_1d * np.sqrt(rel_err_cor_1d**2 + rel_err_truth_1d**2)
+        rel_err_cor = cf_cor.err[mask] / np.maximum(cf_cor.val[mask], 1e-10)
+        rel_err_truth = cf_truth.err[mask] / np.maximum(cf_truth.val[mask], 1e-10)
+        ratio_err = ratio * np.sqrt(rel_err_cor**2 + rel_err_truth**2)
         bot.errorbar(
             X[idx],
-            ratio_1d,
-            yerr=ratio_err_1d,
-            fmt="o",
-            markersize=markers["o"] * 2 / 3,
-            color=colors[2],
-            label="1D",
-        )
-        ratio_2d = cf_cor_2d.val[mask] / cf_truth.val[mask]
-
-        rel_err_cor_2d = cf_cor_2d.err[mask] / np.maximum(cf_cor_2d.val[mask], 1e-10)
-        rel_err_truth_2d = cf_truth.err[mask] / np.maximum(cf_truth.val[mask], 1e-10)
-        ratio_err_2d = ratio_2d * np.sqrt(rel_err_cor_2d**2 + rel_err_truth_2d**2)
-        bot.errorbar(
-            X[idx],
-            ratio_2d,
-            yerr=ratio_err_2d,
-            fmt="H",
-            markersize=markers["H"] * 2 / 3,
-            color=colors[3],
-            label="2D",
+            ratio,
+            yerr=ratio_err,
+            fmt=".",
+            color=colors[0],
         )
 
-        bot.legend()
         bot.axhline(1, color=colors[0], linestyle="-", linewidth=0.3)
         bot.set_xlabel(f"${X_labels[idx]}$")
         bot.set_ylabel("Ratio (recon. w/ corr. over truth)")
 
-    fig.savefig(DATA_DIR / f"{Path(__file__).stem}.pdf")
+    fig.savefig(DATA_DIR / f"{Path(__file__).stem}_{args.dim}d.pdf")

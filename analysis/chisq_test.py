@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from common import DATA_DIR
 
-common.setup_pyplot()
+colors, _ = common.setup_pyplot()
 
 chisq_data = defaultdict(dict)
 
@@ -31,8 +31,8 @@ x = np.arange(len(labels))
 width = 0.20
 
 fig, ax = plt.subplots(figsize=(6, 4))
-bars1 = ax.bar(x - width / 2, chisq_1d, width, label="1D corrections")
-bars2 = ax.bar(x + width / 2, chisq_2d, width, label="2D corrections")
+bars1 = ax.bar(x - width / 2, chisq_1d, width, label="1D corrections", color=colors[2])
+bars2 = ax.bar(x + width / 2, chisq_2d, width, label="2D corrections", color=colors[3])
 
 for bars in [bars1, bars2]:
     for bar in bars:

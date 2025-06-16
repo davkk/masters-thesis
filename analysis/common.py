@@ -1,9 +1,9 @@
-import os
 import sys
 from dataclasses import dataclass
 from pathlib import Path
 
 import scienceplots
+from cycler import cycler
 from matplotlib import font_manager as fm
 from matplotlib import pyplot as plt
 
@@ -40,8 +40,8 @@ def parse_args():
     return Args(pair, pair_tex, *sys.argv[2:])
 
 
-def setup_pyplot():
-    plt.style.use(["science", "ieee"])
+def setup_pyplot(base_size=2):
+    plt.style.use(["science", "ieee", "no-latex"])
 
     plt.rcParams["text.usetex"] = False
 
@@ -65,6 +65,29 @@ def setup_pyplot():
     plt.rcParams["xtick.major.pad"] = 2
     plt.rcParams["ytick.major.pad"] = 2
 
-    colors = plt.rcParams["axes.prop_cycle"].by_key()["color"]
-    markers = ["o", "D", "s"]
+    colors = [
+        "#333333",  # black
+        "#ff2c00",  # red
+        "#00b945",  # green
+        "#0c5da5",  # blue
+        "#ff9500",  # orange
+        "#845b97",  # purple
+        "#9e9e9e",  # grey
+        "#ff9faf",  # pink
+    ]
+
+    plt.rcParams["axes.prop_cycle"] = cycler(color=colors)
+
+    markers = ["o", "D", "s", "h", "x", "*", "v", "^"]
+    markers = {
+        "o": base_size,
+        "D": base_size * 0.9,
+        "s": base_size * 0.85,
+        "x": base_size * 1.4,
+        "h": base_size * 1.1,
+        "H": base_size * 1.1,
+        "*": base_size * 1.5,
+        "^": base_size * 1.0,
+        "v": base_size * 1.0,
+    }
     return colors, markers

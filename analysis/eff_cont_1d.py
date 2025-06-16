@@ -67,12 +67,14 @@ if __name__ == "__main__":
 
                 counts, errors, pts = parse_hist(hist_eff)
 
+                marker = list(markers.keys())[(particles - 1) % len(markers)]
+
                 ax_eff.errorbar(
                     pts,
                     counts,
                     yerr=errors,
-                    markersize=1,
-                    marker=markers[(particles - 1) % len(markers)],
+                    markersize=markers[marker],
+                    marker=marker,
                     linestyle="none",
                     label=f"${common.to_latex[pair.split('-')[idx]]}$",
                 )
@@ -87,8 +89,8 @@ if __name__ == "__main__":
                     pts,
                     sec_counts,
                     yerr=sec_errs,
-                    markersize=1,
-                    marker=markers[(particles - 1) % len(markers)],
+                    markersize=markers[marker],
+                    marker=marker,
                     linestyle="none",
                     label=f"${common.to_latex[pair.split('-')[idx]]}$",
                 )
