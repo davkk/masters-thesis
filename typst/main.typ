@@ -276,11 +276,11 @@ Ensuring the correct results in the efficiency calculations requires consider
   ],
 ) <fig:contamination-proton>
 
-As shown in @fig:contamination-proton, contamination for protons exceeds that of pions. This difference results from the lower number of protons in the data sample, most prominently in the lower range of transverse momentum.
+As shown in @fig:contamination-proton, contamination for protons exceeds that of pions. This difference results from the lower number of protons in the data sample, most prominently in the lower range of transverse momentum.
 
-The contamination includes contributions from both secondary particles and particles produced through interactions with detector material. In this work, both sources contribute to the contamination factor used for corrections.
+The contamination includes contributions from both secondary particles and particles produced through interactions with detector material. In this work, both sources contribute to the contamination factor used for corrections.
 
-// TODO: talk about why there is more material for protons?
+// TODO: talk about why there is more material for protons?
 
 #pagebreak()
 
@@ -415,7 +415,7 @@ Next, it assesses contamination from secondary sources by reusing already avai
 Each particle type shows a distinct reconstruction efficiency and contamination factor. In the case of kaons, secondary contamination remains negligible. For pions, contamination stays low but nonzero, as shown in @fig:eff-cont. Protons, on the other hand, exhibit a more significant contribution from secondary contamination, which correction calculations must account for.
 
 #figure(
-  pdf("../data/eff_cont.pdf", width: 100%),
+  pdf("../data/eff_cont_1d.pdf", width: 100%),
   caption: [
     A comparison of the reconstruction efficiency (a) and the contamination factor (b) for different particle types.
   ],
@@ -469,7 +469,6 @@ When the user specifies a projection through a flag, the macro calls ROOT's 
 
 The rest of the correction macro, along with the remaining steps of the correction procedure, follow the same structure as the previous workflow.
 
-// \begin{lstlisting}[caption={\label{lst:corr-macro-proj} Snippet of the correction macro - projection.}]
 #figure(
   ```cpp
   auto* hist_truth_3d {get_hist(results_file, hist_path / "hMCTruth")};
@@ -490,6 +489,29 @@ The rest of the correction macro, along with the remaining steps of the co
     Snippet of the correction macro - projection.
   ],
 ) <lst:corr-macro-proj>
+
+@fig:eff-cont-pi-2d, @fig:eff-cont-k-2d and @fig:eff-cont-p-2d show projections from constructed 3D histograms onto $p_T$ vs. $eta$ axis of the reconstruction efficiency and contamination.
+
+#figure(
+  pdf("../data/LHC24f3c/effcor/pi/eff_cont_2d.pdf"),
+  caption: [
+    Efficiency (a) and secondary contamination (b) in two dimensions for pion+ pion+.
+  ],
+) <fig:eff-cont-pi-2d>
+
+#figure(
+  pdf("../data/LHC24f3c/effcor/k/eff_cont_2d.pdf"),
+  caption: [
+    Efficiency (a) and secondary contamination (b) in two dimensions for kaon+ kaon+.
+  ],
+) <fig:eff-cont-k-2d>
+
+#figure(
+  pdf("../data/LHC24f3c_fix/effcor/p/eff_cont_2d.pdf"),
+  caption: [
+    Efficiency (a) and secondary contamination (b) in two dimensions for proton-proton.
+  ],
+) <fig:eff-cont-p-2d>
 
 
 = MC closure
@@ -540,44 +562,44 @@ All datasets used for the MC closure test come from simulations based on the P
 == $pi^+ pi^+$ correlation functions
 
 #figure(pdf("../data/LHC24f3c/pi-pi/mc_closure_ratio.pdf"), caption: [
-  MC closure in 1D and 2D for pion+ pion+ from proton-proton collisions.
+  MC closure in 1D and 2D for pion+ pion+ from proton-proton collisions.
 ]) <fig:closure-pi-pi>
 
 == $pi^+ pi^-$ correlation functions
 
 #figure(pdf("../data/LHC24f3c/pi-api/mc_closure_ratio.pdf"), caption: [
-  MC closure in 1D and 2D for pion+ pion- from proton-proton collisions.
+  MC closure in 1D and 2D for pion+ pion- from proton-proton collisions.
 ]) <fig:closure-pi-api>
 
 == $K^+ K^+$ correlation functions
 
 #figure(pdf("../data/LHC24f3/k-k/mc_closure_ratio.pdf"), caption: [
-  MC closure in 1D and 2D for kaon+ kaon+ from proton-proton collisions.
+  MC closure in 1D and 2D for kaon+ kaon+ from proton-proton collisions.
 ]) <fig:closure-k-k-1>
 
 == $K^+ K^-$ correlation functions
 
 #figure(pdf("../data/LHC24f3/k-ak/mc_closure_ratio.pdf"), caption: [
-  MC closure in 1D and 2D for kaon+ kaon- from proton-proton collisions.
+  MC closure in 1D and 2D for kaon+ kaon- from proton-proton collisions.
 ]) <fig:closure-k-ak-1>
 
 == $p p$ correlation functions
 
 #figure(pdf("../data/LHC24f3c_fix/p-p/mc_closure_ratio.pdf"), caption: [
-  MC closure in 1D and 2D for proton-proton from proton-proton collisions.
+  MC closure in 1D and 2D for proton-proton from proton-proton collisions.
 ]) <fig:closure-p-p-1>
 
 == $p overline(p)$ correlation functions
 
 #figure(pdf("../data/LHC24f3c_fix/p-ap/mc_closure_ratio.pdf"), caption: [
-  MC closure in 1D and 2D for proton anti-proton from proton-proton collisions.
+  MC closure in 1D and 2D for proton anti-proton from proton-proton collisions.
 ]) <fig:closure-p-ap-1>
 
 #pagebreak()
 
 == Efficiency influence in 1d vs. 2d
 
-To quantify the influence of efficiency corrections, I have computed the unweighted $chi^2$ values between the MC truth and the corrected correlation functions. For both 1D and 2D corrections, I have compared the resulting angular correlation functions using ROOT's `Chi2Test` method. As shown in @fig:chisq-comparison, the results suggest a consistent improvement in corrected functions when applying for two dimensions, across all analyzed particle pairs.
+To quantify the influence of efficiency corrections, I have computed the unweighted $chi^2$ values between the MC truth and the corrected correlation functions. For both 1D and 2D corrections, I have compared the resulting angular correlation functions using ROOT's `Chi2Test` method. As shown in @fig:chisq-comparison, the results suggest a consistent improvement in corrected functions when applying for two dimensions, across all analyzed particle pairs.
 
 #figure(
   pdf("../data/chisq_test.pdf", width: 90%),

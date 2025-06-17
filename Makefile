@@ -1,9 +1,10 @@
 .PHONY: install report dev hist hist-all push
 
-SCRIPTS_DATASET := analysis/eff_cont.py analysis/weights.py
+SCRIPTS_DATASET := analysis/eff_cont_1d.py analysis/weights.py
 SCRIPTS_RUN := analysis/mc_closure_ratio.py \
 			   analysis/corr_func.py \
-			   analysis/contamination.py
+			   analysis/contamination.py \
+			   analysis/eff_cont_2d.py
 
 install: pyproject.toml
 	uv venv

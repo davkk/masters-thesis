@@ -7,7 +7,7 @@ import numpy as np
 import uproot
 import uproot.exceptions
 from common import DATA_DIR
-from eff_cont import parse_hist
+from eff_cont_1d import parse_hist
 from uproot.models import TH
 
 if __name__ == "__main__":
