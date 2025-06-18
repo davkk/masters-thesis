@@ -573,27 +573,27 @@ All datasets used for the MC closure test come from simulations based on the P
 
 == $K^+ K^+$ correlation functions
 
-#figure(pdf("../data/LHC24f3/k-k/mc_closure_ratio.pdf"), caption: [
+#figure(pdf("../data/LHC24f3c/k-k/mc_closure_ratio.pdf"), caption: [
   MC closure in 1D and 2D for kaon+ kaon+ from proton-proton collisions.
-]) <fig:closure-k-k-1>
+]) <fig:closure-k-k>
 
 == $K^+ K^-$ correlation functions
 
-#figure(pdf("../data/LHC24f3/k-ak/mc_closure_ratio.pdf"), caption: [
+#figure(pdf("../data/LHC24f3c/k-ak/mc_closure_ratio.pdf"), caption: [
   MC closure in 1D and 2D for kaon+ kaon- from proton-proton collisions.
-]) <fig:closure-k-ak-1>
+]) <fig:closure-k-ak>
 
 == $p p$ correlation functions
 
 #figure(pdf("../data/LHC24f3c_fix/p-p/mc_closure_ratio.pdf"), caption: [
   MC closure in 1D and 2D for proton-proton from proton-proton collisions.
-]) <fig:closure-p-p-1>
+]) <fig:closure-p-p>
 
 == $p overline(p)$ correlation functions
 
 #figure(pdf("../data/LHC24f3c_fix/p-ap/mc_closure_ratio.pdf"), caption: [
   MC closure in 1D and 2D for proton anti-proton from proton-proton collisions.
-]) <fig:closure-p-ap-1>
+]) <fig:closure-p-ap>
 
 #pagebreak()
 
