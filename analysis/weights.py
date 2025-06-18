@@ -19,7 +19,9 @@ if __name__ == "__main__":
 
     particles = 0
     datasets = [
-        dataset for dataset in os.listdir(DATA_DIR) if os.path.isdir(DATA_DIR / dataset)
+        dataset
+        for dataset in os.listdir(DATA_DIR)
+        if os.path.isdir(DATA_DIR / dataset) and dataset.startswith("LHC")
     ]
     for dataset in datasets:
         path = DATA_DIR

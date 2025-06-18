@@ -36,7 +36,11 @@ if __name__ == "__main__":
 
     particles = 0
 
-    datasets = [ds for ds in os.listdir(DATA_DIR) if os.path.isdir(DATA_DIR / ds)]
+    datasets = [
+        dataset
+        for dataset in os.listdir(DATA_DIR)
+        if os.path.isdir(DATA_DIR / dataset) and dataset.startswith("LHC")
+    ]
     for dataset in datasets:
         path = Path(DATA_DIR)
         path /= dataset

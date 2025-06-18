@@ -1,4 +1,3 @@
-import os
 import sys
 from pathlib import Path
 
@@ -8,8 +7,6 @@ import numpy as np
 import uproot
 import uproot.exceptions
 from common import DATA_DIR
-from corr_func import clamp, plot_3d_bar
-from mpl_toolkits.mplot3d import Axes3D
 from uproot.models import TH
 
 
@@ -26,9 +23,6 @@ def parse_hist(hist: TH.Model_TH2D_v4):
 
     pt_cut = (0.5 < pt) & (pt < 4)
     pt = pt[pt_cut]
-
-    # eta_cut = (-1.5 < eta) & (eta < 1.5)
-    # eta = eta[eta_cut]
 
     counts = counts[pt_cut, :]
 

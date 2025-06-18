@@ -74,6 +74,11 @@ def corr_func(
 
         scale = den.sum() / num.sum()
 
+        corr = np.full_like(num, np.nan)
+        corr_err = np.full_like(num, np.nan)
+
+        den[den == 0] = sys.float_info.epsilon
+
         corr = (num / den) * scale
         corr_err = (scale / den) * np.sqrt((num_var + (num / den) ** 2 * den_var))
 
