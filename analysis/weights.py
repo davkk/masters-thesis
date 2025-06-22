@@ -66,6 +66,7 @@ if __name__ == "__main__":
 
     ax.set_xticks(np.arange(0, 4.2, 1))
     ax.set_xlabel(r"$p_T\ [\text{GeV}/c]$")
+    ax.set_ylabel("Weight $w$")
 
     ax.legend(
         loc="center left",

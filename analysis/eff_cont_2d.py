@@ -29,6 +29,25 @@ def parse_hist(hist: TH.Model_TH2D_v4):
     return counts, pt, eta
 
 
+def rebin_histogram(*, counts, pt_edges, eta_edges, pt_rebin, eta_rebin):
+    pt_bins = len(pt_edges) - 1
+    eta_bins = len(eta_edges) - 1
+
+    new_pt_bins = pt_bins // pt_rebin
+    new_eta_bins = eta_bins // eta_rebin
+
+    rebinned_counts = counts[: new_pt_bins * pt_rebin, : new_eta_bins * eta_rebin]
+    rebinned_counts = rebinned_counts.reshape(
+        new_pt_bins, pt_rebin, new_eta_bins, eta_rebin
+    )
+    rebinned_counts = rebinned_counts.sum(axis=(1, 3))
+
+    new_pt_edges = pt_edges[::pt_rebin][: new_pt_bins + 1]
+    new_eta_edges = eta_edges[::eta_rebin][: new_eta_bins + 1]
+
+    return rebinned_counts, new_pt_edges, new_eta_edges
+
+
 if __name__ == "__main__":
     args = common.parse_args()
 
@@ -67,12 +86,22 @@ if __name__ == "__main__":
         hist_eff = data["hEfficiency"]
         assert isinstance(hist_eff, TH.Model_TH2D_v4)
 
+        pt_rebin = 6
+        eta_rebin = 1
+
         counts, pt_edges, eta_edges = parse_hist(hist_eff)
-        X, Y = np.meshgrid(pt_edges, eta_edges, indexing="ij")
+        counts_rebin, pt_edges_rebin, eta_edges_rebin = rebin_histogram(
+            counts=counts,
+            pt_edges=pt_edges,
+            eta_edges=eta_edges,
+            pt_rebin=pt_rebin,
+            eta_rebin=eta_rebin,
+        )
+        X, Y = np.meshgrid(pt_edges_rebin, eta_edges_rebin, indexing="ij")
         pcm = ax_eff.pcolormesh(
             X,
             Y,
-            counts,
+            counts_rebin,
             shading="auto",
             cmap="binary",
             edgecolors="none",
@@ -86,12 +115,19 @@ if __name__ == "__main__":
         assert isinstance(hist_sec, TH.Model_TH2D_v4)
 
         sec_counts, _, _ = parse_hist(hist_sec)
-        sec_counts[sec_counts > 0.3] = np.nan
-        X, Y = np.meshgrid(pt_edges, eta_edges, indexing="ij")
+        sec_counts_rebin, _, _ = rebin_histogram(
+            counts=sec_counts,
+            pt_edges=pt_edges,
+            eta_edges=eta_edges,
+            pt_rebin=pt_rebin,
+            eta_rebin=eta_rebin,
+        )
+        sec_counts_rebin[sec_counts_rebin > 0.3] = np.nan
+        X, Y = np.meshgrid(pt_edges_rebin, eta_edges_rebin, indexing="ij")
         pcm = ax_sec.pcolormesh(
             X,
             Y,
-            sec_counts,
+            sec_counts_rebin,
             shading="auto",
             cmap="binary",
             edgecolors="none",
@@ -102,10 +138,12 @@ if __name__ == "__main__":
 
         ax_eff.set_title("(a)")
         ax_eff.set_xlabel(r"$p_T\ [\text{GeV}/c]$")
+        ax_eff.set_ylabel(r"$\eta$")
         ax_eff.set_ylim(-1, 1)
 
         ax_sec.set_title("(b)")
         ax_sec.set_xlabel(r"$p_T\ [\text{GeV}/c]$")
+        ax_sec.set_ylabel(r"$\eta$")
         ax_sec.set_ylim(-1, 1)
 
         fig.savefig(path.parent / f"{Path(__file__).stem}.pdf")

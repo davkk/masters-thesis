@@ -183,9 +183,7 @@ _Słowa kluczowe:_
 
 = Introduction
 
-This thesis examines reconstruction efficiency in proton–proton collision data collected by the ALICE experiment. It applies the resulting efficiency corrections in the analysis of angular ($Delta eta Delta phi$) particle correlations.
-
-// TODO: opisac motywacje i cel pracy
+This thesis aims to improve the precision of particle physics analyses by correcting studied observable with the reconstruction efficiency of particle tracks in the ALICE detector. Specifically, it proposes and validates a new semi-automated method for applying these corrections to angular correlation functions within the upgraded Run 3 $"O"^2$ software framework.
 
 == LHC and Run 3
 
@@ -196,7 +194,7 @@ The collider has completed two successful periods of data collection, the fir
 
 == The ALICE experiment
 
-The acronym ALICE stands for *A Large Ion Collider Experiment* @collaboration2008alice, one of four major experiments at the LHC. The detector enables the study of the quark-gluon plasma (QGP), a state with conditions resembling those a few millionths of a second after the Big Bang, before quarks and gluons combined to form protons and neutrons. Heavy ion nucleus-nucleus collisions can produce such a state. In the case of ALICE, the focus lies on lead-lead (Pb-Pb) collisions. The experiment also includes proton-nucleus collisions, as well as analysis of proton-proton collisions as reference data.
+The acronym ALICE stands for *A Large Ion Collider Experiment* @collaboration2008alice, one of four major experiments at the LHC. The detector enables the study of the quark-gluon plasma (QGP), a state with conditions resembling those a few millionths of a second after the Big Bang, before quarks and gluons combined to form protons and neutrons @qgp. Heavy ion nucleus-nucleus collisions can produce such a state. In the case of ALICE, the focus lies on lead-lead (Pb-Pb) collisions. The experiment also includes proton-nucleus collisions, as well as analysis of proton-proton collisions as reference data.
 
 == Two-particle angular correlation function
 
@@ -328,7 +326,7 @@ After many attempts to implement the corrections application in the O2Physic
 
 My first solution (@fig:workflow-initial) leveraged the O2 framework's so-called callback service, which allows any task to register a callback function that would execute custom code on special dispatched events, e.g. `Start`, `Stop`, `EndOfStream`, etc. The `CallbackService.h` file lists all the available event IDs @callback-service. I have settled for `Stop` event (@lst:callback-service-code), on which a callback uploaded the calculated correction factors to the CCDB only once, at the end of the analysis task execution. It used the `CCDBApi::storeAsTFileAny` method to interact with the CCDB @ccdbapi-store. This flow has worked as expected when running locally.
 
-#figure(image("img/workflow-initial.png", width: 70%), caption: [
+#figure(image("img/workflow-initial.png", width: 80%), caption: [
   Visualization of the initial workflow for efficiency correction.
 ]) <fig:workflow-initial>
 
@@ -417,7 +415,8 @@ Each particle type shows a distinct reconstruction efficiency and contaminatio
 #figure(
   pdf("../data/eff_cont_1d.pdf", width: 100%),
   caption: [
-    A comparison of the reconstruction efficiency (a) and the contamination factor (b) for different particle types.
+    A comparison of the reconstruction efficiency (a) and the contamination factor (b) for different particle types.\
+    The statistical errors appear smaller than the plotted points.
   ],
 ) <fig:eff-cont>
 
@@ -455,11 +454,15 @@ As the next major step, one needs to upload correction weights histogram to 
   ],
 ) <lst:ccdb-upload-cmd>
 
+The core of this solution is `FemtoUniverseEfficiencyCorrection` class @efficiency-correction-class, that extends analysis tasks within the O2Physics framework, and allows for querying for the uploaded files, through the same interface as in the initial idea (@lst:callback-service-code). Additionally, the class utilizes configurable parameters to determine whether to apply corrections, specify the CCDB URL and histogram paths and timestamps for histogram objects retrieval.
+
+Finally, the histograms uploaded to the CCDB look as in @fig:weights.
+
 #figure(pdf("../data/weights.pdf", width: 69%), caption: [
-  Comparison of the weights for different particle types.
+  Comparison of the weights for different particle types.\
+  The statistical errors appear smaller than the plotted points.
 ]) <fig:weights>
 
-The core of this solution is `FemtoUniverseEfficiencyCorrection` class @efficiency-correction-class, that extends analysis tasks within the O2Physics framework, and allows for querying for the uploaded files, through the same interface as in the initial idea (@lst:callback-service-code). Additionally, the class utilizes configurable parameters to determine whether to apply corrections, specify the CCDB URL and histogram paths and timestamps for histogram objects retrieval.
 
 == Extending corrections beyond 1D - the final solution
 
@@ -525,7 +528,7 @@ All datasets used for the MC closure test come from simulations based on the P
 #figure(
   table(
     columns: (auto, auto, 1fr),
-    align: left + horizon,
+    align: horizon,
     inset: 1em,
     table.header([*Pair*], [*Dataset*], [*Run numbers*]),
 
@@ -539,7 +542,9 @@ All datasets used for the MC closure test come from simulations based on the P
       `LHC24f3c` \
       (size: 23.8 TB)
     ],
-    [526641, 526964, 527041, 527057, 527109, 527240, 527850, 527871, 527895, 527899, 528292, 528461, 528531],
+    table.cell(rowspan: 2)[
+      526641, 526964, 527041, 527057, 527109,\ 527240, 527850, 527871, 527895, 527899,\ 528292, 528461, 528531
+    ],
 
     [
       $p p$ \
@@ -549,55 +554,77 @@ All datasets used for the MC closure test come from simulations based on the P
       `LHC24f3c_fix` \
       (size: 238.0 TB)
     ],
-    [526641, 526964, 527041, 527057, 527109, 527240, 527850, 527871, 527895, 527899, 528292, 528461, 528531],
   ),
   caption: [Data used for MC closure analysis],
 ) <tab:mc-closure>
 
-#pagebreak()
-
 // TODO: Event and track selection
 
+In the following figures, the top panels compare truth results to reconstructed distributions, both without corrections and with 1D or 2D efficiency corrections. The bottom panels display the ratio between each corrected result and the truth.
 
-== $pi^+ pi^+$ correlation functions
+== Correlation functions for pions
 
-#figure(pdf("../data/LHC24f3c/pi-pi/mc_closure_ratio.pdf"), caption: [
-  MC closure in 1D and 2D for pion+ pion+ from proton-proton collisions.
-]) <fig:closure-pi-pi>
+#figure(
+  pdf("../data/LHC24f3c/pi-pi/mc_closure_ratio.pdf", width: 90%),
+  caption: [
+    MC closure in 1D and 2D for pion+ pion+ from proton-proton collisions.
+  ],
+) <fig:closure-pi-pi>
 
-== $pi^+ pi^-$ correlation functions
+The uncorrected distributions show noticeable differences from the truth, particularly in $Delta phi$ projection. In this case, the reconstructed shape appears flat, which makes reconstruction questionable. Using efficiency corrections makes the reconstructed results closer to truth. In the $Delta phi$ projection, both correction methods recover the main features with almost perfect agreement.
 
-#figure(pdf("../data/LHC24f3c/pi-api/mc_closure_ratio.pdf"), caption: [
-  MC closure in 1D and 2D for pion+ pion- from proton-proton collisions.
-]) <fig:closure-pi-api>
+The $Delta eta$ projection shows a different trend: at $|Delta eta| > 1$, the corrected points rise above the truth, forming a wing-like structure. This feature appears in both 1D and 2D corrections and does not reflect any known physical effect.
 
-== $K^+ K^+$ correlation functions
+The same wing-like structure is visible in pions of opposite charges (@fig:closure-pi-api).
 
-#figure(pdf("../data/LHC24f3c/k-k/mc_closure_ratio.pdf"), caption: [
+#figure(
+  pdf("../data/LHC24f3c/pi-api/mc_closure_ratio.pdf", width: 90%),
+  caption: [
+    MC closure in 1D and 2D for pion+ pion- from proton-proton collisions.
+  ],
+) <fig:closure-pi-api>
+
+
+// TODO: We still don't know what caused it, and we need to do more research.
+
+== Correlation functions for kaons
+
+In @fig:closure-k-ak, the $C(Delta eta)$ plot presents the clearest distinction -- among all studied particle pairs -- between the effects of 1D and 2D corrections. The uncorrected bins deviate the most from the truth. However, the more dimensions in the corrections, the better agreement with the reference distribution, especially at $0.7 < |Delta eta| < 1.5$.
+
+#figure(pdf("../data/LHC24f3c/k-k/mc_closure_ratio.pdf", width: 90%), caption: [
   MC closure in 1D and 2D for kaon+ kaon+ from proton-proton collisions.
 ]) <fig:closure-k-k>
 
-== $K^+ K^-$ correlation functions
-
-#figure(pdf("../data/LHC24f3c/k-ak/mc_closure_ratio.pdf"), caption: [
-  MC closure in 1D and 2D for kaon+ kaon- from proton-proton collisions.
-]) <fig:closure-k-ak>
-
-== $p p$ correlation functions
-
-#figure(pdf("../data/LHC24f3c_fix/p-p/mc_closure_ratio.pdf"), caption: [
-  MC closure in 1D and 2D for proton-proton from proton-proton collisions.
-]) <fig:closure-p-p>
-
-== $p overline(p)$ correlation functions
-
-#figure(pdf("../data/LHC24f3c_fix/p-ap/mc_closure_ratio.pdf"), caption: [
-  MC closure in 1D and 2D for proton anti-proton from proton-proton collisions.
-]) <fig:closure-p-ap>
+#figure(
+  pdf("../data/LHC24f3c/k-ak/mc_closure_ratio.pdf", width: 90%),
+  caption: [
+    MC closure in 1D and 2D for kaon+ kaon- from proton-proton collisions.
+  ],
+) <fig:closure-k-ak>
 
 #pagebreak()
 
-== Efficiency influence in 1d vs. 2d
+== Correlation functions for protons
+
+As the final particle pair analyzed, protons show negligible differences in effects from 1D vs. 2D corrections.
+
+#figure(
+  pdf("../data/LHC24f3c_fix/p-p/mc_closure_ratio.pdf", width: 90%),
+  caption: [
+    MC closure in 1D and 2D for proton-proton from proton-proton collisions.
+  ],
+) <fig:closure-p-p>
+
+#figure(
+  pdf("../data/LHC24f3c_fix/p-ap/mc_closure_ratio.pdf", width: 90%),
+  caption: [
+    MC closure in 1D and 2D for proton anti-proton from proton-proton collisions.
+  ],
+) <fig:closure-p-ap>
+
+#pagebreak()
+
+== Efficiency influence in 1D vs. 2D
 
 To quantify the influence of efficiency corrections, I have computed the unweighted $chi^2$ values between the MC truth and the corrected correlation functions. For both 1D and 2D corrections, I have compared the resulting angular correlation functions using ROOT's `Chi2Test` method. As shown in @fig:chisq-comparison, the results suggest a consistent improvement in corrected functions when applying for two dimensions, across all analyzed particle pairs.
 

@@ -46,7 +46,7 @@ if __name__ == "__main__":
         path /= dataset
         path /= "effcor"
 
-        pair_data = {
+        part_data = {
             particle: sorted(
                 [  #
                     file  #
@@ -58,11 +58,11 @@ if __name__ == "__main__":
             if os.path.isdir(path / particle)
         }
 
-        for pair, files in pair_data.items():
+        for part, files in part_data.items():
             for idx, file in enumerate(files):
                 particles += 1
 
-                data = uproot.open(path / pair / file)
+                data = uproot.open(path / part / file)
                 assert isinstance(data, uproot.ReadOnlyDirectory)
 
                 # -- efficiency
@@ -80,7 +80,7 @@ if __name__ == "__main__":
                     markersize=markers[marker],
                     marker=marker,
                     linestyle="none",
-                    label=f"${common.to_latex[pair.split('-')[idx]]}$",
+                    label=f"${common.to_latex[part.split('-')[idx]]}$",
                 )
 
                 # -- secondary contamination
@@ -96,19 +96,18 @@ if __name__ == "__main__":
                     markersize=markers[marker],
                     marker=marker,
                     linestyle="none",
-                    label=f"${common.to_latex[pair.split('-')[idx]]}$",
+                    label=f"${common.to_latex[part.split('-')[idx]]}$",
                 )
-
-    ax_eff.set_xticks(np.arange(0, 4.2, 1))
 
     ax_eff.set_title("(a)")
     ax_eff.set_xlabel(r"$p_T\ [\text{GeV}/c]$")
-    ax_eff.legend(title="Recon. efficiency")
-
     ax_cor.set_xticks(np.arange(0, 4.2, 1))
+    ax_eff.set_ylabel(r"Recon. efficiency $\varepsilon$")
+    ax_eff.legend()
 
     ax_cor.set_title("(b)")
     ax_cor.set_xlabel(r"$p_T\ [\text{GeV}/c]$")
-    ax_cor.legend(title="Secondary cont.")
+    ax_cor.set_ylabel(r"Secondary cont. $C$")
+    ax_cor.legend()
 
     fig.savefig(DATA_DIR / f"{Path(__file__).stem}.pdf")

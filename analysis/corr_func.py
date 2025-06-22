@@ -33,16 +33,16 @@ if __name__ == "__main__":
 
     pair = "-".join(args.pair)
 
-    TASK_NAME = f"femto-universe-pair-task-track-track-extended_{pair}"
-    if args.dim == "0":
-        TASK_NAME += "_cor"
-    else:
-        TASK_NAME += f"_{args.dim}d"
+    TASK_NAME = f"femto-universe-pair-task-track-track-extended_{pair}_nocor"
+    # if args.dim == "0":
+    #     TASK_NAME += "_cor"
+    # else:
+    #     TASK_NAME += f"_{args.dim}d"
 
     DATA_DIR /= args.dataset
     DATA_DIR /= pair
 
-    data_cor = uproot.open(DATA_DIR / f"{args.cor}.root")
+    data_cor = uproot.open(DATA_DIR / f"{args.nocor}.root")
 
     assert isinstance(data_cor, uproot.ReadOnlyDirectory)
 

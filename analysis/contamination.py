@@ -107,13 +107,13 @@ if __name__ == "__main__":
             bottom += ratio
 
         ax.legend(
-            title=f"Contamination - ${args.pair_tex[idx]}$",
+            title=f"${args.pair_tex[idx]}$",
             loc="lower center",
             bbox_to_anchor=(0.5, 1.02),
             ncol=len(hist_names),
             fontsize=6,
         )
         ax.set_xlabel(r"$p_T [\text{GeV/c}]$")
-        ax.set_ylabel(r"[%]")
+        ax.set_ylabel(r"Contamination [%]")
 
         fig.savefig(DATA_DIR / f"{Path(__file__).stem}_{args.pair[idx]}.pdf")

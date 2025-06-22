@@ -56,7 +56,7 @@ def setup_pyplot(base_size=2):
     plt.rcParams["xtick.direction"] = "in"
     plt.rcParams["ytick.direction"] = "in"
 
-    plt.rcParams["axes.formatter.limits"] = -4, 4
+    plt.rcParams["axes.formatter.limits"] = -3, 3
     plt.rcParams["axes.formatter.use_mathtext"] = True
 
     plt.rcParams["lines.markersize"] = 5
