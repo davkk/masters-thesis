@@ -1,4 +1,4 @@
-import os
+import sys
 from pathlib import Path
 
 import common
@@ -7,7 +7,7 @@ import numpy as np
 import uproot
 import uproot.exceptions
 from common import DATA_DIR
-from eff_cont_1d import parse_hist
+from eff_cont_1d import get_particles, parse_hist
 from uproot.models import TH
 
 if __name__ == "__main__":
@@ -17,52 +17,25 @@ if __name__ == "__main__":
     gs = fig.add_gridspec(1, 1)
     ax = fig.add_subplot(gs[0])
 
-    particles = 0
-    datasets = [
-        dataset
-        for dataset in os.listdir(DATA_DIR)
-        if os.path.isdir(DATA_DIR / dataset) and dataset.startswith("LHC")
-    ]
-    for dataset in datasets:
-        path = DATA_DIR
-        path /= dataset
-        path /= "effcor"
+    particles = get_particles(sys.argv[1:])
 
-        pair_data = {
-            particle: sorted(
-                [  #
-                    file  #
-                    for file in os.listdir(path / particle)  #
-                    if "-1d.root" in file
-                ]
-            )
-            for particle in os.listdir(path)
-            if os.path.isdir(path / particle)
-        }
+    for idx, (part, data) in enumerate(particles.items()):
+        hist_eff = data["hWeights"]
+        assert isinstance(hist_eff, TH.Model_TH1D_v3)
 
-        for part, files in pair_data.items():
-            for idx, file in enumerate(files):
-                particles += 1
+        counts, errors, pts = parse_hist(hist_eff)
 
-                data = uproot.open(path / part / file)
-                assert isinstance(data, uproot.ReadOnlyDirectory)
+        marker = list(markers.keys())[idx % len(markers)]
 
-                hist_eff = data["hWeights"]
-                assert isinstance(hist_eff, TH.Model_TH1D_v3)
-
-                counts, errors, pts = parse_hist(hist_eff)
-
-                marker = list(markers.keys())[(particles - 1) % len(markers)]
-
-                ax.errorbar(
-                    pts,
-                    counts,
-                    yerr=errors,
-                    markersize=markers[marker],
-                    marker=marker,
-                    linestyle="none",
-                    label=f"${common.to_latex[part.split('-')[idx]]}$",
-                )
+        ax.errorbar(
+            pts,
+            counts,
+            yerr=errors,
+            markersize=markers[marker],
+            marker=marker,
+            linestyle="none",
+            label=f"${common.to_latex[part]}$",
+        )
 
     ax.set_xticks(np.arange(0, 4.2, 1))
     ax.set_xlabel(r"$p_T\ [\text{GeV}/c]$")

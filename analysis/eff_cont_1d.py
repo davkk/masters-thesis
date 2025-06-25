@@ -1,4 +1,4 @@
-import os
+import sys
 from pathlib import Path
 
 import common
@@ -25,6 +25,35 @@ def parse_hist(hist: TH.Model_TH1D_v3):
     return counts, np.sqrt(vars), pt
 
 
+def get_particles(data):
+    particles = dict()
+
+    for pair in data:
+        args = common.parse_args(pair.split(","))
+
+        path = Path(DATA_DIR)
+        path /= args.dataset
+        path /= "effcor"
+
+        part1, part2 = args.pair
+        parts = 1 + (part1 != part2)
+
+        for part in args.pair[:parts]:
+            if part in particles:
+                continue
+
+            try:
+                data = uproot.open(path / part / f"{args.nocor}-1d.root")
+            except FileNotFoundError:
+                continue
+
+            assert isinstance(data, uproot.ReadOnlyDirectory)
+
+            particles[part] = data
+
+    return particles
+
+
 if __name__ == "__main__":
     colors, markers = common.setup_pyplot()
 
@@ -34,70 +63,41 @@ if __name__ == "__main__":
     ax_eff = fig.add_subplot(gs[0])
     ax_cor = fig.add_subplot(gs[1])
 
-    particles = 0
+    particles = get_particles(sys.argv[1:])
 
-    datasets = [
-        dataset
-        for dataset in os.listdir(DATA_DIR)
-        if os.path.isdir(DATA_DIR / dataset) and dataset.startswith("LHC")
-    ]
-    for dataset in datasets:
-        path = Path(DATA_DIR)
-        path /= dataset
-        path /= "effcor"
+    for idx, (part, data) in enumerate(particles.items()):
+        # -- efficiency
+        hist_eff = data["hEfficiency"]
+        assert isinstance(hist_eff, TH.Model_TH1D_v3)
 
-        part_data = {
-            particle: sorted(
-                [  #
-                    file  #
-                    for file in os.listdir(path / particle)  #
-                    if "-1d.root" in file
-                ]
-            )
-            for particle in os.listdir(path)
-            if os.path.isdir(path / particle)
-        }
+        counts, errors, pts = parse_hist(hist_eff)
 
-        for part, files in part_data.items():
-            for idx, file in enumerate(files):
-                particles += 1
+        marker = list(markers.keys())[idx % len(markers)]
+        ax_eff.errorbar(
+            pts,
+            counts,
+            yerr=errors,
+            markersize=markers[marker],
+            marker=marker,
+            linestyle="none",
+            label=f"${common.to_latex[part]}$",
+        )
 
-                data = uproot.open(path / part / file)
-                assert isinstance(data, uproot.ReadOnlyDirectory)
+        # -- secondary contamination
+        hist_sec = data["hSecondaryCont"]
+        assert isinstance(hist_sec, TH.Model_TH1D_v3)
 
-                # -- efficiency
-                hist_eff = data["hEfficiency"]
-                assert isinstance(hist_eff, TH.Model_TH1D_v3)
+        sec_counts, sec_errs, pts = parse_hist(hist_sec)
 
-                counts, errors, pts = parse_hist(hist_eff)
-
-                marker = list(markers.keys())[(particles - 1) % len(markers)]
-
-                ax_eff.errorbar(
-                    pts,
-                    counts,
-                    yerr=errors,
-                    markersize=markers[marker],
-                    marker=marker,
-                    linestyle="none",
-                    label=f"${common.to_latex[part.split('-')[idx]]}$",
-                )
-
-                # -- secondary contamination
-                hist_sec = data["hSecondaryCont"]
-                assert isinstance(hist_sec, TH.Model_TH1D_v3)
-
-                sec_counts, sec_errs, pts = parse_hist(hist_sec)
-
-                ax_cor.errorbar(
-                    pts,
-                    sec_counts,
-                    yerr=sec_errs,
-                    markersize=markers[marker],
-                    marker=marker,
-                    linestyle="none",
-                    label=f"${common.to_latex[part.split('-')[idx]]}$",
-                )
+        ax_cor.errorbar(
+            pts,
+            sec_counts,
+            yerr=sec_errs,
+            markersize=markers[marker],
+            marker=marker,
+            linestyle="none",
+            label=f"${common.to_latex[part]}$",
+        )
 
     ax_eff.set_title("(a)")
     ax_eff.set_xlabel(r"$p_T\ [\text{GeV}/c]$")

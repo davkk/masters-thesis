@@ -24,7 +24,7 @@ hist: datafiles.csv
 
 hist-all: datafiles.csv
 	python analysis/chisq_test.py
-	parallel --progress python {} ::: ${SCRIPTS_DATASET}
+	parallel --progress python {} `grep ^1, datafiles.csv` ::: ${SCRIPTS_DATASET}
 	parallel --progress ./run.sh {1} {2} \
 		::: ${SCRIPTS_RUN} \
 		::: `tail -n +2 datafiles.csv | grep -e "^1,"`

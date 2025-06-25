@@ -31,12 +31,12 @@ class Args:
 
 
 # pair,dataset,cor,nocor,truth
-def parse_args():
-    assert len(sys.argv) > 1
-    pair = tuple(sys.argv[1].split("-"))
+def parse_args(args=sys.argv):
+    assert len(args) > 1
+    pair = tuple(args[1].split("-"))
     assert len(pair) == 2
     pair_tex = (to_latex[pair[0]], to_latex[pair[1]])
-    return Args(pair, pair_tex, *sys.argv[2:])
+    return Args(pair, pair_tex, *args[2:])
 
 
 def setup_pyplot(base_size=2):
