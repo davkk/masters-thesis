@@ -130,14 +130,14 @@ cf_nocors = corr_func(
     f"{TASK_NAME_BASE}_nocor/MixedEvent_MC/DeltaEtaDeltaPhi",
 )
 
-TASK_NAME_COR = TASK_NAME_BASE + ("_1d" if int(args.dim) > 0 else "")
+TASK_NAME_COR = TASK_NAME_BASE + "_1d"
 cf_cors_1d = corr_func(
     data_cor,
     f"{TASK_NAME_COR}/SameEvent_MC/DeltaEtaDeltaPhi",
     f"{TASK_NAME_COR}/MixedEvent_MC/DeltaEtaDeltaPhi",
 )
 
-TASK_NAME_COR = TASK_NAME_BASE + ("_2d" if int(args.dim) > 0 else "")
+TASK_NAME_COR = TASK_NAME_BASE + "_2d"
 cf_cors_2d = corr_func(
     data_cor,
     f"{TASK_NAME_COR}/SameEvent_MC/DeltaEtaDeltaPhi",
@@ -146,9 +146,6 @@ cf_cors_2d = corr_func(
 
 
 if __name__ == "__main__":
-    if int(args.dim) > 1:
-        sys.exit(0)
-
     fig = plt.figure(figsize=(8, 4))
     gs = fig.add_gridspec(2, 2, height_ratios=[3, 2])
     fig.subplots_adjust(top=1, hspace=0.05, wspace=0.2)

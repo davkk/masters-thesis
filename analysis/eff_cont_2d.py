@@ -51,9 +51,6 @@ def rebin_histogram(*, counts, pt_edges, eta_edges, pt_rebin, eta_rebin):
 if __name__ == "__main__":
     args = common.parse_args()
 
-    if int(args.dim) == 1:
-        sys.exit(0)
-
     colors, markers = common.setup_pyplot()
 
     DATA_DIR /= args.dataset
