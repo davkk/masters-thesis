@@ -13,8 +13,9 @@ chisq_data = defaultdict(dict)
 with open(DATA_DIR / "chisq-test.tsv") as f:
     for line in f.readlines():
         line = line.strip()
-        name, dim, value = line.split()
-        chisq_data[name][int(dim)] = float(value)
+        name, *values = line.split()
+        for dim, value in enumerate(values):
+            chisq_data[name][dim + 1] = float(value)
 
 data = [(name, dim[1], dim[2]) for name, dim in chisq_data.items()]
 data.sort(key=lambda x: x[2], reverse=True)
