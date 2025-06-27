@@ -571,7 +571,7 @@ In the following figures, the top panels compare truth results to reconstruc
   ],
 ) <fig:closure-pi-pi>
 
-The uncorrected distributions show noticeable differences from the truth, particularly in $Delta phi$ projection. In this case, the reconstructed shape appears flat, which makes reconstruction questionable. Using efficiency corrections makes the reconstructed results closer to truth. In the $Delta phi$ projection, both correction methods recover the main features with almost perfect agreement.
+The uncorrected distributions show noticeable differences from the truth, particularly in $Delta phi$ projection. Using efficiency corrections makes the reconstructed results closer to truth. In the $Delta phi$ projection, both correction methods recover the main features with almost perfect agreement.
 
 The $Delta eta$ projection shows a different trend: at $|Delta eta| > 1$, the corrected points rise above the truth, forming a wing-like structure. This feature appears in both 1D and 2D corrections and does not reflect any known physical effect.
 
