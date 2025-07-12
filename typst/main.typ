@@ -78,11 +78,9 @@
 #let clearpage() = page()[]
 
 #let page-without-numbering(body, title: none) = {
-  align(horizon)[
-    #text(size: 2.2em, weight: "bold")[#title]
-    #v(3em)
-    #body
-  ]
+  text(size: 2.2em, weight: "bold")[#title]
+  v(3em)
+  body
 }
 
 #let INDEX = sys.inputs.at("INDEX", default: "TODO")
@@ -172,10 +170,10 @@ _Słowa kluczowe:_
 
 #set page(footer: context {
   let page-number = here().page()
-  let is-even = calc.rem(page-number, 2) == 0
+  let even = calc.rem(page-number, 2) == 0
 
   rect(stroke: (top: 2pt + bg-main), width: 100%, inset: (top: 1em))[
-    #align(if is-even { left } else { right })[
+    #align(if even { left } else { right })[
       #page-number
     ]
   ]
@@ -183,22 +181,24 @@ _Słowa kluczowe:_
 
 = Introduction
 
-This thesis aims to improve the precision of particle physics analyses by correcting studied observable with the reconstruction efficiency of particle tracks in the ALICE detector. Specifically, it proposes and validates a new semi-automated method for applying these corrections to angular correlation functions within the upgraded Run 3 $"O"^2$ software framework.
+This thesis aims to improve the precision of particle physics analyses by correcting studied observable with the reconstruction efficiency of particle registered by the ALICE detector. Specifically, it proposes and validates a new semi-automated method for applying these corrections to angular correlation functions within the upgraded Run 3 $"O"^2$ software framework.
 
 == LHC and Run 3
 
-The *Large Hadron Collider* (LHC), located at the European Organization for Nuclear Research (CERN) near Geneva, Switzerland, stands as the world's largest particle accelerator. Created in 2008, it accelerates and collides particles, primarily protons and heavy ions (e.g., lead). These collisions produce a variety of subatomic particles, allowing us to test predictions of the Standard Model and search for new phenomena beyond it.
+The *Large Hadron Collider* (LHC), located at the European Organization for Nuclear Research (CERN) near Geneva, Switzerland, stands as the world's largest particle accelerator. Since 2009, it provides data from particle acceleration and collision, primarily protons and heavy ions (e.g., lead).
 
-The collider has completed two successful periods of data collection, the first Run 1 (2010--2013), and the other Run 2 (2015--2018). The current operational phase, *Run 3*, began in 2022 following the second, long shutdown (LS2) @lhc-upgrade. After numerous upgrades, the LHC now features proton-proton collisions at a center-of-mass energy of 13.6 [TeV], an increase from the 13 [TeV] utilized in Run 2. This higher energy helps in further studies and improves measurement precision and analysis statistics.
+// TODO: write something more?
+
+The collider has completed two successful periods of data collection, the first Run 1 (2010--2013), and the other Run 2 (2015--2018). The current operational phase, *Run 3*, began in 2022 following the second, long shutdown (LS2) @lhc-upgrade. After numerous upgrades, the LHC now features proton-proton collisions at a center-of-mass energy of 13.6 TeV, an increase from the 13 TeV utilized in Run 2. This higher energy helps in further studies and improves measurement precision and analysis statistics.
 
 
 == The ALICE experiment
 
-The acronym ALICE stands for *A Large Ion Collider Experiment* @collaboration2008alice, one of four major experiments at the LHC. The detector enables the study of the quark-gluon plasma (QGP), a state with conditions resembling those a few millionths of a second after the Big Bang, before quarks and gluons combined to form protons and neutrons @qgp. Heavy ion nucleus-nucleus collisions can produce such a state. In the case of ALICE, the focus lies on lead-lead (Pb-Pb) collisions. The experiment also includes proton-nucleus collisions, as well as analysis of proton-proton collisions as reference data.
+The acronym ALICE stands for *A Large Ion Collider Experiment* @collaboration2008alice, one of four major experiments at the LHC. The detector enables the study of the quark-gluon plasma (QGP), a state with conditions resembling those a few millionths of a second after the Big Bang, before quarks and gluons combined to form protons and neutrons @qgp. Heavy ion nucleus-nucleus collisions can produce such a state. In the case of ALICE, the focus lies on lead-lead (Pb-Pb) collisions @alice-qcd. The experiment also studies proton-nucleus collisions, as well as analysis of proton-proton collisions as reference data.
 
 == Two-particle angular correlation function
 
-The function measures how often particle pairs appear with a given difference in pseudorapidity ($Delta eta$) and azimuthal angle ($Delta phi$). It helps to study patterns in particle production by comparing signal distributions to reference, e.g. background distribution.
+The function measures how often particle pairs appear for a given difference in pseudorapidity ($Delta eta$) and azimuthal angle ($Delta phi$). It helps to study patterns in particle production by comparing signal distributions to reference, e.g. background distribution.
 
 === Pseudorapidity and azimuthal angle
 
@@ -274,11 +274,9 @@ Ensuring the correct results in the efficiency calculations requires consider
   ],
 ) <fig:contamination-proton>
 
-As shown in @fig:contamination-proton, contamination for protons exceeds that of pions. This difference results from the lower number of protons in the data sample, most prominently in the lower range of transverse momentum.
+As shown in @fig:contamination-proton, proton contamination exceeds pion contamination. This difference stems from the high proton content of the detector material — protons often scatter out and appear as signal particles. The effect intensifies at low transverse momentum, where secondary particles from decays or material interactions dominate.
 
 The contamination includes contributions from both secondary particles and particles produced through interactions with detector material. In this work, both sources contribute to the contamination factor used for corrections.
-
-// TODO: talk about why there is more material for protons?
 
 #pagebreak()
 
@@ -314,7 +312,7 @@ Until now, the O2Physics framework has lacked a universal and automated imple
 
 To calculate efficiency, the O2Physics framework relied on the `femtoUniverseEfficiencyBase.cxx` task. Since each task contains its own separate set of configurable parameters, this approach required manually synchronizing the efficiency task with the main analysis task. Such an error-prone and time-consuming process demanded a careful mirroring of every change across all analyses. The introduction of any potential inconsistencies could consequently reduce the reliability of the final results.
 
-Therefore, a large part of this work revolves around developing a generic method in O2Physics, so that the application of the corrections can be easily added to any analysis task.
+Therefore, a large part of this work focuses on developing a generic method in O2Physics, which allows physicists to apply the corrections easily to any analysis task.
 
 == The initial idea
 
@@ -410,7 +408,7 @@ Next, it assesses contamination from secondary sources by reusing already avai
   ],
 ) <lst:corr-macro-cont>
 
-Each particle type shows a distinct reconstruction efficiency and contamination factor. In the case of kaons, secondary contamination remains negligible. For pions, contamination stays low but nonzero, as shown in @fig:eff-cont. Protons, on the other hand, exhibit a more significant contribution from secondary contamination, which correction calculations must account for.
+Each particle type shows a distinct reconstruction efficiency and contamination factor. In the case of kaons, secondary contamination remains negligible. For pions, contamination stays low but nonzero, as shown in @fig:eff-cont. Protons, on the other hand, exhibit a more significant contribution from secondary contamination, which correction calculations must address.
 
 #figure(
   pdf("../data/eff_cont_1d.pdf", width: 100%),
@@ -419,6 +417,8 @@ Each particle type shows a distinct reconstruction efficiency and contaminatio
     The statistical errors appear smaller than the plotted points.
   ],
 ) <fig:eff-cont>
+
+Furthermore, the reconstruction efficiency seen in the @fig:eff-cont depends strongly on the applied particle selection criteria. For instance, at $p = 0.7 "GeV"/c$, particle identification starts to rely on the Time-Of-Flight (TOF) detector. Due to low matching efficiency between the Time Projection Chamber (TPC) and TOF in this momentum region, the overall reconstruction efficiency drops sharply.
 
 The macro then computes the final weights by combining the efficiency and secondary contamination distributions to write the resulting histograms into a new ROOT file (@lst:corr-macro-weig).
 
@@ -456,7 +456,7 @@ As the next major step, one needs to upload correction weights histogram to 
 
 The core of this solution is `FemtoUniverseEfficiencyCorrection` class @efficiency-correction-class, that extends analysis tasks within the O2Physics framework, and allows for querying for the uploaded files, through the same interface as in the initial idea (@lst:callback-service-code). Additionally, the class utilizes configurable parameters to determine whether to apply corrections, specify the CCDB URL and histogram paths and timestamps for histogram objects retrieval.
 
-Finally, the histograms uploaded to the CCDB look as in @fig:weights.
+Finally, the histograms uploaded to the CCDB look as in @fig:weights.
 
 #figure(pdf("../data/weights.pdf", width: 69%), caption: [
   Comparison of the weights for different particle types.\
@@ -495,33 +495,24 @@ The rest of the correction macro, along with the remaining steps of the co
 
 @fig:eff-cont-pi-2d, @fig:eff-cont-k-2d and @fig:eff-cont-p-2d show projections from constructed 3D histograms onto $p_T$ vs. $eta$ axis of the reconstruction efficiency and contamination.
 
-#figure(
-  pdf("../data/LHC24f3c/effcor/pi/eff_cont_2d.pdf"),
-  caption: [
-    Efficiency (a) and secondary contamination (b) in two dimensions for pion+ pion+.
-  ],
-) <fig:eff-cont-pi-2d>
+#figure(pdf("../data/LHC24f3c/effcor/pi/eff_cont_2d.pdf"), caption: [
+  Efficiency (a) and secondary contamination (b) in two dimensions for pion+.
+]) <fig:eff-cont-pi-2d>
 
-#figure(
-  pdf("../data/LHC24f3c/effcor/k/eff_cont_2d.pdf"),
-  caption: [
-    Efficiency (a) and secondary contamination (b) in two dimensions for kaon+ kaon+.
-  ],
-) <fig:eff-cont-k-2d>
+#figure(pdf("../data/LHC24f3c/effcor/k/eff_cont_2d.pdf"), caption: [
+  Efficiency (a) and secondary contamination (b) in two dimensions for kaon+.
+]) <fig:eff-cont-k-2d>
 
-#figure(
-  pdf("../data/LHC24f3c_fix/effcor/p/eff_cont_2d.pdf"),
-  caption: [
-    Efficiency (a) and secondary contamination (b) in two dimensions for proton-proton.
-  ],
-) <fig:eff-cont-p-2d>
+#figure(pdf("../data/LHC24f3c_fix/effcor/p/eff_cont_2d.pdf"), caption: [
+  Efficiency (a) and secondary contamination (b) in two dimensions for proton.
+]) <fig:eff-cont-p-2d>
 
 
 = MC closure
 
 The standard method for verifying the applied weights is through a Monte Carlo closure test. It compares the MC reconstructed sample - after applying efficiency corrections - with the MC truth sample. In a successful closure test, the corrected reconstructed distribution matches the one coming from MC truth, within statistical uncertainties.
 
-All datasets used for the MC closure test come from simulations based on the PYTHIA8 model [@pythia8]. The dataset names refer to labels internal to ALICE. The `LHC24f3c` and `LHC24f3c_fix` datasets focus on `apass7` of 13.6 [TeV] pp `LHC22o` data period, and share the same run lists. However, the `LHC24f3c_fix` contains more events, selected to improve statistical precision in the proton analysis. @tab:mc-closure lists the run lists used in each dataset, matched to the corresponding particle pair analyses.
+All datasets used for the MC closure test come from simulations based on the PYTHIA8 model @pythia8. The dataset names refer to labels internal to ALICE. The `LHC24f3c` and `LHC24f3c_fix` datasets focus on `apass7` of 13.6 TeV pp `LHC22o` data period, and share the same run lists. However, the `LHC24f3c_fix` contains more events, selected to improve statistical precision in the proton analysis. @tab:mc-closure lists the run lists used in each dataset, matched to the corresponding particle pair analyses.
 
 // TODO: add how many events in dataset?
 
@@ -571,11 +562,11 @@ In the following figures, the top panels compare truth results to reconstruc
   ],
 ) <fig:closure-pi-pi>
 
-The uncorrected distributions show noticeable differences from the truth, particularly in $Delta phi$ projection. Using efficiency corrections makes the reconstructed results closer to truth. In the $Delta phi$ projection, both correction methods recover the main features with almost perfect agreement.
+The uncorrected distributions show noticeable differences from the truth, particularly in $Delta eta$ projection. Using efficiency corrections makes the reconstructed results closer to truth. In the $Delta phi$ projection, both correction dimensions reproduce the overall shape of the correlation function, although systematic deviations of up to 2% remain.
 
-The $Delta eta$ projection shows a different trend: at $|Delta eta| > 1$, the corrected points rise above the truth, forming a wing-like structure. This feature appears in both 1D and 2D corrections and does not reflect any known physical effect.
+The $Delta eta$ projection shows a different trend: at $|Delta eta| > 1$, the corrected points rise above the truth. Previous analyses of mixed‑event corrections show that finite binning in event multiplicity and primary vertex (PV) position can create a mismatch in the background shape at large $eta$ differences, forming a wing-like structure @wings. This artifact appears in both 1D and 2D corrections. Nevertheless, the deviation from the truth in the 2D projection remains smaller compared to the 1D case.
 
-The same wing-like structure is visible in pions of opposite charges (@fig:closure-pi-api).
+The opposite-sign pion correlation shown in @fig:closure-pi-api exhibits similar features to the like-sign case - the corrected distributions closely follow the MC truth across most of the $Delta phi$ and $Delta eta$ ranges. As before, 2D corrections yield better agreement with the truth than 1D corrections. A wing-like structure again emerges at $|Delta eta| > 1$, indicating the same artifact discussed earlier.
 
 #figure(
   pdf("../data/LHC24f3c/pi-api/mc_closure_ratio.pdf", width: 90%),
@@ -585,11 +576,9 @@ The same wing-like structure is visible in pions of opposite charges (@fig:c
 ) <fig:closure-pi-api>
 
 
-// TODO: We still don't know what caused it, and we need to do more research.
-
 == Correlation functions for kaons
 
-In @fig:closure-k-ak, the $C(Delta eta)$ plot presents the clearest distinction -- among all studied particle pairs -- between the effects of 1D and 2D corrections. The uncorrected bins deviate the most from the truth. However, the more dimensions in the corrections, the better agreement with the reference distribution, especially at $0.7 < |Delta eta| < 1.5$.
+The $C(Delta eta)$ plots for kaon pairs with like (@fig:closure-k-k) and unlike signs (@fig:closure-k-ak) present the clearest distinction -- among all studied particle pairs -- between the effects of 1D and 2D corrections. The uncorrected bins deviate the most from the truth. However, the more dimensions in the corrections, the better agreement with the reference distribution. The 2D corrections make the ratio between reconstructed and truth results to not exceed 2%.
 
 #figure(pdf("../data/LHC24f3c/k-k/mc_closure_ratio.pdf", width: 90%), caption: [
   MC closure in 1D and 2D for kaon+ kaon+ from proton-proton collisions.
@@ -606,7 +595,7 @@ In @fig:closure-k-ak, the $C(Delta eta)$ plot presents the clearest distincti
 
 == Correlation functions for protons
 
-As the final particle pair analyzed, protons show negligible differences in effects from 1D vs. 2D corrections.
+When looking at the $Delta eta$ projections for proton-proton pair (@fig:closure-p-p), one could draw a conclusion, that the corrections from 1D yield better results compared to 2D. However, chi-squared test results, shown in the next section, provide more accurate insight regarding the difference.
 
 #figure(
   pdf("../data/LHC24f3c_fix/p-p/mc_closure_ratio.pdf", width: 90%),
@@ -614,6 +603,8 @@ As the final particle pair analyzed, protons show negligible differences in e
     MC closure in 1D and 2D for proton-proton from proton-proton collisions.
   ],
 ) <fig:closure-p-p>
+
+The proton anti-proton pair (@fig:closure-p-ap) effectively shows no significant differences in effects between 1D vs. 2D corrections in $Delta phi$ projections, with only a slight deviation for $|Delta eta| > 0.7$.
 
 #figure(
   pdf("../data/LHC24f3c_fix/p-ap/mc_closure_ratio.pdf", width: 90%),
@@ -626,15 +617,16 @@ As the final particle pair analyzed, protons show negligible differences in e
 
 == Efficiency influence in 1D vs. 2D
 
-To quantify the influence of efficiency corrections, I have computed the unweighted $chi^2$ values between the MC truth and the corrected correlation functions. For both 1D and 2D corrections, I have compared the resulting angular correlation functions using ROOT's `Chi2Test` method. As shown in @fig:chisq-comparison, the results suggest a consistent improvement in corrected functions when applying for two dimensions, across all analyzed particle pairs.
+This section quantifies the influence of efficiency corrections by comparing the unweighted $chi^2$ values between the MC truth and the corrected correlation functions. The comparison relies on ROOT's `Chi2Test` method, applied for both 1D and 2D corrections. As shown in @fig:chisq-comparison, the results suggest a consistent improvement in corrected functions when applying for two dimensions, across all analyzed particle pairs.
 
 #figure(
   pdf("../data/chisq_test.pdf", width: 90%),
   caption: [
-    Comparison of the chi-squared values for truth vs. 1D and truth vs. 2D corrections.
+    Comparison of the chi-squared values for truth vs. no corrections, truth vs. 1D and truth vs. 2D corrections.
   ],
 ) <fig:chisq-comparison>
 
+// TODO: say more about chi-squared test results
 
 = Correction on real data
 

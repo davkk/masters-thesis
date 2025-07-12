@@ -27,6 +27,9 @@ def parse_hist(hist: TH.Model_TH3D_v4) -> tuple[npt.NDArray, npt.NDArray]:
 if __name__ == "__main__":
     args = common.parse_args()
 
+    if not args.mc:
+        sys.exit(0)
+
     colors, markers = common.setup_pyplot()
 
     pair = "-".join(args.pair)

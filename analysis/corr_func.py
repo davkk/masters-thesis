@@ -1,4 +1,3 @@
-import sys
 from pathlib import Path
 
 import common
@@ -43,8 +42,10 @@ if __name__ == "__main__":
 
     assert isinstance(data_cor, uproot.ReadOnlyDirectory)
 
-    same_event = data_cor[TASK_NAME + "/SameEvent_MC/DeltaEtaDeltaPhi"]
-    mixed_event = data_cor[TASK_NAME + "/MixedEvent_MC/DeltaEtaDeltaPhi"]
+    MC = "_MC" if args.mc else ""
+
+    same_event = data_cor[TASK_NAME + f"/SameEvent{MC}/DeltaEtaDeltaPhi"]
+    mixed_event = data_cor[TASK_NAME + f"/MixedEvent{MC}/DeltaEtaDeltaPhi"]
 
     assert isinstance(same_event, TH.Model_TH2F_v4)
     assert isinstance(mixed_event, TH.Model_TH2F_v4)

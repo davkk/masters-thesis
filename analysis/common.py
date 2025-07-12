@@ -22,6 +22,7 @@ to_latex = {
 
 @dataclass
 class Args:
+    mc: bool
     pair: tuple[str, str]
     pair_tex: tuple[str, str]
     dataset: str
@@ -30,13 +31,14 @@ class Args:
     truth: str
 
 
-# pair,dataset,cor,nocor,truth
+# mc,pair,dataset,cor,nocor,truth
 def parse_args(args=sys.argv):
     assert len(args) > 1
-    pair = tuple(args[1].split("-"))
+    mc = bool(int(args[1]))
+    pair = tuple(args[2].split("-"))
     assert len(pair) == 2
     pair_tex = (to_latex[pair[0]], to_latex[pair[1]])
-    return Args(pair, pair_tex, *args[2:])
+    return Args(mc, pair, pair_tex, *args[3:])
 
 
 def setup_pyplot(base_size=2):

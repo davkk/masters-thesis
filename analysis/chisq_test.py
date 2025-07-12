@@ -15,27 +15,48 @@ with open(DATA_DIR / "chisq-test.tsv") as f:
         line = line.strip()
         name, *values = line.split()
         for dim, value in enumerate(values):
-            chisq_data[name][dim + 1] = float(value)
+            chisq_data[name][dim] = float(value)
 
-data = [(name, dim[1], dim[2]) for name, dim in chisq_data.items()]
+data = [(name, dim[0], dim[1], dim[2]) for name, dim in chisq_data.items()]
 data.sort(key=lambda x: x[2], reverse=True)
 
 labels = []
-for pair, _, _ in data:
+for pair, _, _, _ in data:
     p1, p2 = pair.split("-")
     labels.append(f"${common.to_latex[p1]}{common.to_latex[p2]}$")
 
-chisq_1d = [dim1 for _, dim1, _ in data]
-chisq_2d = [dim2 for _, _, dim2 in data]
+chisq_nocor = [nocor for _, nocor, _, _ in data]
+chisq_1d = [dim1 for _, _, dim1, _ in data]
+chisq_2d = [dim2 for _, _, _, dim2 in data]
 
 x = np.arange(len(labels))
 width = 0.20
 
 fig, ax = plt.subplots(figsize=(6, 4))
-bars1 = ax.bar(x - width / 2, chisq_1d, width, label="1D corrections", color=colors[2])
-bars2 = ax.bar(x + width / 2, chisq_2d, width, label="2D corrections", color=colors[3])
 
-for bars in [bars1, bars2]:
+bars0 = ax.bar(
+    x - width,
+    chisq_nocor,
+    width,
+    label="no corrections",
+    color=colors[1],
+)
+bars1 = ax.bar(
+    x,
+    chisq_1d,
+    width,
+    label="1D corrections",
+    color=colors[2],
+)
+bars2 = ax.bar(
+    x + width,
+    chisq_2d,
+    width,
+    label="2D corrections",
+    color=colors[3],
+)
+
+for bars in [bars0, bars1, bars2]:
     for bar in bars:
         height = bar.get_height()
         ax.annotate(

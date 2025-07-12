@@ -16,7 +16,7 @@ from uproot.models import TH
 def project(
     hist: TH.Model_TH2F_v4,
     axis: int,
-) -> tuple[npt.NDArray, npt.NDArray, Any, Any]:
+) -> tuple[npt.NDArray, npt.NDArray, npt.NDArray, npt.NDArray, bool, bool]:
     hist_np = hist.to_numpy()
     assert len(hist_np) == 3
 
@@ -26,8 +26,6 @@ def project(
     eta = 0.5 * (eta[:-1] + eta[1:])
     phi = 0.5 * (phi[:-1] + phi[1:])
 
-    global phi_mask
-    global eta_mask
     phi_mask = (phi > -0.5) & (phi < 4)
     eta_mask = (eta > -1.5) & (eta < 1.5)
 
@@ -36,7 +34,7 @@ def project(
     proj = signal.sum(axis=axis)
     proj_var = vars.sum(axis=axis)
 
-    return proj, proj_var, phi, eta
+    return proj, proj_var, phi, eta, phi_mask, eta_mask
 
 
 @dataclass
@@ -44,7 +42,9 @@ class CorrFunc:
     val: npt.NDArray
     err: npt.NDArray
     phi: npt.NDArray
+    phi_mask: bool
     eta: npt.NDArray
+    eta_mask: bool
 
 
 def corr_func(
@@ -61,8 +61,8 @@ def corr_func(
     outputs = []
 
     for axis in reversed(range(2)):
-        num, num_var, same_phi, same_eta = project(same_event, axis)
-        den, den_var, mixed_phi, mixed_eta = project(mixed_event, axis)
+        num, num_var, same_phi, same_eta, phi_mask, eta_mask = project(same_event, axis)
+        den, den_var, mixed_phi, mixed_eta, *_ = project(mixed_event, axis)
 
         assert same_phi.shape == mixed_phi.shape
         assert np.isclose(same_phi[0], mixed_phi[0])
@@ -87,75 +87,71 @@ def corr_func(
                 val=corr,
                 err=corr_err,
                 phi=same_phi,
+                phi_mask=phi_mask,
                 eta=same_eta,
+                eta_mask=eta_mask,
             )
         )
 
     return outputs
 
 
-args = common.parse_args()
-colors, markers = common.setup_pyplot(base_size=5)
-pair = "-".join(args.pair)
+if __name__ == "__main__":
+    args = common.parse_args()
 
-TRUTH_TASK_NAME = "femto-universe-pair-task-track-track-mc-truth"
-TASK_NAME_BASE = f"femto-universe-pair-task-track-track-extended_{pair}"
-DATA_DIR /= args.dataset
-DATA_DIR /= pair
+    colors, markers = common.setup_pyplot(base_size=5)
+    pair = "-".join(args.pair)
 
-data_nocor = uproot.open(DATA_DIR / f"{args.nocor}.root")
-data_cor = uproot.open(DATA_DIR / f"{args.cor}.root")
-data_truth = uproot.open(DATA_DIR / f"{args.truth}.root")
+    TRUTH_TASK_NAME = "femto-universe-pair-task-track-track-mc-truth"
+    TASK_NAME_BASE = f"femto-universe-pair-task-track-track-extended_{pair}"
+    DATA_DIR /= args.dataset
+    DATA_DIR /= pair
 
-assert isinstance(data_nocor, uproot.ReadOnlyDirectory)
-assert isinstance(data_cor, uproot.ReadOnlyDirectory)
-assert isinstance(data_truth, uproot.ReadOnlyDirectory)
+    data_nocor = uproot.open(DATA_DIR / f"{args.nocor}.root")
+    data_cor = uproot.open(DATA_DIR / f"{args.cor}.root")
+    data_truth = uproot.open(DATA_DIR / f"{args.truth}.root")
 
-try:
+    assert isinstance(data_nocor, uproot.ReadOnlyDirectory)
+    assert isinstance(data_cor, uproot.ReadOnlyDirectory)
+    assert isinstance(data_truth, uproot.ReadOnlyDirectory)
+
+    MC = "_MC" if args.mc else ""
+
     cf_truths = corr_func(
         data_truth,
         f"{TRUTH_TASK_NAME}/SameEvent/DeltaEtaDeltaPhi",
         f"{TRUTH_TASK_NAME}/MixedEvent/DeltaEtaDeltaPhi",
     )
-except uproot.exceptions.KeyInFileError:
-    cf_truths = corr_func(
-        data_truth,
-        f"{TRUTH_TASK_NAME}_{pair}/SameEvent/DeltaEtaDeltaPhi",
-        f"{TRUTH_TASK_NAME}_{pair}/MixedEvent/DeltaEtaDeltaPhi",
+
+    cf_nocors = corr_func(
+        data_nocor,
+        f"{TASK_NAME_BASE}_nocor/SameEvent{MC}/DeltaEtaDeltaPhi",
+        f"{TASK_NAME_BASE}_nocor/MixedEvent{MC}/DeltaEtaDeltaPhi",
     )
 
-cf_nocors = corr_func(
-    data_nocor,
-    f"{TASK_NAME_BASE}_nocor/SameEvent_MC/DeltaEtaDeltaPhi",
-    f"{TASK_NAME_BASE}_nocor/MixedEvent_MC/DeltaEtaDeltaPhi",
-)
+    cf_cors_1d = corr_func(
+        data_cor,
+        f"{TASK_NAME_BASE}_1d/SameEvent{MC}/DeltaEtaDeltaPhi",
+        f"{TASK_NAME_BASE}_1d/MixedEvent{MC}/DeltaEtaDeltaPhi",
+    )
 
-TASK_NAME_COR = TASK_NAME_BASE + "_1d"
-cf_cors_1d = corr_func(
-    data_cor,
-    f"{TASK_NAME_COR}/SameEvent_MC/DeltaEtaDeltaPhi",
-    f"{TASK_NAME_COR}/MixedEvent_MC/DeltaEtaDeltaPhi",
-)
+    cf_cors_2d = corr_func(
+        data_cor,
+        f"{TASK_NAME_BASE}_2d/SameEvent{MC}/DeltaEtaDeltaPhi",
+        f"{TASK_NAME_BASE}_2d/MixedEvent{MC}/DeltaEtaDeltaPhi",
+    )
 
-TASK_NAME_COR = TASK_NAME_BASE + "_2d"
-cf_cors_2d = corr_func(
-    data_cor,
-    f"{TASK_NAME_COR}/SameEvent_MC/DeltaEtaDeltaPhi",
-    f"{TASK_NAME_COR}/MixedEvent_MC/DeltaEtaDeltaPhi",
-)
-
-
-if __name__ == "__main__":
     fig = plt.figure(figsize=(8, 4))
-    gs = fig.add_gridspec(2, 2, height_ratios=[3, 2])
     fig.subplots_adjust(top=1, hspace=0.05, wspace=0.2)
+
+    gs = fig.add_gridspec(2, 2, height_ratios=[3, 2])
 
     X_labels = [r"\Delta\varphi", r"\Delta\eta"]
 
     for idx, (cf_truth, cf_nocor, cf_cor_1d, cf_cor_2d) in enumerate(
         zip(cf_truths, cf_nocors, cf_cors_1d, cf_cors_2d)
     ):
-        mask = [phi_mask, eta_mask][idx]
+        mask = [cf_truth.phi_mask, cf_truth.eta_mask][idx]
         X = [cf_truth.phi[mask], cf_truth.eta[mask]]
 
         top = fig.add_subplot(gs[0, idx])
