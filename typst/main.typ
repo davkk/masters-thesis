@@ -350,7 +350,7 @@ My first solution (@fig:workflow-initial) leveraged the O2 framework's so-calle
   ],
 ) <lst:callback-service-code>
 
-However, the above idea has a major drawback. It assumes that the analysis task runs on a single machine, which is not the case when running in a parallel and a distributed environment, e.g. the Worldwide LHC Computing Grid.
+However, the above idea has a major drawback. It assumes that the analysis task executes on a single machine, whereas parallel and distributed environments—such as the Worldwide LHC Computing Grid—typically involve multiple machines.
 
 The *WLCG*, simply referred to as _Grid_, constitutes a global collaboration of approximately 170 computing centers across more than 40 countries. This computing infrastructure integrates around 1.4 million computer cores and 1.5 exabytes of storage. Its primary objective involves storing, distributing, and analyzing the substantial amounts of data generated annually by the LHC at CERN.
 
@@ -454,7 +454,7 @@ As the next major step, one needs to upload correction weights histogram to 
   ],
 ) <lst:ccdb-upload-cmd>
 
-The core of this solution is `FemtoUniverseEfficiencyCorrection` class @efficiency-correction-class, that extends analysis tasks within the O2Physics framework, and allows for querying for the uploaded files, through the same interface as in the initial idea (@lst:callback-service-code). Additionally, the class utilizes configurable parameters to determine whether to apply corrections, specify the CCDB URL and histogram paths and timestamps for histogram objects retrieval.
+The core of this solution involves the `FemtoUniverseEfficiencyCorrection` class @efficiency-correction-class, which extends analysis tasks within the O2Physics framework, and allows for querying for the uploaded files, through the same interface as in the initial idea (@lst:callback-service-code). Additionally, the class utilizes configurable parameters to determine whether to apply corrections, specify the CCDB URL and histogram paths and timestamps for histogram objects retrieval.
 
 Finally, the histograms uploaded to the CCDB look as in @fig:weights.
 
@@ -510,7 +510,7 @@ The rest of the correction macro, along with the remaining steps of the co
 
 = MC closure
 
-The standard method for verifying the applied weights is through a Monte Carlo closure test. It compares the MC reconstructed sample - after applying efficiency corrections - with the MC truth sample. In a successful closure test, the corrected reconstructed distribution matches the one coming from MC truth, within statistical uncertainties.
+The standard method for verifying the applied weights involves performing a Monte Carlo closure test. It compares the MC reconstructed sample - after applying efficiency corrections - with the MC truth sample. In a successful closure test, the corrected reconstructed distribution matches the one coming from MC truth, within statistical uncertainties.
 
 All datasets used for the MC closure test come from simulations based on the PYTHIA8 model @pythia8. The dataset names refer to labels internal to ALICE. The `LHC24f3c` and `LHC24f3c_fix` datasets focus on `apass7` of 13.6 TeV pp `LHC22o` data period, and share the same run lists. However, the `LHC24f3c_fix` contains more events, selected to improve statistical precision in the proton analysis. @tab:mc-closure lists the run lists used in each dataset, matched to the corresponding particle pair analyses.
 
@@ -629,6 +629,73 @@ This section quantifies the influence of efficiency corrections by comparing 
 // TODO: say more about chi-squared test results
 
 = Correction on real data
+
+== Correlation functions for pions
+
+#figure(
+  pdf(
+    "../data/LHC22o_pass7_minBias_small/pi-pi/mc_closure_ratio.pdf",
+    width: 90%,
+  ),
+  caption: [
+    Data in 1D and 2D for pion+ pion+.
+  ],
+) <fig:data-p-ap>
+
+#figure(
+  pdf(
+    "../data/LHC22o_pass7_minBias_small/pi-api/mc_closure_ratio.pdf",
+    width: 90%,
+  ),
+  caption: [
+    Data in 1D and 2D for pion+ pion-.
+  ],
+)
+
+== Correlation functions for kaons
+
+#figure(
+  pdf(
+    "../data/LHC22o_pass7_minBias_small/k-k/mc_closure_ratio.pdf",
+    width: 90%,
+  ),
+  caption: [
+    Data in 1D and 2D for kaon+ kaon+.
+  ],
+) <fig:data-k-k>
+
+#figure(
+  pdf(
+    "../data/LHC22o_pass7_minBias_small/k-ak/mc_closure_ratio.pdf",
+    width: 90%,
+  ),
+  caption: [
+    Data in 1D and 2D for kaon+ kaon-.
+  ],
+) <fig:data-k-ak>
+
+== Correlation functions for protons
+
+#figure(
+  pdf(
+    "../data/LHC22o_pass7_minBias_medium/p-p/mc_closure_ratio.pdf",
+    width: 90%,
+  ),
+  caption: [
+    Data in 1D and 2D for proton-proton.
+  ],
+) <fig:data-p-p>
+
+#figure(
+  pdf(
+    "../data/LHC22o_pass7_minBias_medium/p-ap/mc_closure_ratio.pdf",
+    width: 90%,
+  ),
+  caption: [
+    Data in 1D and 2D for proton anti-proton.
+  ],
+) <fig:data-p-ap>
+
 
 #clearpage()
 

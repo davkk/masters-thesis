@@ -15,3 +15,6 @@ enable,mc,pair,dataset,nocor,cor,truth
 1,0,pi-pi,LHC22o_pass7_minBias_small,434791,434791,431027
 1,0,pi-api,LHC22o_pass7_minBias_small,434792,434792,416216
 1,0,p-p,LHC22o_pass7_minBias_medium,435143,435143,433636
+1,0,p-ap,LHC22o_pass7_minBias_medium,450698,450698,417729
+1,0,k-k,LHC22o_pass7_minBias_small,449805,449805,432204
+1,0,k-ak,LHC22o_pass7_minBias_small,450102,450102,427138
