@@ -1,7 +1,7 @@
 .PHONY: install report dev hist hist-all push
 
 SCRIPTS_DATASET := analysis/eff_cont_1d.py analysis/weights.py
-SCRIPTS_RUN := analysis/mc_closure_ratio.py \
+SCRIPTS_RUN := analysis/data_correction.py \
 			   analysis/corr_func.py \
 			   analysis/contamination.py \
 			   analysis/eff_cont_2d.py

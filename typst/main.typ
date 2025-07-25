@@ -556,7 +556,7 @@ In the following figures, the top panels compare truth results to reconstruc
 == Correlation functions for pions
 
 #figure(
-  pdf("../data/LHC24f3c/pi-pi/mc_closure_ratio.pdf", width: 90%),
+  pdf("../data/LHC24f3c/pi-pi/data_correction.pdf", width: 90%),
   caption: [
     MC closure in 1D and 2D for pion+ pion+ from proton-proton collisions.
   ],
@@ -569,7 +569,7 @@ The $Delta eta$ projection shows a different trend: at $|Delta eta| > 1$, the�
 The opposite-sign pion correlation shown in @fig:closure-pi-api exhibits similar features to the like-sign case - the corrected distributions closely follow the MC truth across most of the $Delta phi$ and $Delta eta$ ranges. As before, 2D corrections yield better agreement with the truth than 1D corrections. A wing-like structure again emerges at $|Delta eta| > 1$, indicating the same artifact discussed earlier.
 
 #figure(
-  pdf("../data/LHC24f3c/pi-api/mc_closure_ratio.pdf", width: 90%),
+  pdf("../data/LHC24f3c/pi-api/data_correction.pdf", width: 90%),
   caption: [
     MC closure in 1D and 2D for pion+ pion- from proton-proton collisions.
   ],
@@ -580,12 +580,12 @@ The opposite-sign pion correlation shown in @fig:closure-pi-api exhibits simil
 
 The $C(Delta eta)$ plots for kaon pairs with like (@fig:closure-k-k) and unlike signs (@fig:closure-k-ak) present the clearest distinction -- among all studied particle pairs -- between the effects of 1D and 2D corrections. The uncorrected bins deviate the most from the truth. However, the more dimensions in the corrections, the better agreement with the reference distribution. The 2D corrections make the ratio between reconstructed and truth results to not exceed 2%.
 
-#figure(pdf("../data/LHC24f3c/k-k/mc_closure_ratio.pdf", width: 90%), caption: [
+#figure(pdf("../data/LHC24f3c/k-k/data_correction.pdf", width: 90%), caption: [
   MC closure in 1D and 2D for kaon+ kaon+ from proton-proton collisions.
 ]) <fig:closure-k-k>
 
 #figure(
-  pdf("../data/LHC24f3c/k-ak/mc_closure_ratio.pdf", width: 90%),
+  pdf("../data/LHC24f3c/k-ak/data_correction.pdf", width: 90%),
   caption: [
     MC closure in 1D and 2D for kaon+ kaon- from proton-proton collisions.
   ],
@@ -598,7 +598,7 @@ The $C(Delta eta)$ plots for kaon pairs with like (@fig:closure-k-k) and unlik
 When looking at the $Delta eta$ projections for proton-proton pair (@fig:closure-p-p), one could draw a conclusion, that the corrections from 1D yield better results compared to 2D. However, chi-squared test results, shown in the next section, provide more accurate insight regarding the difference.
 
 #figure(
-  pdf("../data/LHC24f3c_fix/p-p/mc_closure_ratio.pdf", width: 90%),
+  pdf("../data/LHC24f3c_fix/p-p/data_correction.pdf", width: 90%),
   caption: [
     MC closure in 1D and 2D for proton-proton from proton-proton collisions.
   ],
@@ -607,7 +607,7 @@ When looking at the $Delta eta$ projections for proton-proton pair (@fig:closur
 The proton anti-proton pair (@fig:closure-p-ap) effectively shows no significant differences in effects between 1D vs. 2D corrections in $Delta phi$ projections, with only a slight deviation for $|Delta eta| > 0.7$.
 
 #figure(
-  pdf("../data/LHC24f3c_fix/p-ap/mc_closure_ratio.pdf", width: 90%),
+  pdf("../data/LHC24f3c_fix/p-ap/data_correction.pdf", width: 90%),
   caption: [
     MC closure in 1D and 2D for proton anti-proton from proton-proton collisions.
   ],
@@ -617,7 +617,7 @@ The proton anti-proton pair (@fig:closure-p-ap) effectively shows no significan
 
 == Efficiency influence in 1D vs. 2D
 
-This section quantifies the influence of efficiency corrections by comparing the unweighted $chi^2$ values between the MC truth and the corrected correlation functions. The comparison relies on ROOT's `Chi2Test` method, applied for both 1D and 2D corrections. As shown in @fig:chisq-comparison, the results suggest a consistent improvement in corrected functions when applying for two dimensions, across all analyzed particle pairs.
+This section quantifies the influence of efficiency corrections by comparing the unweighted $chi^2$ values between the MC truth and the corrected correlation functions. The comparison relies on ROOT's `Chi2Test` method, which calculates the chi-squared per degree of freedom ($chi^2 / "NDF"$) to provide a statistical measure of the goodness of fit between two histograms. A lower value typically indicates a better agreement. The test compares the full two-dimensional correlation function from the MC truth sample against the uncorrected, 1D-corrected, and 2D-corrected reconstructed distributions. As shown in @fig:chisq-comparison, the results demonstrate a consistent and significant improvement when applying two-dimensional corrections. For every particle pair analyzed, the $chi^2 / "NDF"$ value reaches its minimum for the 2D-corrected data, providing strong quantitative evidence that this method brings the reconstructed data closest to the MC truth.
 
 #figure(
   pdf("../data/chisq_test.pdf", width: 90%),
@@ -626,39 +626,36 @@ This section quantifies the influence of efficiency corrections by comparing 
   ],
 ) <fig:chisq-comparison>
 
-// TODO: say more about chi-squared test results
-
 = Correction on real data
+
+The following figures show the correlation functions for real data before and after applying 1D and 2D efficiency corrections. Each of the two panels compare the uncorrected distributions with the corrected ones.
 
 == Correlation functions for pions
 
 #figure(
   pdf(
-    "../data/LHC22o_pass7_minBias_small/pi-pi/mc_closure_ratio.pdf",
+    "../data/LHC22o_pass7_minBias_small/pi-pi/data_correction.pdf",
     width: 90%,
   ),
   caption: [
     Data in 1D and 2D for pion+ pion+.
   ],
-) <fig:data-p-ap>
+) <fig:data-pi-pi>
 
 #figure(
   pdf(
-    "../data/LHC22o_pass7_minBias_small/pi-api/mc_closure_ratio.pdf",
+    "../data/LHC22o_pass7_minBias_small/pi-api/data_correction.pdf",
     width: 90%,
   ),
   caption: [
     Data in 1D and 2D for pion+ pion-.
   ],
-)
+) <fig:data-pi-api>
 
 == Correlation functions for kaons
 
 #figure(
-  pdf(
-    "../data/LHC22o_pass7_minBias_small/k-k/mc_closure_ratio.pdf",
-    width: 90%,
-  ),
+  pdf("../data/LHC22o_pass7_minBias_small/k-k/data_correction.pdf", width: 90%),
   caption: [
     Data in 1D and 2D for kaon+ kaon+.
   ],
@@ -666,7 +663,7 @@ This section quantifies the influence of efficiency corrections by comparing 
 
 #figure(
   pdf(
-    "../data/LHC22o_pass7_minBias_small/k-ak/mc_closure_ratio.pdf",
+    "../data/LHC22o_pass7_minBias_small/k-ak/data_correction.pdf",
     width: 90%,
   ),
   caption: [
@@ -678,7 +675,7 @@ This section quantifies the influence of efficiency corrections by comparing 
 
 #figure(
   pdf(
-    "../data/LHC22o_pass7_minBias_medium/p-p/mc_closure_ratio.pdf",
+    "../data/LHC22o_pass7_minBias_medium/p-p/data_correction.pdf",
     width: 90%,
   ),
   caption: [
@@ -688,7 +685,7 @@ This section quantifies the influence of efficiency corrections by comparing 
 
 #figure(
   pdf(
-    "../data/LHC22o_pass7_minBias_medium/p-ap/mc_closure_ratio.pdf",
+    "../data/LHC22o_pass7_minBias_medium/p-ap/data_correction.pdf",
     width: 90%,
   ),
   caption: [
