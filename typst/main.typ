@@ -350,7 +350,7 @@ My first solution (@fig:workflow-initial) leveraged the O2 framework's so-calle
   ],
 ) <lst:callback-service-code>
 
-However, the above idea has a major drawback. It assumes that the analysis task executes on a single machine, whereas parallel and distributed environments—such as the Worldwide LHC Computing Grid—typically involve multiple machines.
+However, the above idea has a major drawback. It assumes that the analysis task executes on a single machine, whereas parallel and distributed environments—such as the Worldwide LHC Computing Grid—typically involve multiple machines.
 
 The *WLCG*, simply referred to as _Grid_, constitutes a global collaboration of approximately 170 computing centers across more than 40 countries. This computing infrastructure integrates around 1.4 million computer cores and 1.5 exabytes of storage. Its primary objective involves storing, distributing, and analyzing the substantial amounts of data generated annually by the LHC at CERN.
 
@@ -555,12 +555,9 @@ In the following figures, the top panels compare truth results to reconstruc
 
 == Correlation functions for pions
 
-#figure(
-  pdf("../data/LHC24f3c/pi-pi/data_correction.pdf", width: 90%),
-  caption: [
-    MC closure in 1D and 2D for pion+ pion+ from proton-proton collisions.
-  ],
-) <fig:closure-pi-pi>
+#figure(pdf("../data/LHC24f3c/pi-pi/data_correction.pdf"), caption: [
+  MC closure in 1D and 2D for pion+ pion+ from proton-proton collisions.
+]) <fig:closure-pi-pi>
 
 The uncorrected distributions show noticeable differences from the truth, particularly in $Delta eta$ projection. Using efficiency corrections makes the reconstructed results closer to truth. In the $Delta phi$ projection, both correction dimensions reproduce the overall shape of the correlation function, although systematic deviations of up to 2% remain.
 
@@ -568,28 +565,22 @@ The $Delta eta$ projection shows a different trend: at $|Delta eta| > 1$, the�
 
 The opposite-sign pion correlation shown in @fig:closure-pi-api exhibits similar features to the like-sign case - the corrected distributions closely follow the MC truth across most of the $Delta phi$ and $Delta eta$ ranges. As before, 2D corrections yield better agreement with the truth than 1D corrections. A wing-like structure again emerges at $|Delta eta| > 1$, indicating the same artifact discussed earlier.
 
-#figure(
-  pdf("../data/LHC24f3c/pi-api/data_correction.pdf", width: 90%),
-  caption: [
-    MC closure in 1D and 2D for pion+ pion- from proton-proton collisions.
-  ],
-) <fig:closure-pi-api>
+#figure(pdf("../data/LHC24f3c/pi-api/data_correction.pdf"), caption: [
+  MC closure in 1D and 2D for pion+ pion- from proton-proton collisions.
+]) <fig:closure-pi-api>
 
 
 == Correlation functions for kaons
 
 The $C(Delta eta)$ plots for kaon pairs with like (@fig:closure-k-k) and unlike signs (@fig:closure-k-ak) present the clearest distinction -- among all studied particle pairs -- between the effects of 1D and 2D corrections. The uncorrected bins deviate the most from the truth. However, the more dimensions in the corrections, the better agreement with the reference distribution. The 2D corrections make the ratio between reconstructed and truth results to not exceed 2%.
 
-#figure(pdf("../data/LHC24f3c/k-k/data_correction.pdf", width: 90%), caption: [
+#figure(pdf("../data/LHC24f3c/k-k/data_correction.pdf"), caption: [
   MC closure in 1D and 2D for kaon+ kaon+ from proton-proton collisions.
 ]) <fig:closure-k-k>
 
-#figure(
-  pdf("../data/LHC24f3c/k-ak/data_correction.pdf", width: 90%),
-  caption: [
-    MC closure in 1D and 2D for kaon+ kaon- from proton-proton collisions.
-  ],
-) <fig:closure-k-ak>
+#figure(pdf("../data/LHC24f3c/k-ak/data_correction.pdf"), caption: [
+  MC closure in 1D and 2D for kaon+ kaon- from proton-proton collisions.
+]) <fig:closure-k-ak>
 
 #pagebreak()
 
@@ -597,21 +588,15 @@ The $C(Delta eta)$ plots for kaon pairs with like (@fig:closure-k-k) and unlik
 
 When looking at the $Delta eta$ projections for proton-proton pair (@fig:closure-p-p), one could draw a conclusion, that the corrections from 1D yield better results compared to 2D. However, chi-squared test results, shown in the next section, provide more accurate insight regarding the difference.
 
-#figure(
-  pdf("../data/LHC24f3c_fix/p-p/data_correction.pdf", width: 90%),
-  caption: [
-    MC closure in 1D and 2D for proton-proton from proton-proton collisions.
-  ],
-) <fig:closure-p-p>
+#figure(pdf("../data/LHC24f3c_fix/p-p/data_correction.pdf"), caption: [
+  MC closure in 1D and 2D for proton-proton from proton-proton collisions.
+]) <fig:closure-p-p>
 
 The proton anti-proton pair (@fig:closure-p-ap) effectively shows no significant differences in effects between 1D vs. 2D corrections in $Delta phi$ projections, with only a slight deviation for $|Delta eta| > 0.7$.
 
-#figure(
-  pdf("../data/LHC24f3c_fix/p-ap/data_correction.pdf", width: 90%),
-  caption: [
-    MC closure in 1D and 2D for proton anti-proton from proton-proton collisions.
-  ],
-) <fig:closure-p-ap>
+#figure(pdf("../data/LHC24f3c_fix/p-ap/data_correction.pdf"), caption: [
+  MC closure in 1D and 2D for proton anti-proton from proton-proton collisions.
+]) <fig:closure-p-ap>
 
 #pagebreak()
 
@@ -628,70 +613,115 @@ This section quantifies the influence of efficiency corrections by comparing 
 
 = Correction on real data
 
-The following figures show the correlation functions for real data before and after applying 1D and 2D efficiency corrections. Each of the two panels compare the uncorrected distributions with the corrected ones.
+The following figures show the correlation functions for real data before and after applying 1D and 2D efficiency corrections. Each of the two panels compare the uncorrected distributions with the corrected ones.
 
 == Correlation functions for pions
 
+Corrections on pion+ pion+ pair (@fig:data-pi-pi) seem to slightly lower the correlation peak at $Delta phi = 0$ (effects from same jet effects) up to 2%, and increase the effects from momentum conservation at $Delta phi > 2$ also by \<2%. For the $Delta eta$ projection, the corrections do not affect the function shape too much, with visible differences in the ranges $|Delta eta| > 0.7$, where the deviations reach 2%.
+
 #figure(
-  pdf(
-    "../data/LHC22o_pass7_minBias_small/pi-pi/data_correction.pdf",
-    width: 90%,
-  ),
+  pdf("../data/LHC22o_pass7_minBias_small/pi-pi/data_correction.pdf"),
   caption: [
     Data in 1D and 2D for pion+ pion+.
   ],
 ) <fig:data-pi-pi>
 
+When comparing the ratios for 1D and 2D corrections (@fig:data-pi-pi-3d), one can see that 2D corrections have introduced localized regions of higher deviation in the ratio for $0.5 < Delta phi < 1$ and $2 < Delta phi < 3$ ranges.
+
 #figure(
-  pdf(
-    "../data/LHC22o_pass7_minBias_small/pi-api/data_correction.pdf",
-    width: 90%,
-  ),
+  pdf("../data/LHC22o_pass7_minBias_small/pi-pi/corr_func_compare.pdf"),
+  caption: [
+    3D correlation function for pion+ pion+.
+  ],
+) <fig:data-pi-pi-3d>
+
+For the pion+ pion- pair, the corrections alter the correlation function's shape, with the same deviation at the same jet peak but rising to 10%. For larger variable differences, both 1D and 2D corrections reduce the function's values.
+
+#figure(
+  pdf("../data/LHC22o_pass7_minBias_small/pi-api/data_correction.pdf"),
   caption: [
     Data in 1D and 2D for pion+ pion-.
   ],
 ) <fig:data-pi-api>
 
-== Correlation functions for kaons
+In @fig:data-pi-api-3d, one can see that the values around the peak do not change much after correction, and the areas further than the peak deviate less than 5% from the uncorrected function.
 
 #figure(
-  pdf("../data/LHC22o_pass7_minBias_small/k-k/data_correction.pdf", width: 90%),
+  pdf("../data/LHC22o_pass7_minBias_small/pi-api/corr_func_compare.pdf"),
+  caption: [
+    3D correlation function for pion+ pion-.
+  ],
+) <fig:data-pi-api-3d>
+
+== Correlation functions for kaons
+
+In @fig:data-k-k, the results in the $Delta phi$ projection do not show any significant differences between the uncorrected and corrected distributions. However, the $Delta eta$ projection shows a significant difference in the correction effects between 1D and 2D.
+
+#figure(
+  pdf("../data/LHC22o_pass7_minBias_small/k-k/data_correction.pdf"),
   caption: [
     Data in 1D and 2D for kaon+ kaon+.
   ],
 ) <fig:data-k-k>
 
+In @fig:data-k-k-3d, the 1D corrections seem to increase the values in the areas related to back-to-back jets by \<3%. In contrast, the 2D corrections decrease them by 3%. One can also see 2D corrections seem to magnify the resonance effects in the function.
+
 #figure(
-  pdf(
-    "../data/LHC22o_pass7_minBias_small/k-ak/data_correction.pdf",
-    width: 90%,
-  ),
+  pdf("../data/LHC22o_pass7_minBias_small/k-k/corr_func_compare.pdf"),
+  caption: [
+    3D correlation function for kaon+ kaon+.
+  ],
+) <fig:data-k-k-3d>
+
+For the opposite-sign kaon+ kaon- pair (@fig:data-k-ak, @fig:data-k-ak-3d), the corrections primarily affect the same jet peak, with other areas unchanged. Both 1D and 2D corrections increase the peak by less than 5%.
+
+#figure(
+  pdf("../data/LHC22o_pass7_minBias_small/k-ak/data_correction.pdf"),
   caption: [
     Data in 1D and 2D for kaon+ kaon-.
   ],
 ) <fig:data-k-ak>
 
+#figure(
+  pdf("../data/LHC22o_pass7_minBias_small/k-ak/corr_func_compare.pdf"),
+  caption: [
+    3D correlation function for kaon+ kaon-.
+  ],
+) <fig:data-k-ak-3d>
+
 == Correlation functions for protons
 
+Wing-like structures observed in the $Delta eta$ projection for the MC closure test (@fig:closure-p-p) also appear in the real data results (@fig:data-p-p). Both 1D and 2D corrections reduce the wing artifacts, with 2D corrections decreasing their values by up to 4%. Additionally, @fig:data-p-p-3d indicates that all corrections amplify resonance effects.
+
 #figure(
-  pdf(
-    "../data/LHC22o_pass7_minBias_medium/p-p/data_correction.pdf",
-    width: 90%,
-  ),
+  pdf("../data/LHC22o_pass7_minBias_medium/p-p/data_correction.pdf"),
   caption: [
     Data in 1D and 2D for proton-proton.
   ],
 ) <fig:data-p-p>
 
 #figure(
-  pdf(
-    "../data/LHC22o_pass7_minBias_medium/p-ap/data_correction.pdf",
-    width: 90%,
-  ),
+  pdf("../data/LHC22o_pass7_minBias_medium/p-p/corr_func_compare.pdf"),
+  caption: [
+    3D correlation function for proton-proton.
+  ],
+) <fig:data-p-p-3d>
+
+Proton anti-proton pair (@fig:data-p-ap) shows no significant differences between 1D and 2D correction effects. However, both ratios show a large increase in same jet peak area, reaching 20% in both dimensions (@fig:data-p-p-3d).
+
+#figure(
+  pdf("../data/LHC22o_pass7_minBias_medium/p-ap/data_correction.pdf"),
   caption: [
     Data in 1D and 2D for proton anti-proton.
   ],
 ) <fig:data-p-ap>
+
+#figure(
+  pdf("../data/LHC22o_pass7_minBias_medium/p-ap/corr_func_compare.pdf"),
+  caption: [
+    3D correlation function for proton anti-proton.
+  ],
+) <fig:data-p-ap-3d>
 
 
 #clearpage()

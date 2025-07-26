@@ -209,7 +209,6 @@ if __name__ == "__main__":
 
         if args.mc:
             assert cf_truth is not None
-
             bot = fig.add_subplot(gs[1, idx], sharex=top)
             plt.setp(top.get_xticklabels(), visible=False)
 
