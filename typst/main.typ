@@ -509,7 +509,96 @@ The rest of the correction macro, along with the remaining steps of the co
 ]) <fig:eff-cont-p-2d>
 
 
-= MC closure
+= Validation of correction workflow
+
+This chapter focuses on the validation of the correction workflow described in the previous chapter. For this purpose I perform Monte Carlo closure test, as well as a simple $chi^2$ test.
+
+== Event and track selection
+
+Events must satisfy criteria designed to reject poorly defined collisions and reduce the impact of pileup, which arises when detectors register signals from multiple interactions within the same readout window. In particular, the selection includes a constraint on the primary vertex z-position, requiring $|v_x z| < 10$ cm to exclude collisions occurring far from the center of the ALICE detector, where particle detection becomes unreliable.
+
+The O2 framework also provides built-in event selection criterion called `sel8`, based on FT0A and FT0C forward detectors used for triggering and event characterization in studied collisions. It performs pileup rejection and ensures basic event quality.
+
+@fig:track-selection shows the chosen track selection requirements for the analysis of each pair. There also exists a global track filter, also provided by the O2 framework for general use, with its details outlined in @fig:global-track-selection.
+
+#figure(
+  table(
+    columns: 4,
+    align: left + horizon,
+    inset: 0.5em,
+    table.header([*Particle pair*], [*Cuts*], [*Particle pair*], [*Cuts*]),
+
+    [*$p p$*],
+    [
+      $0.5 < p_T < 6$ GeV/$c$ \
+      TOF $p_T > 0.7$ GeV/$c$ \
+      $N_(sigma_"TPC") < 3$ ($p_T < 0.7$ GeV/$c$)
+    ],
+
+    [*$p overline(p)$*],
+    [
+      $0.5 < p_T < 6$ GeV/$c$ \
+      TOF $p_T > 0.7$ GeV/$c$ \
+      $N_(sigma_"TPC") < 3$ ($p_T < 0.7$ GeV/$c$)
+    ],
+
+    [*$pi^+ pi^+$*],
+    [
+      $0.5 < p_T < 6$ GeV/$c$ \
+      TOF $p_T > 0.7$ GeV/$c$ \
+      $N_(sigma_"TPC") < 3$ ($p_T < 0.7$ GeV/$c$)
+    ],
+
+    [*$pi^+ pi^-$*],
+    [
+      $0.5 < p_T < 6$ GeV/$c$ \
+      TOF $p_T > 0.7$ GeV/$c$ \
+      $N_(sigma_"TPC") < 3$ ($p_T < 0.7$ GeV/$c$)
+    ],
+
+    [*$K^+ K^+$*],
+    [
+      $0.5 < p_T < 6$ GeV/$c$ \
+      TOF $p_T > 0.7$ GeV/$c$ \
+      $N_(sigma_"TPC") < 3$ ($p_T < 0.7$ GeV/$c$)
+    ],
+
+    [*$K^+ K^-$*],
+    [
+      $0.5 < p_T < 6$ GeV/$c$ \
+      TOF $p_T > 0.7$ GeV/$c$ \
+      $N_(sigma_"TPC") < 3$ ($p_T < 0.7$ GeV/$c$)
+    ],
+  ),
+  caption: [
+    Event selection criteria.
+  ],
+) <fig:track-selection>
+
+#figure(
+  table(
+    columns: 2,
+    align: left,
+    table.header([*Cuts*], [*globalTrack*]),
+
+    [min number of crossed rows TPC], [70],
+    [min ratio of crossed rows over findable clusters TPC], [0.8],
+    [max chi2 per cluster TPC], [4.0],
+    [max chi2 per cluster ITS], [36.0],
+    [require TPC refit], [true],
+    [require ITS refit], [true],
+    [max DCA to vertex z], [2.0],
+    [max DCA to vertex xy], [0.0105 + 0.035 / p$""_T^(1.1)$],
+    [cluster requirement ITS],
+    [Run 3: in 3 innermost ITS layers],
+
+    [p$""_T$ range], [0.1 - 1e10],
+    [η range], [-0.8 - 0.8],
+  ),
+  caption: [Partial `TrackSelection` table used in O2 framework as the global track filter @global-track-filter],
+) <fig:global-track-selection>
+
+== Monte Carlo closure test
 
 The standard method for verifying the applied weights involves performing a Monte Carlo closure test. It compares the MC reconstructed sample - after applying efficiency corrections - with the MC truth sample. In a successful closure test, the corrected reconstructed distribution matches the one coming from MC truth, within statistical uncertainties.
 
@@ -520,8 +609,8 @@ All datasets used for the MC closure test come from simulations based on the P
 #figure(
   table(
     columns: (auto, auto, 1fr),
+    inset: 0.7em,
     align: horizon,
-    inset: 1em,
     table.header([*Pair*], [*Dataset*], [*Run numbers*]),
 
     [
@@ -549,8 +638,6 @@ All datasets used for the MC closure test come from simulations based on the P
   ),
   caption: [Data used for MC closure analysis],
 ) <tab:mc-closure>
-
-// TODO: Event and track selection
 
 In the following figures, the top panels compare truth results to reconstructed distributions, both without corrections and with 1D or 2D efficiency corrections. The bottom panels display the ratio between each corrected result and the truth.
 
