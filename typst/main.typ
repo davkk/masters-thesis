@@ -515,7 +515,7 @@ This chapter focuses on the validation of the correction workflow described i
 
 == Event and track selection
 
-Events must satisfy criteria designed to reject poorly defined collisions and reduce the impact of pileup, which arises when detectors register signals from multiple interactions within the same readout window. In particular, the selection includes a constraint on the primary vertex z-position, requiring $|v_x z| < 10$ cm to exclude collisions occurring far from the center of the ALICE detector, where particle detection becomes unreliable.
+Events must satisfy criteria designed to reject poorly defined collisions and reduce the impact of pileup, which arises when detectors register signals from multiple interactions within the same readout window. In particular, the selection includes a constraint on the primary vertex z-position, requiring $|"vtx"_z| < 10$ cm to exclude collisions occurring far from the center of the ALICE detector, where particle detection becomes unreliable.
 
 The O2 framework also provides built-in event selection criterion called `sel8`, based on FT0A and FT0C forward detectors used for triggering and event characterization in studied collisions. It performs pileup rejection and ensures basic event quality.
 
