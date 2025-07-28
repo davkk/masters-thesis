@@ -113,7 +113,7 @@ if __name__ == "__main__":
             ncol=len(hist_names),
             fontsize=6,
         )
-        ax.set_xlabel(r"$p_T [\text{GeV/c}]$")
+        ax.set_xlabel(r"$p_T$ [GeV/$c$]")
         ax.set_ylabel(r"Contamination [%]")
 
         fig.savefig(DATA_DIR / f"{Path(__file__).stem}_{args.pair[idx]}.pdf")

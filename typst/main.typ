@@ -97,7 +97,7 @@
     image("img/mgr_en.png", width: 70%),
     text(size: 1.1em)[
       in the field of study Fizyka Techniczna \
-      and specialization EDMI
+      and specialization Eksploracja Danych i Modelowanie Interdyscyplinarne
     ],
     stack(
       spacing: 2em,
@@ -181,7 +181,7 @@ _Słowa kluczowe:_
 
 = Introduction
 
-This thesis aims to improve the precision of particle physics analyses by correcting studied observable with the reconstruction efficiency of particle registered by the ALICE detector. Specifically, it proposes and validates a new semi-automated method for applying these corrections to angular correlation functions within the upgraded Run 3 $"O"^2$ software framework.
+This thesis aims to improve the precision of particle physics analyses by correcting studied observables with the reconstruction efficiency of particle registered by the ALICE detector. Specifically, it proposes and validates a new semi-automated method for applying these corrections to angular correlation functions within the upgraded Run 3 $"O"^2$ software framework.
 
 == LHC and Run 3
 
@@ -189,8 +189,7 @@ The *Large Hadron Collider* (LHC), located at the European Organization for Nu
 
 // TODO: write something more?
 
-The collider has completed two successful periods of data collection, the first Run 1 (2010--2013), and the other Run 2 (2015--2018). The current operational phase, *Run 3*, began in 2022 following the second, long shutdown (LS2) @lhc-upgrade. After numerous upgrades, the LHC now features proton-proton collisions at a center-of-mass energy of 13.6 TeV, an increase from the 13 TeV utilized in Run 2. This higher energy helps in further studies and improves measurement precision and analysis statistics.
-
+The collider has completed two successful periods of data collection, the first Run 1 (2010--2013), and the other Run 2 (2015--2018). The current operational phase, *Run 3*, began in 2022 following the second long shutdown (LS2) @lhc-upgrade. After numerous upgrades, the LHC now features proton-proton collisions at a center-of-mass energy of 13.6 TeV, an increase from the 13 TeV utilized in Run 2. This higher energy helps in further studies and improves measurement precision and overall analysis.
 
 == The ALICE experiment
 
@@ -208,12 +207,12 @@ One can construct the angular correlation function using two quantities: pseudo
   Showcase of the angles considered in angular correlation function analysis.
 ]) <fig:detector-angles>
 
-First, the pseudorapidity, $eta$, relates to the angle between the particle momentum $p$ and the beam axis ($theta$, @fig:detector-angles) as
+First, the pseudorapidity, $eta$, relates to the angle, denoted in @fig:detector-angles as $theta$, between the particle momentum $p$ and the beam axis as
 $
   eta = -ln [tan(theta/2)].
 $
 
-The azimuthal angle on the other hand represents the angle between the $x$-axis and the projection, $p_T$, of the momentum vector onto the $x y$-plane ($phi$, @fig:detector-angles).
+The azimuthal angle on the other hand represents the angle, $phi$, between the $x$-axis and the projection, $p_T$, of the momentum vector onto the $x y$-plane (@fig:detector-angles).
 
 However, the analysis of two-particle correlation accounts for the differences between both angles, expressed as $Delta eta = eta_1 - eta_2$ and $Delta phi = phi_1 - phi_2$.
 
@@ -234,9 +233,7 @@ $
 
 == Correction procedure
 
-The correction procedure aims to mitigate biases, that arise during the actual experiment.
-
-Correction weights come from data produced in Monte Carlo (MC) simulations. Generated collisions follow set parameters, producing particles referred to as *MC truth*. These particles originate directly from the event generator and remain unaffected by detector effects.
+This procedure aims to mitigate biases, that arise during the actual experiment. Correction weights come from data produced in Monte Carlo (MC) simulations. Generated collisions follow set parameters, producing particles referred to as *MC truth*. These particles originate directly from the event generator and remain unaffected by detector effects.
 
 To model how these particles would appear in the detector, their trajectories pass through a transport package — in this case, GEANT4 @agostinelli2003geant4 — which emulates their interactions with the detector. This step accounts for e.g. energy loss, multiple scattering, and secondary particle production. Such tracks undergo reconstruction, simulating the one used for real collision data. The resulting tracks correspond to the same MC truth particles but now also include effects introduced by detector geometry and material. This final set forms the *MC reconstructed* sample.
 
@@ -244,15 +241,19 @@ To model how these particles would appear in the detector, their trajectories
 
 === Reconstruction efficiency
 
+Reconstruction efficiency can vary with transverse momentum, $p_T$, and pseudorapidity, $eta$. Tracks with too low $p_T$ may bend too strongly in the magnetic field and fail to register enough hits for a reliable fit (@fig:reco-truth-tracks), and detector layout or dead zones can lower efficiency. Application of the corrections recovers the true count of primary charged particles.
+
 Calculation of reconstruction efficiency involves taking the ratio of the number of reconstructed particles to the number of simulated (true) particles
 $
   epsilon = N_"recon." / N_"truth".
 $ <eq:efficiency>
 
-#figure(image("img/efficiency.png", width: 60%), caption: [
-  Tracks of simulated and reconstructed particles. Successful
-  identification shown in green.
-]) <fig:reco-truth-tracks>
+#figure(
+  image("img/efficiency.png", width: 60%),
+  caption: [
+    Tracks of simulated and reconstructed particles. Successful identification shown in green.
+  ],
+) <fig:reco-truth-tracks>
 
 === Secondary contamination
 
@@ -294,7 +295,7 @@ The values of $C$ and $epsilon$ typically come from histograms binned in tra
 
 == Framework — O2 and O2Physics
 
-The major upgrade during Long Shutdown 2, introduced a new computing system called *Online-Offline (O2)* @o2-technical-design-report. This system replaces the previous data processing model with a more efficient approach that minimizes data volume through online track reconstruction. To support this, ALICE deployed two specialized computing farms: the First Level Processor (FLP) farm in Counting Room 1 (CR1) and the Event Processing Node (EPN) farm in Counting Room 0 (CR0). The FLP farm first reduces raw detector data from 1.1 TB/s to 900 GB/s by performing initial data suppression before sending it via Infiniband to the EPN farm. There, the first reconstruction pass further reduces the data to 90 GB/s, which then gets written to permanent storage.
+The major upgrade during Long Shutdown 2, introduced a new computing system called *Online-Offline (O2)* @o2-technical-design-report. This system replaces the previous data processing model with a more efficient approach that minimizes data volume through online track reconstruction. To support this, ALICE deployed two specialized computing farms: the First Level Processor (FLP) farm in Counting Room 1 (CR1) and the Event Processing Node (EPN) farm in Counting Room 0 (CR0). The FLP farm first reduces raw detector data from 1.1 TB/s to 900 GB/s by performing initial data suppression before sending it via Infiniband to the EPN farm. There, the first reconstruction pass further reduces the data to 90 GB/s, which then gets written to permanent storage.
 
 The O2 framework @o2-framework introduces an entirely new software ecosystem, designed from scratch to support this architecture, by handling detector readout, data quality control, and operational services. *O2Physics* on the other hand acts as the complementary part to O2 for the LHC data analysis. It provides a way to define and run analysis tasks, which then get executed in parallel on the cluster. Designed with flexibility and extendibility in mind, the framework allows physicists to add their own analyses and modify existing ones.
 
@@ -316,7 +317,7 @@ Therefore, a large part of this work focuses on developing a generic method i
 
 == The initial idea
 
-A key aspect of the Run 3 upgrade involved shifting to a triggerless readout system, which requires real-time lossy data compression. Traditionally, systems have executed certain data processing tasks offline, but the new system integrates them directly into the front end of data acquisition. To facilitate this transition, ALICE introduced a centralized system called Calibration and Conditions Data base (CCDB) @ccdb-alice-run3. As its main design goal, it stores and retrieves the calibration data and ensures real-time propagation of updates to the online cluster while asynchronously synchronizing content with Grid storage for later access. Researchers can retrieve the data through a REST API or a ROOT-based @root C++ client, which integrates directly with the O2 and O2Physics frameworks.
+A key aspect of the Run 3 upgrade involved shifting to a triggerless readout system, which requires real-time lossy data compression. Traditionally, systems have executed certain data processing tasks offline, but the new system integrates them directly into the front end of data acquisition. To facilitate this transition, ALICE introduced a centralized system called Calibration and Conditions Database (CCDB) @ccdb-alice-run3. As its main design goal, it stores and retrieves the calibration data and ensures real-time propagation of updates to the online cluster while asynchronously synchronizing content with Grid storage for later access. Researchers can retrieve the data through a REST API or a ROOT-based @root C++ client, which integrates directly with the O2 and O2Physics frameworks.
 
 The goal of the new approach for correction builds on the idea of using the CCDB to store and retrieve the correction data efficiently. The O2 framework provides a programmatic interface to the service, which makes the process easy to integrate for own needs. With this, analysis tasks can access correction factors from a central place, ensuring consistency.
 
@@ -350,7 +351,7 @@ My first solution (@fig:workflow-initial) leveraged the O2 framework's so-calle
   ],
 ) <lst:callback-service-code>
 
-However, the above idea has a major drawback. It assumes that the analysis task executes on a single machine, whereas parallel and distributed environments—such as the Worldwide LHC Computing Grid—typically involve multiple machines.
+However, the above idea has a major drawback. It assumes that the analysis task executes on a single machine, whereas parallel and distributed environments -- such as the Worldwide LHC Computing Grid -- typically involve multiple machines.
 
 The *WLCG*, simply referred to as _Grid_, constitutes a global collaboration of approximately 170 computing centers across more than 40 countries. This computing infrastructure integrates around 1.4 million computer cores and 1.5 exabytes of storage. Its primary objective involves storing, distributing, and analyzing the substantial amounts of data generated annually by the LHC at CERN.
 
@@ -418,7 +419,7 @@ Each particle type shows a distinct reconstruction efficiency and contaminatio
   ],
 ) <fig:eff-cont>
 
-Furthermore, the reconstruction efficiency seen in the @fig:eff-cont depends strongly on the applied particle selection criteria. For instance, at $p = 0.7 "GeV"/c$, particle identification starts to rely on the Time-Of-Flight (TOF) detector. Due to low matching efficiency between the Time Projection Chamber (TPC) and TOF in this momentum region, the overall reconstruction efficiency drops sharply.
+Furthermore, the reconstruction efficiency seen in the @fig:eff-cont depends strongly on the applied particle selection criteria. For instance, at $p = 0.7$ GeV/$c$, particle identification starts to rely on the Time-Of-Flight (TOF) detector. Due to low matching efficiency between the Time Projection Chamber (TPC) and TOF in this momentum region, the overall reconstruction efficiency drops sharply.
 
 The macro then computes the final weights by combining the efficiency and secondary contamination distributions to write the resulting histograms into a new ROOT file (@lst:corr-macro-weig).
 
@@ -496,11 +497,11 @@ The rest of the correction macro, along with the remaining steps of the co
 @fig:eff-cont-pi-2d, @fig:eff-cont-k-2d and @fig:eff-cont-p-2d show projections from constructed 3D histograms onto $p_T$ vs. $eta$ axis of the reconstruction efficiency and contamination.
 
 #figure(pdf("../data/LHC24f3c/effcor/pi/eff_cont_2d.pdf"), caption: [
-  Efficiency (a) and secondary contamination (b) in two dimensions for pion+.
+  Efficiency (a) and secondary contamination (b) in two dimensions for pion.
 ]) <fig:eff-cont-pi-2d>
 
 #figure(pdf("../data/LHC24f3c/effcor/k/eff_cont_2d.pdf"), caption: [
-  Efficiency (a) and secondary contamination (b) in two dimensions for kaon+.
+  Efficiency (a) and secondary contamination (b) in two dimensions for kaon.
 ]) <fig:eff-cont-k-2d>
 
 #figure(pdf("../data/LHC24f3c_fix/effcor/p/eff_cont_2d.pdf"), caption: [
@@ -555,11 +556,11 @@ In the following figures, the top panels compare truth results to reconstruc
 
 == Correlation functions for pions
 
+The uncorrected distributions in @fig:closure-pi-pi show noticeable differences from the truth, particularly in $Delta eta$ projection. Using efficiency corrections makes the reconstructed results closer to truth. In the $Delta phi$ projection, both correction dimensions reproduce the overall shape of the correlation function, although systematic deviations of up to 2% remain.
+
 #figure(pdf("../data/LHC24f3c/pi-pi/data_correction.pdf"), caption: [
   MC closure in 1D and 2D for pion+ pion+ from proton-proton collisions.
 ]) <fig:closure-pi-pi>
-
-The uncorrected distributions show noticeable differences from the truth, particularly in $Delta eta$ projection. Using efficiency corrections makes the reconstructed results closer to truth. In the $Delta phi$ projection, both correction dimensions reproduce the overall shape of the correlation function, although systematic deviations of up to 2% remain.
 
 The $Delta eta$ projection shows a different trend: at $|Delta eta| > 1$, the corrected points rise above the truth. Previous analyses of mixed‑event corrections show that finite binning in event multiplicity and primary vertex (PV) position can create a mismatch in the background shape at large $eta$ differences, forming a wing-like structure @wings. This artifact appears in both 1D and 2D corrections. Nevertheless, the deviation from the truth in the 2D projection remains smaller compared to the 1D case.
 
@@ -572,7 +573,7 @@ The opposite-sign pion correlation shown in @fig:closure-pi-api exhibits simil
 
 == Correlation functions for kaons
 
-The $C(Delta eta)$ plots for kaon pairs with like (@fig:closure-k-k) and unlike signs (@fig:closure-k-ak) present the clearest distinction -- among all studied particle pairs -- between the effects of 1D and 2D corrections. The uncorrected bins deviate the most from the truth. However, the more dimensions in the corrections, the better agreement with the reference distribution. The 2D corrections make the ratio between reconstructed and truth results to not exceed 2%.
+The $C(Delta eta)$ plots for kaon pairs with like (@fig:closure-k-k) and unlike signs (@fig:closure-k-ak) present the clearest distinction -- among all studied particle pairs -- between the effects of 1D and 2D corrections. The uncorrected bins deviate the most from the truth. However, the more dimensions in the corrections, the better agreement with the reference distribution. After applying the 2D corrections, the ratio of reconstructed to true values deviates by no more than 2%.
 
 #figure(pdf("../data/LHC24f3c/k-k/data_correction.pdf"), caption: [
   MC closure in 1D and 2D for kaon+ kaon+ from proton-proton collisions.
@@ -617,7 +618,7 @@ The following figures show the correlation functions for real data before and�
 
 == Correlation functions for pions
 
-Corrections on pion+ pion+ pair (@fig:data-pi-pi) seem to slightly lower the correlation peak at $Delta phi = 0$ (effects from same jet effects) up to 2%, and increase the effects from momentum conservation at $Delta phi > 2$ also by \<2%. For the $Delta eta$ projection, the corrections do not affect the function shape too much, with visible differences in the ranges $|Delta eta| > 0.7$, where the deviations reach 2%.
+Corrections on pion+ pion+ pair (@fig:data-pi-pi) seem to slightly lower the correlation peak at $Delta phi = 0$ (effects from same jet effects) up to 2%, and increase the effects from momentum conservation at $Delta phi > 2$ also by less than 2%. For the $Delta eta$ projection, the corrections do not affect the function shape too much, with visible differences in the ranges $|Delta eta| > 0.7$, where the deviations reach 2%.
 
 #figure(
   pdf("../data/LHC22o_pass7_minBias_small/pi-pi/data_correction.pdf"),
@@ -635,7 +636,7 @@ When comparing the ratios for 1D and 2D corrections (@fig:data-pi-pi-3d), one 
   ],
 ) <fig:data-pi-pi-3d>
 
-For the pion+ pion- pair, the corrections alter the correlation function's shape, with the same deviation at the same jet peak but rising to 10%. For larger variable differences, both 1D and 2D corrections reduce the function's values.
+For the pion+ pion- pair, the corrections alter the correlation function's shape, with the same deviation at the same jet peak but rising to 10%. For larger variable differences, both 1D and 2D corrections reduce the function's values.
 
 #figure(
   pdf("../data/LHC22o_pass7_minBias_small/pi-api/data_correction.pdf"),
@@ -644,7 +645,7 @@ For the pion+ pion- pair, the corrections alter the correlation function's shape
   ],
 ) <fig:data-pi-api>
 
-In @fig:data-pi-api-3d, one can see that the values around the peak do not change much after correction, and the areas further than the peak deviate less than 5% from the uncorrected function.
+In @fig:data-pi-api-3d, one can see that the values around the peak do not change much after correction, and the areas further than the peak deviate less than 5% from the uncorrected function.
 
 #figure(
   pdf("../data/LHC22o_pass7_minBias_small/pi-api/corr_func_compare.pdf"),
@@ -655,7 +656,7 @@ In @fig:data-pi-api-3d, one can see that the values around the peak do not chang
 
 == Correlation functions for kaons
 
-In @fig:data-k-k, the results in the $Delta phi$ projection do not show any significant differences between the uncorrected and corrected distributions. However, the $Delta eta$ projection shows a significant difference in the correction effects between 1D and 2D.
+In @fig:data-k-k, the results in the $Delta phi$ projection do not show any significant differences between the uncorrected and corrected distributions. However, the $Delta eta$ projection shows a significant difference in the correction effects between 1D and 2D.
 
 #figure(
   pdf("../data/LHC22o_pass7_minBias_small/k-k/data_correction.pdf"),
@@ -664,7 +665,7 @@ In @fig:data-k-k, the results in the $Delta phi$ projection do not show any sign
   ],
 ) <fig:data-k-k>
 
-In @fig:data-k-k-3d, the 1D corrections seem to increase the values in the areas related to back-to-back jets by \<3%. In contrast, the 2D corrections decrease them by 3%. One can also see 2D corrections seem to magnify the resonance effects in the function.
+In @fig:data-k-k-3d, the 1D corrections seem to increase the values in the areas related to back-to-back jets by \<3%, when looking at $Delta phi > 2$ region. In contrast, the 2D corrections decrease them by 3%. One can also see 2D corrections seem to magnify the resonance effects in the function.
 
 #figure(
   pdf("../data/LHC22o_pass7_minBias_small/k-k/corr_func_compare.pdf"),
@@ -673,7 +674,7 @@ In @fig:data-k-k-3d, the 1D corrections seem to increase the values in the areas
   ],
 ) <fig:data-k-k-3d>
 
-For the opposite-sign kaon+ kaon- pair (@fig:data-k-ak, @fig:data-k-ak-3d), the corrections primarily affect the same jet peak, with other areas unchanged. Both 1D and 2D corrections increase the peak by less than 5%.
+For the opposite-sign kaon+ kaon- pair (@fig:data-k-ak, @fig:data-k-ak-3d), the corrections primarily affect the same jet peak, with other areas unchanged. Both 1D and 2D corrections increase the peak by less than 5%.
 
 #figure(
   pdf("../data/LHC22o_pass7_minBias_small/k-ak/data_correction.pdf"),
@@ -691,7 +692,7 @@ For the opposite-sign kaon+ kaon- pair (@fig:data-k-ak, @fig:data-k-ak-3d), the 
 
 == Correlation functions for protons
 
-Wing-like structures observed in the $Delta eta$ projection for the MC closure test (@fig:closure-p-p) also appear in the real data results (@fig:data-p-p). Both 1D and 2D corrections reduce the wing artifacts, with 2D corrections decreasing their values by up to 4%. Additionally, @fig:data-p-p-3d indicates that all corrections amplify resonance effects.
+Wing-like structures observed in the $Delta eta$ projection for the MC closure test (@fig:closure-p-p) also appear in the real data results (@fig:data-p-p). Both 1D and 2D corrections reduce the wing artifacts, with 2D corrections decreasing their values by up to 4%. Additionally, @fig:data-p-p-3d indicates that all corrections amplify resonance effects.
 
 #figure(
   pdf("../data/LHC22o_pass7_minBias_medium/p-p/data_correction.pdf"),
@@ -707,7 +708,7 @@ Wing-like structures observed in the $Delta eta$ projection for the MC closure t
   ],
 ) <fig:data-p-p-3d>
 
-Proton anti-proton pair (@fig:data-p-ap) shows no significant differences between 1D and 2D correction effects. However, both ratios show a large increase in same jet peak area, reaching 20% in both dimensions (@fig:data-p-p-3d).
+Proton anti-proton pair (@fig:data-p-ap) shows no significant differences between 1D and 2D correction effects. However, both ratios show a large increase in same jet peak area, reaching 20% in both dimensions (@fig:data-p-p-3d).
 
 #figure(
   pdf("../data/LHC22o_pass7_minBias_medium/p-ap/data_correction.pdf"),
