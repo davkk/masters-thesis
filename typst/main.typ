@@ -589,8 +589,7 @@ The O2 framework also provides built-in event selection criterion called `sel8`,
     [require ITS refit], [true],
     [max DCA to vertex z], [2.0],
     [max DCA to vertex xy], [0.0105 + 0.035 / p$""_T^(1.1)$],
-    [cluster requirement ITS],
-    [Run 3: in 3 innermost ITS layers],
+    [cluster requirement ITS], [Run 3: in 3 innermost ITS layers],
 
     [p$""_T$ range], [0.1 - 1e10],
     [η range], [-0.8 - 0.8],
@@ -812,6 +811,16 @@ Proton anti-proton pair (@fig:data-p-ap) shows no significant differences betwee
 ) <fig:data-p-ap-3d>
 
 
+= Conclusion
+
+This thesis successfully developed and validated a new, semi-automated workflow for applying reconstruction efficiency corrections to angular correlation functions within the ALICE experiment's Run 3 O2Physics framework. The thesis has replaced the previous ad-hoc correction methods with a standardized, reusable, and more robust solution, improving the reliability of future analyses.
+
+The implemented workflow starts with a ROOT macro that, based on MC simulation data, generates one- and two-dimensional correction weights, which account for both reconstruction efficiency and contamination from secondary particles. The workflow then uploads these weights to the CCDB for later use by running a ready-to-use tool called `o2-ccdb-upload`. Finally, the `FemtoUniverseEfficiencyCorrection` class, a C++ abstraction integrated into the O2Physics/FemtoUniverse framework, lets analysis tasks retrieve and apply the corrections directly, based on defined configuration.
+
+A Monte Carlo closure test confirmed the validity of the new method. By comparing the corrected, reconstructed data with the MC truth for pion, kaon, and proton pairs, the test showed that the workflow effectively minimizes deviation from true values. A chi-squared analysis showed that two-dimensional corrections improve the agreement between the data and the MC truth more than uncorrected or 1D-corrected data.
+
+Finally, applying the workflow to real collision data showed that the corrections produced promising results outside of the simulation environment. The analysis includes a comparison of different particle pairs with and without corrections.
+
 #clearpage()
 
 #page-without-numbering(title: "Bibliography")[
@@ -823,3 +832,4 @@ Proton anti-proton pair (@fig:data-p-ap) shows no significant differences betwee
 #page-without-numbering(title: "List of Figures")[
   #outline(title: none, target: figure)
 ]
+
