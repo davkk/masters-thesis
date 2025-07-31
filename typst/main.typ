@@ -136,10 +136,16 @@
 *Thesis title:* #thesis-title-en
 #v(1em)
 
-#lorem(40)
+This thesis introduces a new, semi-automated workflow for the ALICE experiment's Run 3 O2Physics framework, specifically within the `FemtoUniverse` package. The workflow lets anyone extend existing analysis tasks with calculation of reconstruction efficiency and application of correction weights to angular correlation functions. It replaces earlier ad-hoc solutions with a general, reusable, and robust approach.
+
+The system uses a ROOT macro to derive correction weights from Monte Carlo simulations, taking into account both reconstruction efficiency and secondary particle contamination. The user can then upload these weights to the ALICE Calibration and Conditions Database (CCDB) for later use by a custom `FemtoUniverseEfficiencyCorrection` class, which fetches and applies them as angular correlation function corrections.
+
+A Monte Carlo closure test confirmed the workflow's validity. Moreover, based on analyzed pairs of pions, kaons and protons, the two-dimensional corrections improved agreement with truth data over their one-dimensional variant. A chi-squared analysis supported the findings quantitatively.
+
+Finally, applying the workflow to real collision data produced promising results, producing similar correction effects to those observed with MC data.
 
 #v(2em)
-_Keywords:_
+_Keywords:_ ALICE, Run 3, O2Physics, angular correlation functions, reconstruction efficiency, efficiency correction, femtoscopy.
 
 #v(1fr)
 #stack(dir: ltr, spacing: 1fr, "supervisor's signature", "student's signature")
@@ -152,10 +158,16 @@ _Keywords:_
 *Tytuł pracy:* #thesis-title-pl
 #v(1em)
 
-#lorem(40)
+W pracy przedstawiono nowy, częściowo automatyczny proces liczenia wydajności rekonstrukcji i na jej podstawie,  nakładania poprawek na kątowe funkcje korelacyjne. Proces ten został dodany do oprogramowania O2Physics, konkretnie w katalogu `FemtoUniverse`, powstałego w ramach Run 3 w eksperymencie ALICE. Każdy korzystający z oprogramowania może rozszerzyć istniejące skrypty do analizy danych o te funkcjonalności. Proces tym samym zastępuje wcześniejsze rozwiązania ad-hoc ogólnym, mniej podatnym na błędy podejściem.
+
+System wykorzystuje tzw. makro napisane za pomocą ROOT do uzyskania wag z symulacji Monte Carlo, biorąc pod uwagę zarówno wydajność rekonstrukcji, jak i zanieczyszczenie cząstkami wtórnymi. Użytkownik może następnie dodać te wagi do specjalnej bazy danych _Calibration and Conditions Database_ (CCDB). Tak przygotowane wagi używane są później przez stworzoną klasę `FemtoUniverseEfficiencyCorrection`, która pobiera i stosuje jako poprawki do kątowych funkcji korelacyjnych.
+
+Test _Monte Carlo closure_ potwierdził poprawność całego procesu korekcji. Ponadto, na podstawie analizowanych par pionów, kaonów i protonów, korekty dwuwymiarowe najlepiej poprawiły zgodność z danymi MC truth. Analiza chi-kwadrat pozwoliła na liczbowe potwierdzenie porównania korekcji między 1D a 2D.
+
+Wreszcie, zastosowanie poprawek na danych z rzeczywistych  zderzeń dało obiecujące wyniki, powodując zbliżony wpływ na funkcje korelacyjne do tych obserwowanych w korekcjach dla danych MC.
 
 #v(2em)
-_Słowa kluczowe:_
+_Słowa kluczowe:_ ALICE, Run 3, O2Physics, kątowe funkcje korelacyjne, wydajność rekonstrukcji, poprawka na wydajność, femtoskopia.
 
 #v(1fr)
 #stack(dir: ltr, spacing: 1fr, "podpis opiekuna naukowego", "podpis studenta")
@@ -820,6 +832,9 @@ The implemented workflow starts with a ROOT macro that, based on MC simulation d
 A Monte Carlo closure test confirmed the validity of the new method. By comparing the corrected, reconstructed data with the MC truth for pion, kaon, and proton pairs, the test showed that the workflow effectively minimizes deviation from true values. A chi-squared analysis showed that two-dimensional corrections improve the agreement between the data and the MC truth more than uncorrected or 1D-corrected data.
 
 Finally, applying the workflow to real collision data showed that the corrections produced promising results outside of the simulation environment. The analysis includes a comparison of different particle pairs with and without corrections.
+
+At the time of writing this thesis, few group members already actively use the workflow in their analysis tasks. I have tested it on the particle pairs discussed in the thesis, and its design allows generalization to other particle combinations. The future plan involves integrating the workflow with most of the `FemtoUniverse`.
+
 
 #clearpage()
 
