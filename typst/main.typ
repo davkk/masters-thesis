@@ -136,13 +136,13 @@
 *Thesis title:* #thesis-title-en
 #v(1em)
 
-This thesis introduces a new, semi-automated workflow for the ALICE experiment's Run 3 O2Physics framework, specifically within the `FemtoUniverse` package. The workflow lets anyone extend existing analysis tasks with calculation of reconstruction efficiency and application of correction weights to angular correlation functions. It replaces earlier ad-hoc solutions with a general, reusable, and robust approach.
+This thesis introduces a new, semi-automated workflow for the ALICE experiment's Run 3 O2Physics framework, specifically within the `FemtoUniverse` package. The workflow lets anyone extend existing analysis tasks with calculation of reconstruction efficiency and application of correction weights to angular correlation functions. It replaces earlier ad-hoc solutions with a general, reusable, and robust approach.
 
-The system uses a ROOT macro to derive correction weights from Monte Carlo simulations, taking into account both reconstruction efficiency and secondary particle contamination. The user can then upload these weights to the ALICE Calibration and Conditions Database (CCDB) for later use by a custom `FemtoUniverseEfficiencyCorrection` class, which fetches and applies them as angular correlation function corrections.
+The system uses a ROOT macro to derive correction weights from Monte Carlo simulations, taking into account both reconstruction efficiency and secondary particle contamination. The user can then upload these weights to the ALICE Calibration and Conditions Database (CCDB) for later use by a custom `FemtoUniverseEfficiencyCorrection` class, which fetches and applies them as angular correlation function corrections.
 
-A Monte Carlo closure test confirmed the workflow's validity. Moreover, based on analyzed pairs of pions, kaons and protons, the two-dimensional corrections improved agreement with truth data over their one-dimensional variant. A chi-squared analysis supported the findings quantitatively.
+A Monte Carlo closure test confirmed the workflow's validity. Moreover, based on analyzed pairs of pions, kaons and protons, the two-dimensional corrections improved agreement with truth data over their one-dimensional variant. A chi-squared analysis supported the findings quantitatively.
 
-Finally, applying the workflow to real collision data produced promising results, producing similar correction effects to those observed with MC data.
+Finally, applying the workflow to real collision data produced promising results, producing similar correction effects to those observed with MC data.
 
 #v(2em)
 _Keywords:_ ALICE, Run 3, O2Physics, angular correlation functions, reconstruction efficiency, efficiency correction, femtoscopy.
@@ -158,16 +158,16 @@ _Keywords:_ ALICE, Run 3, O2Physics, angular correlation functions, reconstructi
 *Tytuł pracy:* #thesis-title-pl
 #v(1em)
 
-W pracy przedstawiono nowy, częściowo automatyczny proces liczenia wydajności rekonstrukcji i na jej podstawie,  nakładania poprawek na kątowe funkcje korelacyjne. Proces ten został dodany do oprogramowania O2Physics, konkretnie w katalogu `FemtoUniverse`, powstałego w ramach Run 3 w eksperymencie ALICE. Każdy korzystający z oprogramowania może rozszerzyć istniejące skrypty do analizy danych o te funkcjonalności. Proces tym samym zastępuje wcześniejsze rozwiązania ad-hoc ogólnym, mniej podatnym na błędy podejściem.
+W pracy przedstawiono nowy, częściowo automatyczny proces liczenia wydajności rekonstrukcji i na jej podstawie,  nakładania poprawek na kątowe funkcje korelacyjne. Proces ten został dodany do oprogramowania O2Physics, konkretnie w katalogu `FemtoUniverse`, powstałego w ramach Run 3 w eksperymencie ALICE. Każdy korzystający z oprogramowania może rozszerzyć istniejące skrypty do analizy danych o te funkcjonalności. Proces tym samym zastępuje wcześniejsze rozwiązania ad-hoc ogólnym, mniej podatnym na błędy podejściem.
 
-System wykorzystuje tzw. makro napisane za pomocą ROOT do uzyskania wag z symulacji Monte Carlo, biorąc pod uwagę zarówno wydajność rekonstrukcji, jak i zanieczyszczenie cząstkami wtórnymi. Użytkownik może następnie dodać te wagi do specjalnej bazy danych _Calibration and Conditions Database_ (CCDB). Tak przygotowane wagi używane są później przez stworzoną klasę `FemtoUniverseEfficiencyCorrection`, która pobiera i stosuje jako poprawki do kątowych funkcji korelacyjnych.
+System wykorzystuje tzw. makro napisane za pomocą ROOT do uzyskania wag z symulacji Monte Carlo, biorąc pod uwagę zarówno wydajność rekonstrukcji, jak i zanieczyszczenie cząstkami wtórnymi. Użytkownik może następnie dodać te wagi do specjalnej bazy danych _Calibration and Conditions Database_ (CCDB). Tak przygotowane wagi używane są później przez stworzoną klasę `FemtoUniverseEfficiencyCorrection`, która pobiera i stosuje jako poprawki do kątowych funkcji korelacyjnych.
 
-Test _Monte Carlo closure_ potwierdził poprawność całego procesu korekcji. Ponadto, na podstawie analizowanych par pionów, kaonów i protonów, korekty dwuwymiarowe najlepiej poprawiły zgodność z danymi MC truth. Analiza chi-kwadrat pozwoliła na liczbowe potwierdzenie porównania korekcji między 1D a 2D.
+Test _Monte Carlo closure_ potwierdził poprawność całego procesu korekcji. Ponadto, na podstawie analizowanych par pionów, kaonów i protonów, korekty dwuwymiarowe najlepiej poprawiły zgodność z danymi MC truth. Analiza chi-kwadrat pozwoliła na liczbowe potwierdzenie porównania korekcji między 1D a 2D.
 
-Wreszcie, zastosowanie poprawek na danych z rzeczywistych  zderzeń dało obiecujące wyniki, powodując zbliżony wpływ na funkcje korelacyjne do tych obserwowanych w korekcjach dla danych MC.
+Ostatecznie, zastosowanie poprawek na danych z rzeczywistych  zderzeń dało obiecujące wyniki, powodując zbliżony wpływ na funkcje korelacyjne do tych obserwowanych w korekcjach dla danych MC.
 
 #v(2em)
-_Słowa kluczowe:_ ALICE, Run 3, O2Physics, kątowe funkcje korelacyjne, wydajność rekonstrukcji, poprawka na wydajność, femtoskopia.
+_Słowa kluczowe:_ ALICE, Run 3, O2Physics, kątowe funkcje korelacyjne, wydajność rekonstrukcji, poprawka na wydajność, femtoskopia.
 
 #v(1fr)
 #stack(dir: ltr, spacing: 1fr, "podpis opiekuna naukowego", "podpis studenta")
@@ -523,15 +523,15 @@ The rest of the correction macro, along with the remaining steps of the co
 
 = Validation of correction workflow
 
-This chapter focuses on the validation of the correction workflow described in the previous chapter. For this purpose I perform Monte Carlo closure test, as well as a simple $chi^2$ test.
+This chapter focuses on the validation of the correction workflow described in the previous chapter. For this purpose I perform Monte Carlo closure test, as well as a simple $chi^2$ test.
 
-== Event and track selection
+== Event and track selection
 
-Events must satisfy criteria designed to reject poorly defined collisions and reduce the impact of pileup, which arises when detectors register signals from multiple interactions within the same readout window. In particular, the selection includes a constraint on the primary vertex z-position, requiring $|"vtx"_z| < 10$ cm to exclude collisions occurring far from the center of the ALICE detector, where particle detection becomes unreliable.
+Events must satisfy criteria designed to reject poorly defined collisions and reduce the impact of pileup, which arises when detectors register signals from multiple interactions within the same readout window. In particular, the selection includes a constraint on the primary vertex z-position, requiring $|"vtx"_z| < 10$ cm to exclude collisions occurring far from the center of the ALICE detector, where particle detection becomes unreliable.
 
-The O2 framework also provides built-in event selection criterion called `sel8`, based on FT0A and FT0C forward detectors used for triggering and event characterization in studied collisions. It performs pileup rejection and ensures basic event quality.
+The O2 framework also provides built-in event selection criterion called `sel8`, based on FT0A and FT0C forward detectors used for triggering and event characterization in studied collisions. It performs pileup rejection and ensures basic event quality.
 
-@fig:track-selection shows the chosen track selection requirements for the analysis of each pair. There also exists a global track filter, also provided by the O2 framework for general use, with its details outlined in @fig:global-track-selection.
+@fig:track-selection shows the chosen track selection requirements for the analysis of each pair. There also exists a global track filter, also provided by the O2 framework for general use, with its details outlined in @fig:global-track-selection.
 
 #figure(
   table(
@@ -593,20 +593,20 @@ The O2 framework also provides built-in event selection criterion called `sel8`,
     align: left,
     table.header([*Cuts*], [*globalTrack*]),
 
-    [min number of crossed rows TPC], [70],
-    [min ratio of crossed rows over findable clusters TPC], [0.8],
+    [min number of crossed rows TPC], [70],
+    [min ratio of crossed rows over findable clusters TPC], [0.8],
     [max chi2 per cluster TPC], [4.0],
     [max chi2 per cluster ITS], [36.0],
     [require TPC refit], [true],
     [require ITS refit], [true],
-    [max DCA to vertex z], [2.0],
-    [max DCA to vertex xy], [0.0105 + 0.035 / p$""_T^(1.1)$],
-    [cluster requirement ITS], [Run 3: in 3 innermost ITS layers],
+    [max DCA to vertex z], [2.0],
+    [max DCA to vertex xy], [0.0105 + 0.035 / p$""_T^(1.1)$],
+    [cluster requirement ITS], [Run 3: in 3 innermost ITS layers],
 
     [p$""_T$ range], [0.1 - 1e10],
     [η range], [-0.8 - 0.8],
   ),
-  caption: [Partial `TrackSelection` table used in O2 framework as the global track filter @global-track-filter],
+  caption: [Partial `TrackSelection` table used in O2 framework as the global track filter @global-track-filter],
 ) <fig:global-track-selection>
 
 == Monte Carlo closure test
@@ -671,7 +671,7 @@ The opposite-sign pion correlation shown in @fig:closure-pi-api exhibits simil
 
 == Correlation functions for kaons
 
-The $C(Delta eta)$ plots for kaon pairs with like (@fig:closure-k-k) and unlike signs (@fig:closure-k-ak) present the clearest distinction -- among all studied particle pairs -- between the effects of 1D and 2D corrections. The uncorrected bins deviate the most from the truth. However, the more dimensions in the corrections, the better agreement with the reference distribution. After applying the 2D corrections, the ratio of reconstructed to true values deviates by no more than 2%.
+The $C(Delta eta)$ plots for kaon pairs with like (@fig:closure-k-k) and unlike signs (@fig:closure-k-ak) present the clearest distinction -- among all studied particle pairs -- between the effects of 1D and 2D corrections. The uncorrected bins deviate the most from the truth. However, the more dimensions in the corrections, the better agreement with the reference distribution. After applying the 2D corrections, the ratio of reconstructed to true values deviates by no more than 2%.
 
 #figure(pdf("../data/LHC24f3c/k-k/data_correction.pdf"), caption: [
   MC closure in 1D and 2D for kaon+ kaon+ from proton-proton collisions.
@@ -825,15 +825,15 @@ Proton anti-proton pair (@fig:data-p-ap) shows no significant differences betwee
 
 = Conclusion
 
-This thesis successfully developed and validated a new, semi-automated workflow for applying reconstruction efficiency corrections to angular correlation functions within the ALICE experiment's Run 3 O2Physics framework. The thesis has replaced the previous ad-hoc correction methods with a standardized, reusable, and more robust solution, improving the reliability of future analyses.
+This thesis successfully developed and validated a new, semi-automated workflow for applying reconstruction efficiency corrections to angular correlation functions within the ALICE experiment's Run 3 O2Physics framework. The thesis has replaced the previous ad-hoc correction methods with a standardized, reusable, and more robust solution, improving the reliability of future analyses.
 
-The implemented workflow starts with a ROOT macro that, based on MC simulation data, generates one- and two-dimensional correction weights, which account for both reconstruction efficiency and contamination from secondary particles. The workflow then uploads these weights to the CCDB for later use by running a ready-to-use tool called `o2-ccdb-upload`. Finally, the `FemtoUniverseEfficiencyCorrection` class, a C++ abstraction integrated into the O2Physics/FemtoUniverse framework, lets analysis tasks retrieve and apply the corrections directly, based on defined configuration.
+The implemented workflow starts with a ROOT macro that, based on MC simulation data, generates one- and two-dimensional correction weights, which account for both reconstruction efficiency and contamination from secondary particles. The workflow then uploads these weights to the CCDB for later use by running a ready-to-use tool called `o2-ccdb-upload`. Finally, the `FemtoUniverseEfficiencyCorrection` class, a C++ abstraction integrated into the O2Physics/FemtoUniverse framework, lets analysis tasks retrieve and apply the corrections directly, based on defined configuration.
 
-A Monte Carlo closure test confirmed the validity of the new method. By comparing the corrected, reconstructed data with the MC truth for pion, kaon, and proton pairs, the test showed that the workflow effectively minimizes deviation from true values. A chi-squared analysis showed that two-dimensional corrections improve the agreement between the data and the MC truth more than uncorrected or 1D-corrected data.
+A Monte Carlo closure test confirmed the validity of the new method. By comparing the corrected, reconstructed data with the MC truth for pion, kaon, and proton pairs, the test showed that the workflow effectively minimizes deviation from true values. A chi-squared analysis showed that two-dimensional corrections improve the agreement between the data and the MC truth more than uncorrected or 1D-corrected data.
 
-Finally, applying the workflow to real collision data showed that the corrections produced promising results outside of the simulation environment. The analysis includes a comparison of different particle pairs with and without corrections.
+Finally, applying the workflow to real collision data showed that the corrections produced promising results outside of the simulation environment. The analysis includes a comparison of different particle pairs with and without corrections.
 
-At the time of writing this thesis, few group members already actively use the workflow in their analysis tasks. I have tested it on the particle pairs discussed in the thesis, and its design allows generalization to other particle combinations. The future plan involves integrating the workflow with most of the `FemtoUniverse`.
+At the time of writing this thesis, few group members already actively use the workflow in their analysis tasks. I have tested it on the particle pairs discussed in the thesis, and its design allows generalization to other particle combinations. The future plan involves integrating the workflow with most of the `FemtoUniverse`.
 
 
 #clearpage()
