@@ -1,3 +1,4 @@
+import math
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -25,7 +26,7 @@ def project(
     eta = 0.5 * (eta[:-1] + eta[1:])
     phi = 0.5 * (phi[:-1] + phi[1:])
 
-    phi_mask = (phi > -0.5) & (phi < 4)
+    phi_mask = (phi > -math.pi) & (phi < 3 * math.pi / 2)
     eta_mask = (eta > -1.5) & (eta < 1.5)
 
     signal[~phi_mask][:, ~eta_mask] = 0

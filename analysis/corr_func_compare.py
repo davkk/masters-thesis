@@ -1,3 +1,4 @@
+import math
 from pathlib import Path
 
 import common
@@ -34,19 +35,22 @@ def get_corr_func(
     same_event, phi_edges, eta_edges = same_event_hist
     mixed_event, _, _ = mixed_event_hist
 
-    phi = 0.5 * (phi_edges[1:] + phi_edges[:-1])
-    eta = 0.5 * (eta_edges[1:] + eta_edges[:-1])
+    phi_centers = 0.5 * (phi_edges[1:] + phi_edges[:-1])
+    eta_centers = 0.5 * (eta_edges[1:] + eta_edges[:-1])
 
-    eta_mask = (eta > -1.5) & (eta < 1.5)
-    phi_mask = (phi > -0.5) & (phi < 4.0)
+    eta_mask = (eta_centers > -1.5) & (eta_centers < 1.5)
+    phi_mask = (phi_centers > -math.pi / 2) & (phi_centers < 3 * math.pi / 2)
 
     same_event = same_event[phi_mask][:, eta_mask]
     mixed_event = mixed_event[phi_mask][:, eta_mask]
-    phi = phi[phi_mask]
-    eta = eta[eta_mask]
+
+    phi_indices = np.where(phi_mask)[0]
+    phi_edges = phi_edges[phi_indices[0] : phi_indices[-1] + 2]
+    eta_indices = np.where(eta_mask)[0]
+    eta_edges = eta_edges[eta_indices[0] : eta_indices[-1] + 2]
 
     corr_func = (same_event / same_event.sum()) / (mixed_event / mixed_event.sum())
-    return corr_func, phi, eta
+    return corr_func, phi_edges, eta_edges
 
 
 if __name__ == "__main__":
@@ -64,9 +68,14 @@ if __name__ == "__main__":
     assert isinstance(data_nocor, uproot.ReadOnlyDirectory)
     assert isinstance(data_cor, uproot.ReadOnlyDirectory)
 
-    cf_nocor, phi, eta = get_corr_func(data_nocor, f"{TASK_NAME_BASE}_nocor", args.mc)
+    cf_nocor, phi_edges, eta_edges = get_corr_func(
+        data_nocor, f"{TASK_NAME_BASE}_nocor", args.mc
+    )
     cf_cor1d, _, _ = get_corr_func(data_cor, f"{TASK_NAME_BASE}_1d", args.mc)
     cf_cor2d, _, _ = get_corr_func(data_cor, f"{TASK_NAME_BASE}_2d", args.mc)
+
+    phi_centers = 0.5 * (phi_edges[1:] + phi_edges[:-1])
+    eta_centers = 0.5 * (eta_edges[1:] + eta_edges[:-1])
 
     fig = plt.figure(figsize=(10, 6), constrained_layout=True)
     gs = fig.add_gridspec(2, 3, width_ratios=[1, 1.5, 1])
@@ -82,17 +91,17 @@ if __name__ == "__main__":
 
     ax_uncor = fig.add_subplot(gs[:, 0], projection="3d")
     assert isinstance(ax_uncor, Axes3D)
-    plot_3d_bar(eta, phi, cf_nocor.T, ax=ax_uncor, cmap=cmap_viridis)
+    plot_3d_bar(eta_centers, phi_centers, cf_nocor.T, ax=ax_uncor, cmap=cmap_viridis)
     ax_uncor.set_title(f"Correlation function - ${''.join(args.pair_tex)}$ w/o corr.")
 
     ax_cor1d = fig.add_subplot(gs[0, 1], projection="3d")
     assert isinstance(ax_cor1d, Axes3D)
-    plot_3d_bar(eta, phi, cf_cor1d.T, ax=ax_cor1d, cmap=cmap_viridis)
+    plot_3d_bar(eta_centers, phi_centers, cf_cor1d.T, ax=ax_cor1d, cmap=cmap_viridis)
     ax_cor1d.set_title(f"Cor. func. - ${''.join(args.pair_tex)}$ w/ 1D corr.")
 
     ax_cor2d = fig.add_subplot(gs[1, 1], projection="3d")
     assert isinstance(ax_cor2d, Axes3D)
-    plot_3d_bar(eta, phi, cf_cor2d.T, ax=ax_cor2d, cmap=cmap_viridis)
+    plot_3d_bar(eta_centers, phi_centers, cf_cor2d.T, ax=ax_cor2d, cmap=cmap_viridis)
     ax_cor2d.set_title(f"Cor. func. - ${''.join(args.pair_tex)}$ w/ 2D corr.")
 
     ratio1d = cf_cor1d / cf_nocor
@@ -105,14 +114,14 @@ if __name__ == "__main__":
 
     ax_ratio1d = fig.add_subplot(gs[0, 2])
     im = ax_ratio1d.pcolormesh(
-        eta, phi, ratio1d.T, cmap=cmap_diverging, vmin=vmin, vmax=vmax
+        eta_edges, phi_edges, ratio1d, cmap=cmap_diverging, vmin=vmin, vmax=vmax
     )
     fig.colorbar(im, ax=ax_ratio1d)
     ax_ratio1d.set_title("Ratio (w/ 1D corr. over w/o corr.)")
 
     ax_ratio2d = fig.add_subplot(gs[1, 2])
     im = ax_ratio2d.pcolormesh(
-        eta, phi, ratio2d.T, cmap=cmap_diverging, vmin=vmin, vmax=vmax
+        eta_edges, phi_edges, ratio2d, cmap=cmap_diverging, vmin=vmin, vmax=vmax
     )
     fig.colorbar(im, ax=ax_ratio2d)
     ax_ratio2d.set_title("Ratio (w/ 2D corr. over w/o corr.)")
