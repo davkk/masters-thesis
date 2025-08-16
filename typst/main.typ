@@ -98,8 +98,8 @@
     image("img/WF_ENG.png", width: 100%),
     image("img/mgr_en.png", width: 70%),
     text(size: 1.1em)[
-      in the field of study Fizyka Techniczna \
-      and specialization Eksploracja Danych i Modelowanie Interdyscyplinarne
+      in the field of study Applied Physics \
+      and specialization Data Exploration and Interdisciplinary Modelling
     ],
     stack(
       spacing: 2em,
@@ -195,13 +195,13 @@ _Słowa kluczowe:_ ALICE, Run 3, O2Physics, kątowe funkcje korelacyjne, wydajno
 
 = Introduction
 
-This thesis introduces a new approach to calculate particle reconstruction efficiency within the upgraded Run 3 $"O"^2$ software framework of the ALICE experiment. It applies the resulting efficiency to correct angular correlation functions, aiming to improve the precision of particle physics analyses.
+This thesis introduces a new approach to calculate particle reconstruction efficiency within the upgraded Run 3 $"O"^2$ software framework of the ALICE experiment. The reconstruction efficiency describes a proportion of produced and successfully reconstructed particles. The thesis applies the calculated efficiency to correct angular correlation functions. A low efficiency results in skewed measured distributions, hence the correction improves the accuracy of particle physics analyses.
 
 == LHC and Run 3
 
 The *Large Hadron Collider* (LHC), located at the European Organization for Nuclear Research (CERN) near Geneva, Switzerland, stands as the world's largest particle accelerator. Since 2009, it provides data from particle acceleration and collision, primarily protons and heavy ions (e.g. lead).
 
-The collider has completed two successful periods of data collection, the first Run 1 (2010--2013), and the other Run 2 (2015--2018). The current operational phase, *Run 3*, began in 2022 following the second long shutdown (LS2) @lhc-upgrade. After numerous upgrades, the LHC now features proton-proton collisions at a center-of-mass energy of 13.6 TeV, an increase from the 13 TeV utilized in Run 2. The higher energy helps in further studies, as well as improves measurement precision and overall analysis.
+The collider has completed two successful periods of data collection, the first Run 1 (2010--2013), and the other Run 2 (2015--2018). The current operational phase, *Run 3*, began in 2022 following the second long shutdown (LS2) @lhc-upgrade. After numerous upgrades, the LHC now features proton-proton and lead-lead collisions at a center-of-mass energy of 13.6 TeV, an increase from the 13 TeV utilized in Run 2. The higher energy helps in further studies, as well as improves measurement precision and overall analysis.
 
 == The ALICE experiment
 
@@ -209,7 +209,7 @@ The acronym ALICE stands for *A Large Ion Collider Experiment* @collaboration2
 
 == Two-particle angular correlation function
 
-The function measures how often particle pairs appear for a given difference in pseudorapidity ($Delta eta$) and azimuthal angle ($Delta phi$). It helps to study patterns in particle production by comparing signal distributions to reference, e.g. background distribution.
+The function measures how often particle pairs appear for a given difference in pseudorapidity ($Delta eta$) and azimuthal angle ($Delta phi$). It helps to study patterns in particle production by comparing same-event signal distributions to mixed-event reference in order to remove distortions introduced by the detector's finite acceptance, most notably along $eta$. An ideal detector with full acceptance and perfect efficiency would not require this correction.
 
 === Pseudorapidity and azimuthal angle
 
@@ -232,7 +232,7 @@ However, the analysis of two-particle correlation accounts for the difference
 
 To construct the $Delta eta Delta phi$ correlation function, one first obtains the so-called *signal distribution*, $S(Delta eta, Delta phi)$, by pairing particles passing selection criteria, all within the same event.
 
-Next, through the event mixing, in which pairs consist of particles from different events, one can calculate the *background distribution*, $B(Delta eta, Delta phi)$. This aids in eliminating any single-particle effects.
+Next, through the event mixing, in which pairs consist of particles from different events, one can calculate the *background distribution*, $B(Delta eta, Delta phi)$. Division of signal distribution by the mixed-event reference removes distortions caused by the detector's finite acceptance (especially in $eta$) and reveals the underlying correlation structures.
 
 As the last step, one should normalize both distributions by the corresponding numbers of pairs in the signal distribution, $N_"same"$, and background distribution, $N_"mixed"$, respectively.
 
@@ -243,9 +243,9 @@ $
 
 == Correction procedure
 
-This procedure aims to mitigate biases, that arise during the actual experiment. Correction weights come from data produced in Monte Carlo (MC) simulations. Generated collisions follow set parameters, producing particles referred to as *MC truth*. These particles originate directly from the event generator and remain unaffected by detector effects.
+This procedure aims to mitigate biases that arise during the actual experiment. Correction weights come from data produced in Monte Carlo (MC) simulations. In this context, Monte Carlo event generators (such as *PYTHIA*) model the physics of high-energy collisions. They implement theoretical frameworks of Quantum Chromodynamics (QCD) and other related models to approximate particle production in proton–proton or heavy-ion interactions. Given initial conditions like collision energy, the generator produces a list of particles that represent the expected outcome of the event. Therefore, these particles, referred to as *MC truth*, originate directly from the event generator and remain unaffected by detector effects.
 
-To model how these particles would appear in the detector, their trajectories pass through a transport package -- in this case, GEANT4 @agostinelli2003geant4 -- which emulates their interactions with the detector. This step accounts for e.g. energy loss, multiple scattering, and secondary particle production. Such tracks undergo reconstruction, simulating the one used for real collision data. The resulting tracks correspond to the same MC truth particles but now also include effects introduced by the detector geometry and material. This final set forms the *MC reconstructed* sample.
+To model how these particles would appear in the detector, the MC truth particles pass through a transport package -- in this case, GEANT4 @agostinelli2003geant4 -- which emulates their interactions with the detector. This simulation step accounts for e.g. energy loss, multiple scattering, and secondary particle production. Such tracks undergo reconstruction, simulating the one used for real collision data. The resulting tracks correspond to the same MC truth particles but now also include effects introduced by the detector geometry and material. This final set forms the *MC reconstructed* sample.
 
 #pagebreak()
 
@@ -295,7 +295,7 @@ The contamination includes contributions from both secondary particles and tho
 
 Having calculated the efficiency histogram and secondary contamination, one can calculate the weights as
 $
-  w = (1 - C) / epsilon.
+  w(p_T, eta) = (1 - C(p_T, eta)) / epsilon(p_T, eta).
 $
 
 The values of $C$ and $epsilon$ typically come from histograms binned in transverse momentum ($p_T$) or in two dimensions as a function of both $p_T$ and pseudorapidity ($eta$), enabling a more accurate study of the efficiency itself and efficiency corrections.
@@ -307,7 +307,11 @@ The values of $C$ and $epsilon$ typically come from histograms binned in tra
 
 The major upgrade during Long Shutdown 2 introduced a new computing system called *Online-Offline (O2)* @o2-technical-design-report. This system replaces the previous data processing model with a more efficient approach that minimizes data volume through online track reconstruction. To support this, ALICE deployed two specialized computing farms: the First Level Processor (FLP) farm in Counting Room 1 (CR1) and the Event Processing Node (EPN) farm in Counting Room 0 (CR0). The FLP farm first reduces raw detector data by performing initial data compression before sending it via _Infiniband_ to the EPN farm. There, the first reconstruction pass further reduces the data, to finally save it to permanent storage.
 
-The O2 framework @o2-framework introduces an entirely new software ecosystem, designed from scratch to support this architecture, by handling detector readout, data quality control, and operational services. *O2Physics* on the other hand acts as the complementary part to O2 for the LHC data analysis. It provides a way to define and run analysis tasks, which then get executed on a cluster, in a distributed manner. Designed with flexibility and extendibility in mind, the framework allows physicists to add their own analyses and modify existing ones.
+#figure(image("img/o2-raw-data-flow.png", width: 90%), caption: [
+  The data flow in the O2 framework.
+]) <fig:o2-raw-data-flow>
+
+The O2 framework @o2-framework introduces an entirely new software ecosystem, designed from scratch to support this architecture, by handling detector readout, data quality control, and operational services. *O2Physics* on the other hand acts as the complementary part to O2 for the LHC data and simulation data analysis. It provides a way to define and run analysis tasks, which then get executed on a cluster, in a distributed manner. Designed with flexibility and extendibility in mind, the framework allows physicists to add their own analyses and modify existing ones.
 
 Our group at Warsaw University of Technology develops a part of the analysis framework, through *FemtoUniverse* package, located in PWGCF directory @femtouniverse.
 
@@ -316,6 +320,12 @@ Illustrated in @fig:o2-flow, the flow of data processing in FemtoUniverse st
 #figure(image("img/o2-flow.png", width: 90%), caption: [
   The data flow in O2Physics.
 ]) <fig:o2-flow>
+
+== Worldwide LHC Computing Grid (WLCG)
+
+The *WLCG*, simply referred to as _Grid_, constitutes a global collaboration of approximately 170 computing centers across more than 40 countries. This computing infrastructure integrates around 1.4 million computer cores and 1.5 exabytes of storage. Its primary objective involves storing, distributing, and analyzing the substantial amounts of data generated annually by the LHC at CERN.
+
+The O2Physics framework by design can run in a distributed and parallel environment. Hence, it aligns perfectly with the Grid architecture.
 
 == The old approach for efficiency correction
 
@@ -362,8 +372,6 @@ The first solution (@fig:workflow-initial) leveraged the O2 framework's callba
 ) <lst:callback-service-code>
 
 However, the above idea has a major drawback. It assumes that the analysis task executes on a single machine, whereas parallel and distributed environments, such as the Worldwide LHC Computing Grid, typically involve multiple machines.
-
-The *WLCG*, simply referred to as _Grid_, constitutes a global collaboration of approximately 170 computing centers across more than 40 countries. This computing infrastructure integrates around 1.4 million computer cores and 1.5 exabytes of storage. Its primary objective involves storing, distributing, and analyzing the substantial amounts of data generated annually by the LHC at CERN.
 
 Therefore, when running the task on the Grid, the system splits a given dataset into smaller chunks, processes each in parallel on individual nodes (machines), and eventually merges the results. This aspect causes the custom callback to execute as many times as the number of jobs created.
 
@@ -504,7 +512,7 @@ The rest of the correction macro, along with the remaining steps of the co
   ],
 ) <lst:corr-macro-proj>
 
-@fig:eff-cont-pi-2d, @fig:eff-cont-k-2d and @fig:eff-cont-p-2d show projections from constructed 3D histograms onto $p_T$ vs. $eta$ axis of the reconstruction efficiency and contamination.
+@fig:eff-cont-pi-2d, @fig:eff-cont-k-2d and @fig:eff-cont-p-2d show projections from the constructed 3D histograms onto $p_T$ vs. $eta$ axis of the reconstruction efficiency and contamination.
 
 #figure(pdf("../data/LHC24f3c/effcor/pi/eff_cont_2d.pdf"), caption: [
   Efficiency (a) and secondary contamination (b) in two dimensions for pion.
@@ -521,15 +529,15 @@ The rest of the correction macro, along with the remaining steps of the co
 
 = Validation of correction workflow
 
-This chapter focuses on the validation of the correction workflow described previously. The validation involves performing a Monte Carlo closure test, as well as a simple $chi^2$ analysis.
+This chapter focuses on the validation of the correction workflow described previously. The validation involves performing a Monte Carlo closure test, as well as a simple $chi^2$ analysis.
 
 == Event and track selection
 
-Events must satisfy criteria designed to reject poorly defined collisions and reduce the impact of pileup. Such issue arises when detectors register signals from multiple interactions within the same readout window. In particular, the selection includes a constraint on the primary vertex z-position, requiring $|"vtx"_z| < 10$ cm to exclude collisions occurring far from the center of the ALICE detector. There, the particle detection becomes unreliable.
+Events must satisfy criteria designed to reject poorly defined collisions and reduce the impact of pileup. Such issue arises when detectors register signals from multiple interactions within the same readout window. In particular, the selection includes a constraint on the primary vertex z-position, requiring $|"vtx"_z| < 10$ cm to exclude collisions occurring far from the center of the ALICE detector. There, the particle detection becomes unreliable.
 
 The O2 framework also provides built-in event selection criterion called `sel8` (Run 3 data), based on FT0A and FT0C forward detectors used for triggering and event characterization in studied collisions. It performs pileup rejection and ensures basic event quality.
 
-@fig:track-selection shows the chosen track selection requirements for the analysis of each pair. There exists a global track filter, also provided by the O2 framework for general use. The @fig:global-track-selection outlines its details.
+@fig:track-selection shows the chosen track selection requirements for the analysis of each pair. There exists a global track filter, also provided by the O2 framework for general use. The @fig:global-track-selection outlines its details.
 
 #figure(
   table(
@@ -651,7 +659,7 @@ All datasets used for the MC closure test come from simulations based on the P
 
 In the following figures, the top panels compare truth results to reconstructed distributions, both without corrections and with 1D or 2D efficiency corrections. The bottom panels display the ratio between each corrected result and the truth.
 
-The uncorrected distributions in @fig:closure-pi-pi show noticeable differences from the truth, particularly in $Delta eta$ projection. Using efficiency corrections improves the agreement between reconstructed results and the truth. In the $Delta phi$ projection, both correction dimensions reproduce the overall shape of the correlation function, though systematic deviations of up to 2% persist.
+The uncorrected distributions in @fig:closure-pi-pi show noticeable differences from the truth, particularly in $Delta eta$ projection. Using efficiency corrections improves the agreement between reconstructed results and the truth. In the $Delta phi$ projection, both correction dimensions reproduce the overall shape of the correlation function, though systematic deviations of up to 2% persist.
 
 #figure(pdf("../data/LHC24f3c/pi-pi/data_correction.pdf"), caption: [
   MC closure in 1D and 2D for pion+ pion+ from $p p$ collisions MC data.
@@ -691,11 +699,9 @@ The proton anti-proton pair (@fig:closure-p-ap) effectively shows no significan
   MC closure in 1D and 2D for proton anti-proton from $p p$ collisions MC data.
 ]) <fig:closure-p-ap>
 
-== Efficiency influence in 1D vs. 2D
+== Efficiency influence for $p_T$-only vs. $p_T$ and $eta$
 
 This section quantifies the influence of efficiency corrections by comparing the unweighted $chi^2$ values between the MC truth and the corrected correlation functions. The comparison relies on ROOT's `Chi2Test` method, which calculates the chi-squared per degree of freedom ($chi^2 / "NDF"$) to provide a statistical measure of the goodness of fit between two histograms. A lower value typically indicates a better agreement. The test compares the full two-dimensional correlation function from the MC truth sample against the uncorrected, 1D-corrected, and 2D-corrected reconstructed distributions.
-
-As shown in @fig:chisq-comparison, the results demonstrate a consistent and significant improvement when applying two-dimensional corrections. For every particle pair analyzed, the $chi^2 / "NDF"$ value reaches its minimum for the 2D-corrected data. This provides a quantitative evidence that this method improves the correspondence of the reconstructed data with the MC truth.
 
 #figure(
   pdf("../data/chisq_test.pdf", width: 90%),
@@ -704,12 +710,14 @@ As shown in @fig:chisq-comparison, the results demonstrate a consistent and�
   ],
 ) <fig:chisq-comparison>
 
+As shown in @fig:chisq-comparison, the results demonstrate a consistent and significant improvement when applying two-dimensional corrections. For every particle pair analyzed, the $chi^2 / "NDF"$ value reaches its minimum for the 2D-corrected data. This provides a quantitative evidence that this method improves the correspondence of the reconstructed data with the MC truth.
+
 
 = Correction on real data
 
 The following figures show the correlation functions for real data before and after applying 1D and 2D efficiency corrections. Each of the two panels compare the uncorrected distributions with the corrected ones.
 
-In addition, the next figures also visualize the same correlation functions using 3D surface plots. Left plot shows the uncorrected correlation function. Upper and lower plots in the middle column display the results after 1D and 2D corrections, respectively. The right column contains two-dimensional ratio plots, which show the bin-by-bin ratio of each corrected distribution to the uncorrected one.
+In addition, the next figures also visualize the same correlation functions using 3D surface plots. Left plot shows the uncorrected correlation function. Upper and lower plots in the middle column display the results after 1D and 2D corrections, respectively. The right column contains two-dimensional ratio plots, which show the bin-by-bin ratio of each corrected distribution to the uncorrected one.
 
 == Correlation functions for pions
 
@@ -731,7 +739,7 @@ When comparing the ratios for 1D and 2D corrections (@fig:data-pi-pi-3d), one 
   ],
 ) <fig:data-pi-pi-3d>
 
-For the $pi^+ pi^-$ pair, the corrections noticeably alter the correlation function's shape. At the same jet peak near $Delta phi = 0$, the corrected distributions show an increase of up to 10%. For larger variable differences, both 1D and 2D corrections reduce the function's values.
+For the $pi^+ pi^-$ pair, the corrections noticeably alter the correlation function's shape. At the same jet peak near $Delta phi = 0$, the corrected distributions show an increase of up to 10%. For larger variable differences, both 1D and 2D corrections reduce the function's values.
 
 #figure(
   pdf("../data/LHC22o_pass7_minBias_small/pi-api/data_correction.pdf"),
@@ -740,7 +748,7 @@ For the $pi^+ pi^-$ pair, the corrections noticeably alter the correlation fu
   ],
 ) <fig:data-pi-api>
 
-In @fig:data-pi-api-3d, one can see that the values around the peak do not change much after correction, and the areas away from the peak deviate by less than 5% from the uncorrected function.
+In @fig:data-pi-api-3d, one can see that the values around the peak do not change much after correction, and the areas away from the peak deviate by less than 5% from the uncorrected function.
 
 #figure(
   pdf("../data/LHC22o_pass7_minBias_small/pi-api/corr_func_compare.pdf"),
@@ -822,13 +830,13 @@ Proton anti-proton pair (@fig:data-p-ap) shows no significant differences betwee
 
 = Conclusion
 
-This thesis successfully developed and validated a new, semi-automated workflow for calculating reconstruction efficiency and applying efficiency corrections to angular correlation functions within the ALICE experiment's Run 3 O2Physics framework. The thesis has replaced the previous ad-hoc correction methods with a reusable, and more robust solution, improving the reliability of future analyses.
+This thesis successfully developed and validated a new, semi-automated workflow for calculating reconstruction efficiency and applying efficiency corrections to angular correlation functions within the ALICE experiment's Run 3 O2Physics framework. The thesis has replaced the previous ad-hoc correction methods with a reusable, and more robust solution, improving the reliability of future analyses.
 
-The implemented workflow starts with a ROOT macro that, based on MC simulation data, generates one-, two-, or three-dimensional correction weights which account for both reconstruction efficiency and contamination from secondary particles. The workflow then uploads these weights to the CCDB for later use by running a ready-to-use tool called `o2-ccdb-upload`. Finally, the `FemtoUniverseEfficiencyCorrection` class, a C++ abstraction integrated into the O2Physics/FemtoUniverse framework, lets analysis tasks retrieve and apply the corrections directly, based on a defined configuration.
+The implemented workflow starts with a ROOT macro that, based on MC simulation data, generates one-, two-, or three-dimensional correction weights which account for both reconstruction efficiency and contamination from secondary particles. The workflow then uploads these weights to the CCDB for later use by running a ready-to-use tool called `o2-ccdb-upload`. Finally, the `FemtoUniverseEfficiencyCorrection` class, a C++ abstraction integrated into the O2Physics/FemtoUniverse framework, lets analysis tasks retrieve and apply the corrections directly, based on a defined configuration.
 
 A Monte Carlo closure test confirmed the validity of the new method. By comparing the corrected, reconstructed data with the MC truth for pion, kaon, and proton pairs, the test showed that the workflow effectively minimizes deviation from true values. A chi-squared analysis showed that two-dimensional corrections improve the agreement between the data and the MC truth more than uncorrected or 1D-corrected data.
 
-Finally, applying the workflow to real collision data showed that the corrections produced promising results outside of the simulation environment. The analysis includes a comparison of different particle pairs with and without corrections. At the time of writing this thesis, a few group members have already used the workflow in their analysis tasks. This thesis tests it on specifically chosen particle pairs, however its design allows generalization to other particle combinations. The future plan involves integrating the workflow with most of the `FemtoUniverse`.
+Finally, applying the workflow to real collision data showed that the corrections produced promising results outside of the simulation environment. The analysis includes a comparison of different particle pairs with and without corrections. At the time of writing this thesis, a few group members have already used the workflow in their analysis tasks. This thesis tests it on specifically chosen particle pairs, however its design allows generalization to other particle combinations. The future plan involves integrating the workflow with most of the `FemtoUniverse`.
 
 #clearpage()
 

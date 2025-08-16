@@ -7,6 +7,7 @@ import numpy as np
 import uproot
 import uproot.exceptions
 from common import DATA_DIR
+from matplotlib.colors import LinearSegmentedColormap
 from uproot.models import TH
 
 
@@ -60,6 +61,10 @@ if __name__ == "__main__":
     DATA_DIR /= "effcor"
 
     colors, markers = common.setup_pyplot()
+    cmap = LinearSegmentedColormap.from_list(
+        "custom_viridis",
+        [colors[3], colors[2], colors[4]],
+    )
 
     part1, part2 = args.pair
     parts = 1 + (part1 != part2)
@@ -98,12 +103,13 @@ if __name__ == "__main__":
             eta_rebin=eta_rebin,
         )
         X, Y = np.meshgrid(pt_edges_rebin, eta_edges_rebin, indexing="ij")
+
         pcm = ax_eff.pcolormesh(
             X,
             Y,
             counts_rebin,
             shading="auto",
-            cmap="binary",
+            cmap=cmap,
             edgecolors="none",
             linewidth=0,
             antialiased=False,
@@ -129,7 +135,7 @@ if __name__ == "__main__":
             Y,
             sec_counts_rebin,
             shading="auto",
-            cmap="binary",
+            cmap=cmap,
             edgecolors="none",
             linewidth=0,
             antialiased=False,
