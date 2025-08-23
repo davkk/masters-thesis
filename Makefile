@@ -14,7 +14,7 @@ report: typst/main.typ
 	typst compile typst/main.typ --root . --font-path fonts/ --input INDEX=$(INDEX) --input EVIDENCE=$(EVIDENCE)
 
 dev: typst/main.typ
-	fd .py | entr make hist-all &
+	# fd .py | entr make hist-all &
 	typst watch typst/main.typ --root . --font-path fonts/ --input INDEX=$(INDEX) --input EVIDENCE=$(EVIDENCE)
 
 hist: datafiles.csv
